@@ -1,0 +1,34 @@
+
+  
+  #root .ql-container {
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    background: #fefcfc;
+  }
+  
+  /* Snow Theme */
+  #root .ql-snow.ql-toolbar {
+    display: block;
+    background: #eaecec;
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+  }
+  
+  #root .ql-editor {
+    min-height: 18em;
+    max-height: 30em;
+    overflow-y: auto; 
+  }
+  .content{
+    h1 {
+      font-size: 40px;
+    }
+    
+    h2 {
+      font-size: 30px;
+    }
+    
+    p {
+      font-size: 14px;
+    }
+  }
