@@ -19,25 +19,25 @@ exports.adminLogin = (req, res) => {
   });
 };
 
-exports.login = (req,res) =>{
+// exports.login = (req,res) =>{
 
-}
+// }
 
-exports.signup =  (req, res) => {
-    const { name, email, password } = req.body;
+// exports.signup =  (req, res) => {
+//     const { name, email, password } = req.body;
   
-    const hashedPassword = bcrypt.hashSync(password, 10);
+//     const hashedPassword = bcrypt.hashSync(password, 10);
   
-    const query =
-      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-    db.query(
-      query,
-      [name, email, hashedPassword],
-      (err, result) => {
-        if (err) {
-          return res.status(500).json({ error: "Signup failed" });
-        }
-        res.json({ message: "Signup successful" });
-      }
-    );
-}
+//     const query =
+//       "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+//     db.query(
+//       query,
+//       [name, email, hashedPassword],
+//       (err, result) => {
+//         if (err) {
+//           return res.status(500).json({ error: "Signup failed" });
+//         }
+//         res.json({ message: "Signup successful" });
+//       }
+//     );
+// }

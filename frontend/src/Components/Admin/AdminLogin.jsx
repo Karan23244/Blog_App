@@ -36,7 +36,8 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/adminlogin`, { username, password });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/adminlogin`, { username, password }, 
+      );
 
       if (response.data.role === 'admin') {
         dispatch(login(response.data.user)); // Dispatch login action

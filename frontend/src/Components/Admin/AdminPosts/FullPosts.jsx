@@ -26,6 +26,7 @@ const FullPost = () => {
 
     fetchPost();
   }, [id]);
+  console.log(post)
 
   if (!post) {
     return <p>Loading...</p>;
@@ -33,6 +34,11 @@ const FullPost = () => {
 
   // Function to create a slug from the post title
   const createSlug = (title) => {
+    // Check if the title is not null and is a string before processing
+    if (typeof title !== "string") {
+      return ""; // Return an empty string or handle the case as needed
+    }
+
     return title
       .toLowerCase()
       .trim()
@@ -54,12 +60,12 @@ const FullPost = () => {
     : "";
 
   // Create the slug and use it in the URL
-  const postSlug = createSlug(post.title);
+  const postSlug = createSlug(post.Custom_url);
   function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
     const seconds = Math.floor((now - date) / 1000);
-  
+
     if (seconds < 60) return `${seconds} seconds ago`;
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes} minutes ago`;
@@ -90,22 +96,19 @@ const FullPost = () => {
           />
         </Helmet>
 
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center text-sm text-gray-500 mb-4">
-          <Link to="/" className="hover:text-blue-500">
-            Home
-          </Link>
-          <span className="mx-2"> &lt; </span>
-          <span className="text-gray-700">Blogs</span>
-        </div>
-
         {/* Blog Post Content */}
         <div className="bg-white shadow-lg rounded-lg p-6 md:p-8">
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
+          <h1 className="text-4xl font-semibold text-gray-900 mb-4">
             {post.title}
           </h1>
-          <p className="text-gray-600 mb-4">By {post.author_name}</p>
-          <p className="text-gray-500 mb-6">{timeAgo(post.created_at)}</p>
+          <div className="flex gap-3">
+            <div>
+              <p className="text-gray-600 mb-4">By {post.author_name}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 mb-6">{timeAgo(post.created_at)}</p>
+            </div>
+          </div>
 
           {/* Featured Image */}
           {post.featured_image && (

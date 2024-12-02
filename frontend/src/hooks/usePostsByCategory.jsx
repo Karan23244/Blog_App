@@ -19,14 +19,15 @@ const usePostsByCategory = () => {
       setCategoryName(decodeURIComponent(categoryNameFromParams));
       setCategoryType(decodeURIComponent(categoryTypeFromParams));
     }
-  }, [categoryNameFromParams,categoryTypeFromParams]);
+  }, [categoryNameFromParams, categoryTypeFromParams]);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categoryData?categoryId=${categoryId}`);
-        setPosts(response.data.data);
+        const filteredPosts = response.data.data.filter(post => post.blog_type === "published");
+        setPosts(filteredPosts);
       } catch (err) {
         setError(err);
       } finally {
@@ -39,7 +40,7 @@ const usePostsByCategory = () => {
     }
   }, [categoryId]);
 
-  return { posts, loading, error, categoryName,categoryType };
+  return { posts, loading, error, categoryName, categoryType };
 };
 
 export default usePostsByCategory;

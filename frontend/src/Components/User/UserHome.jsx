@@ -1,20 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-function UserHome({ searchPosts }) {
+function UserHome() {
   const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (searchPosts && searchPosts.length > 0) {
-      setLoading(false);
-    }
-  }, [searchPosts]);
-
   const [topReads, setTopReads] = useState([]);
   const [editorsChoice, setEditorsChoice] = useState([]);
 
   useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/posts`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const responseData = await response.json();
+        const data = responseData.data; // Extract the 'data' array containing posts
+        setPosts(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -25,9 +38,17 @@ function UserHome({ searchPosts }) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json(); // Ensure this step matches server response
-        setTopReads(result.data.topReads || []); // Safeguard against undefined properties
-        setEditorsChoice(result.data.editorsChoice || []);
+        const result = await response.json();
+        // Filter data to include only posts with blog_type: "published"
+        const filteredTopReads = (result.data.topReads || []).filter(
+          (post) => post.blog_type === "published"
+        );
+        const filteredEditorsChoice = (result.data.editorsChoice || []).filter(
+          (post) => post.blog_type === "published"
+        );
+
+        setTopReads(filteredTopReads);
+        setEditorsChoice(filteredEditorsChoice);
       } catch (err) {
         console.error("Error fetching data:", err.message);
         setError("Failed to load data.");
@@ -45,43 +66,46 @@ function UserHome({ searchPosts }) {
         <p className="text-gray-500 text-center h-screen">Loading...</p>
       ) : error ? (
         <p className="text-gray-500 text-center h-screen">{error}</p>
-      ) : searchPosts?.length === 0 ? (
+      ) : posts?.length === 0 ? (
         <p className="text-gray-500 text-center h-screen">
           No matching blog posts found.
         </p>
       ) : (
-        <div className="flex flex-col lg:flex-row lg:justify-evenly gap-4">
+        <div className="flex flex-col lg:flex-row lg:justify-evenly gap-6">
           {/* Latest Blogs Section */}
           <div className="flex flex-col lg:w-2/3 gap-4">
-            <h2 className="text-2xl font-bold text-black">Latest Blogs</h2>
+            <h2 className="text-2xl font-semibold text-black">Latest Blogs</h2>
 
             {/* Featured Post */}
-            {searchPosts && searchPosts.length > 0 && (
+            {posts && posts.length > 0 && (
               <div
-                key={searchPosts[0].id}
+                key={posts[0].id}
                 className="relative overflow-hidden hover:shadow-md">
                 <Link
-                  to={`/posts/${searchPosts[0]?.id}/${createSlug(
-                    searchPosts[0]?.title
+                  to={`/posts/${posts[0]?.id}/${createSlug(
+                    posts[0]?.Custom_url
                   )}`}
                   className="block">
-                  <img
-                    src={
-                      searchPosts[0]?.featured_image
-                        ? `${import.meta.env.VITE_API_URL}/${
-                            searchPosts[0]?.featured_image
-                          }`
-                        : "https://via.placeholder.com/600x400.png?text=No+Image"
-                    }
-                    alt={searchPosts[0]?.title}
-                    className="w-full h-[400px] object-cover"
-                  />
+                  <div class="relative w-full h-[300px]">
+                    <img
+                      src={
+                        posts[0]?.featured_image
+                          ? `${import.meta.env.VITE_API_URL}/${
+                              posts[0]?.featured_image
+                            }`
+                          : "https://via.placeholder.com/600x400.png?text=No+Image"
+                      }
+                      alt={posts[0]?.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-custom"></div>
+                  </div>
                   <div className="absolute bottom-0 left-0  text-white p-4 w-full">
-                    <h3 className="text-2xl font-semibold line-clamp-2">
-                      {searchPosts[0]?.title}
+                    <h3 className="text-2xl font-medium line-clamp-2">
+                      {posts[0]?.title}
                     </h3>
                     <p className="text-sm mt-1 line-clamp-2">
-                      {searchPosts[0]?.seoDescription}
+                      {posts[0]?.seoDescription}
                     </p>
                   </div>
                 </Link>
@@ -90,7 +114,7 @@ function UserHome({ searchPosts }) {
 
             {/* Smaller Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {searchPosts.slice(1, 6).map((post) => (
+              {posts.slice(1, 7).map((post) => (
                 <div
                   key={post.id}
                   className="overflow-hidden hover:shadow-md border border-gray-200">
@@ -113,7 +137,7 @@ function UserHome({ searchPosts }) {
                       {post?.seoDescription}
                     </p>
                     <Link
-                      to={`/posts/${post?.id}/${createSlug(post?.title)}`}
+                      to={`/posts/${post?.id}/${createSlug(post?.Custom_url)}`}
                       className="text-[#00008B] hover:underline inline-block">
                       Read More...
                     </Link>
@@ -130,8 +154,8 @@ function UserHome({ searchPosts }) {
             <div className="grid grid-cols-1 gap-4">
               {topReads.map((post) => (
                 <React.Fragment key={post.id}>
-                  <div className="post-card flex flex-col sm:flex-row gap-4 px-4 transition-shadow duration-300 ease-in-out">
-                    <div className="lg:w-1/3">
+                  <div className="post-card flex flex-col sm:flex-row gap-4 transition-shadow duration-300 ease-in-out">
+                    <div className="lg:w-2/5">
                       <img
                         src={
                           post?.featured_image
@@ -141,20 +165,22 @@ function UserHome({ searchPosts }) {
                             : "https://via.placeholder.com/300x200.png?text=No+Image"
                         }
                         alt={post?.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-[130px] object-cover"
                       />
                     </div>
-                    <div className="flex flex-col lg:w-2/3">
+                    <div className="flex flex-col gap-1 lg:w-3/5">
                       <h3 className="text-base font-semibold text-gray-800 line-clamp-2">
                         {post?.title}
                       </h3>
-                      <p className="text-xs mt-1 text-gray-600 line-clamp-2">
+                      <p className="text-sm mt-1 text-gray-600 line-clamp-2">
                         {post?.seoDescription}
                       </p>
                       <Link
-                        to={`/posts/${post?.id}/${createSlug(post?.title)}`}
+                        to={`/posts/${post?.id}/${createSlug(
+                          post?.Custom_url
+                        )}`}
                         className="self-start mt-1">
-                        <button className="text-md text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
+                        <button className="text-xs text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                           Read More
                         </button>
                       </Link>
@@ -191,13 +217,13 @@ function UserHome({ searchPosts }) {
                     <h3 className="text-base font-semibold text-gray-800 line-clamp-2">
                       {post?.title}
                     </h3>
-                    <p className="text-xs text-gray-600 line-clamp-2">
+                    <p className="text-sm text-gray-600 line-clamp-2">
                       {post?.seoDescription}
                     </p>
                     <Link
-                      to={`/posts/${post?.id}/${createSlug(post?.title)}`}
+                      to={`/posts/${post?.id}/${createSlug(post?.Custom_url)}`}
                       className="text-[#00008B] hover:underline mt-1 inline-block">
-                      <button className="text-md text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
+                      <button className="text-xs text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                         Read More
                       </button>
                     </Link>
@@ -214,6 +240,11 @@ function UserHome({ searchPosts }) {
 
 // Helper function to create slug
 const createSlug = (title) => {
+  // Check if the title is not null and is a string before processing
+  if (typeof title !== "string") {
+    return ""; // Return an empty string or handle the case as needed
+  }
+
   return title
     .toLowerCase()
     .trim()

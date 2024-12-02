@@ -18,7 +18,7 @@ const CategoryPosts = () => {
   const UpgradeYourselfUI = () => (
     <>
       <div
-        className="relative w-full h-[250px] bg-cover bg-center flex items-center justify-center"
+        className="relative w-full h-[200px] bg-cover bg-center flex items-center justify-center"
         style={{
           backgroundImage: `linear-gradient(90deg, #000025 0%, rgba(0, 0, 139, 0.3) 100%), url('./background.jpeg')`,
           backgroundAttachment: "fixed",
@@ -27,13 +27,15 @@ const CategoryPosts = () => {
           {categoryName}
         </h1>
       </div>
-      <div className="lg:px-[15%] lg:py-[3%] bg-[#00008B] bg-opacity-30">
+      <div className="lg:px-[15%] lg:py-[2%] bg-[#00008B] bg-opacity-30">
         {mostViewedPost && (
           <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-2">{mostViewedPost.title}</h2>
+            <h2 className="text-2xl font-semibold mb-2">
+              {mostViewedPost.title}
+            </h2>
             <Link
               to={`/posts/${mostViewedPost?.id}/${createSlug(
-                mostViewedPost?.title
+                mostViewedPost?.Custom_url
               )}`}
               className="block">
               <img
@@ -45,7 +47,7 @@ const CategoryPosts = () => {
                     : "https://via.placeholder.com/300x200.png?text=No+Image"
                 }
                 alt={mostViewedPost.title}
-                className="w-full h-[400px] object-cover mb-4"
+                className="w-full h-[300px] object-cover mb-4"
               />
               <p className="text-gray-700">
                 {mostViewedPost.seoDescription ||
@@ -56,9 +58,11 @@ const CategoryPosts = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
           {remainingPosts.map((post) => (
-            <div key={post.id} className="bg-white shadow-sm">
+            <div
+              key={post.id}
+              className="bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out">
               <img
                 src={
                   post.featured_image
@@ -76,7 +80,7 @@ const CategoryPosts = () => {
                   {post?.seoDescription}
                 </p>
                 <Link
-                  to={`/posts/${post?.id}/${createSlug(post?.title)}`}
+                  to={`/posts/${post?.id}/${createSlug(post?.Custom_url)}`}
                   className="text-[#00008B] hover:underline inline-block">
                   Read More...
                 </Link>
@@ -112,7 +116,9 @@ const CategoryPosts = () => {
               {/* Featured Post (Big Card) */}
               <div className="col-span-2 relative">
                 <Link
-                  to={`/posts/${posts[0]?.id}/${createSlug(posts[0]?.title)}`}
+                  to={`/posts/${posts[0]?.id}/${createSlug(
+                    posts[0]?.Custom_url
+                  )}`}
                   className="block">
                   <img
                     src={
@@ -139,7 +145,7 @@ const CategoryPosts = () => {
                     key={post.id}
                     className="flex flex-col overflow-hidden bg-white">
                     <Link
-                      to={`/posts/${post?.id}/${createSlug(post?.title)}`}
+                      to={`/posts/${post?.id}/${createSlug(post?.Custom_url)}`}
                       className="block">
                       <img
                         src={
@@ -188,7 +194,9 @@ const CategoryPosts = () => {
                         {post?.seoDescription}
                       </p>
                       <Link
-                        to={`/posts/${post?.id}/${createSlug(post?.title)}`}
+                        to={`/posts/${post?.id}/${createSlug(
+                          post?.Custom_url
+                        )}`}
                         className="text-blue-600 hover:underline mt-2 inline-block">
                         Read More...
                       </Link>
@@ -214,7 +222,7 @@ const CategoryPosts = () => {
 // Helper function to create slug
 const createSlug = (title) => {
   return title
-    .toLowerCase()
+    ?.toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, "") // Remove special characters
     .replace(/\s+/g, "-"); // Replace spaces with hyphens

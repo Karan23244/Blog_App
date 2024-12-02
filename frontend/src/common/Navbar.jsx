@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../state/Authslice"; // Adjust the path as needed
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import axios from "axios"; // For fetching data (if needed)
+import { logout } from "../state/Authslice";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Navbar({ onSearch }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [categories, setCategories] = useState([]); // State for storing categories
-  const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Check if admin is authenticated
 
@@ -25,7 +29,22 @@ function Navbar({ onSearch }) {
         console.error("Error fetching categories:", error);
       }
     };
-
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/posts`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const responseData = await response.json();
+        const data = responseData.data; // Extract the 'data' array containing posts
+        setPosts(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+    fetchPosts();
     fetchCategories(); // Call the function to fetch categories on component mount
   }, []);
   const groupedCategories = categories.reduce((acc, category) => {
@@ -45,24 +64,72 @@ function Navbar({ onSearch }) {
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    onSearch(e.target.value); // Call onSearch passed from UserHome
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.trim() !== "") {
+      const matches = posts.filter(
+        (post) =>
+          post.title.toLowerCase().includes(query.toLowerCase()) ||
+          post.content.toLowerCase().includes(query.toLowerCase())
+      );
+      setSuggestions(matches.slice(0, 6));
+      setShowDropdown(matches.length > 0); // Show dropdown only if there are matches
+    } else {
+      setSuggestions([]); // Clear suggestions if the query is empty
+      setShowDropdown(false);
+    }
   };
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    if (location.pathname === "/") {
+      // Refresh the page if the user is already on the home page
+      window.location.reload();
+    } else {
+      // Navigate to the home page
+      navigate("/");
+    }
+  };
+  const handleSuggestionClick = (blogId, Custom_url) => {
+    navigate(`/posts/${blogId}/${createSlug(Custom_url)}`); // Navigate to the blog page
+    setSearchQuery(""); // Clear the search query
+    setSuggestions([]); // Clear suggestions
+  };
+  const handleFocus = () => {
+    if (searchQuery.trim() !== "") {
+      const matches = posts.filter(
+        (post) =>
+          post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          post.content.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSuggestions(matches.slice(0, 6)); // Update suggestions
+      setShowDropdown(matches.length > 0); // Show dropdown only if there are matches
+    }
+  };
+
+  const handleBlur = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.relatedTarget)) {
+      setShowDropdown(false);
+    }
+  };
+
   return (
     <header>
-      <nav className="border-gray-200 px-4 lg:py-1 lg:px-3 py-2.5 border border-b-1">
+      <nav className="border-gray-200 px-4 lg:py-1 lg:px-7 py-2.5 border border-b-1 shadow-xl">
         <div className="flex">
-          <div className="flex flex-row items-center space-x-4 w-2/6">
-            <Link to="/">
-              <img src="/logo.png" alt="Logo" width={200} height={100} />
-            </Link>
+          <div className="flex flex-row items-center gap-4 w-[40%]">
+            <div onClick={handleLogoClick}>
+              <img src="/headerlogo.png" alt="Logo" width={80} height={80} />
+            </div>
 
             {/* Horizontal Divider */}
-            <div className="w-[3px] h-16 bg-black"></div>
-
-            <h1 className="text-xl font-bold text-center">
-              Inspiring Spaces for Life
-            </h1>
+            <div className="w-[2px] h-12 bg-black"></div>
+            <div>
+              <h1 className="text-lg font-medium text-center">
+                Inspiring Spaces for Life
+              </h1>
+            </div>
           </div>
 
           <div className="flex items-center lg:order-2">
@@ -99,7 +166,7 @@ function Navbar({ onSearch }) {
           <div
             className={`${
               isMenuOpen ? "flex" : "hidden"
-            }  items-center w-full lg:flex justify-end lg:w-4/6 lg:order-1`}
+            }  items-center lg:flex justify-end lg:w-[60%] lg:order-1`}
             id="mobile-menu-2">
             <ul className="flex flex-col items-center gap-5 text-black font-medium lg:flex-row">
               {isAuthenticated ? (
@@ -107,39 +174,41 @@ function Navbar({ onSearch }) {
                   <li>
                     <Link
                       to="/admin/category"
-                      className="block py-2 pr-4 pl-3 text-black lg:py-1 lg:px-4 hover:text-red-600 font-bold">
+                      className="block py-2 pr-4 pl-3 text-black lg:py-1 lg:px-4 hover:text-[#00008B] font-bold">
                       Category
                     </Link>
                   </li>
                   <li>
                     <Link
                       to="/admin/authors"
-                      className="block py-2 pr-4 pl-3 text-black lg:py-1 lg:px-4 hover:text-red-600 font-bold">
+                      className="block py-2 pr-4 pl-3 text-black lg:py-1 lg:px-4 hover:text-[#00008B] font-bold">
                       Authors
                     </Link>
                   </li>
                   <button
                     onClick={handleLogout}
-                    className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 font-bold focus:outline-none">
+                    className="text-white bg-blue-600 hover:bg-[#00008B] focus:ring-4 focus:ring-[#00008B] rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 font-bold focus:outline-none">
                     Logout
                   </button>
                 </>
               ) : (
                 <>
-                  <div className="flex flex-row justify-center items-center gap-10">
+                  <div className="flex flex-row justify-center items-center gap-28">
                     <div
                       className={`${
                         isMenuOpen ? "block" : "hidden"
-                      } w-full lg:flex lg:items-center lg:justify-between lg:w-auto`}>
-                      <ul className="flex flex-col lg:flex-row lg:space-x-8">
+                      } w-full lg:flex lg:items-center lg:justify-between lg:w-auto `}>
+                      <ul className="flex flex-col lg:flex-row lg:space-x-8 gap-14">
                         {Object.keys(groupedCategories).map((type) => (
                           <li className="relative group" key={type}>
-                            <button className="block text-black  hover:text-red-600 font-bold">
+                            <button className="block text-black text-xl hover:text-[#00008B] font-semibold">
                               {type}
                             </button>
-                            <ul className="absolute hidden group-hover:block p-3 w-[300px] z-10 divide-y-2 bg-white shadow-lg border rounded-lg">
+                            <ul className="absolute hidden group-hover:block w-[250px] z-10 bg-white shadow-lg border border-black">
                               {groupedCategories[type].map((category) => (
-                                <li key={category.category_id} className="p-3">
+                                <li
+                                  key={category.category_id}
+                                  className="p-1 hover:bg-gray-200 hover:border-black hover:border-l-4 cursor-pointer transition-transform duration-200">
                                   <Link
                                     to={`/categoryData?categoryId=${
                                       category.category_id
@@ -148,7 +217,7 @@ function Navbar({ onSearch }) {
                                     )}&categoryType=${encodeURIComponent(
                                       category.category_type
                                     )}`}
-                                    className="block px-4 py-2  hover:border-l-2 text-black">
+                                    className="block px-4 py-2 hover:border-gray-600  text-black">
                                     {category.category_name}
                                   </Link>
                                 </li>
@@ -158,14 +227,58 @@ function Navbar({ onSearch }) {
                         ))}
                       </ul>
                     </div>
-                    <div className="">
+                    <div className="relative" onBlur={handleBlur}>
                       <input
                         type="text"
                         value={searchQuery}
                         onChange={handleSearchChange}
+                        onFocus={handleFocus}
                         placeholder="Search blogs..."
-                        className="border border-gray-300 rounded-lg px-4 py-2 mr-4 focus:outline-none focus:ring-1 focus:ring-red-500"
+                        className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-1 focus:ring-[#00008B] w-full"
                       />
+                      {showDropdown && (
+                        <ul
+                          ref={dropdownRef}
+                          className="absolute bg-white border border-black rounded-xl shadow-lg w-[calc(100%+10rem)] -left-[10rem] mt-2 py-5 transition-all z-10">
+                          <div className="px-4">
+                            <span className="text-md text-semibold">
+                              Searching For
+                            </span>
+                          </div>
+                          {suggestions.map((suggestion) => (
+                            <li
+                              key={suggestion.id}
+                              onClick={() =>
+                                handleSuggestionClick(
+                                  suggestion.id,
+                                  suggestion.Custom_url
+                                )
+                              }
+                              className="px-6 py-2 flex items-center font-medium justify-between hover:bg-gray-200 hover:border-black hover:border-l-4 cursor-pointer transition-transform duration-200">
+                              <div>
+                                <span className="flex-grow">
+                                  {suggestion.title}
+                                </span>
+                              </div>
+                              <div>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-6 w-6 text-gray-700"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={3}
+                                    d="M7 17l9-9m0 0v6m0-6H10"
+                                  />
+                                </svg>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 </>
@@ -177,5 +290,17 @@ function Navbar({ onSearch }) {
     </header>
   );
 }
+// Helper function to create slug
+const createSlug = (title) => {
+  // Check if the title is not null and is a string before processing
+  if (typeof title !== "string") {
+    return ""; // Return an empty string or handle the case as needed
+  }
 
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-"); // Replace spaces with hyphens
+};
 export default Navbar;

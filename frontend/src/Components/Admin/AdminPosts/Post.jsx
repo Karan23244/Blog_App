@@ -30,12 +30,14 @@ const PostList = () => {
 
   // Filter posts based on search query (case-insensitive search for title and content)
   const filteredPosts = posts.filter((post) => {
-    const matchesSearch = 
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase());
-
+    // Ensure title and content are not null or undefined before calling toLowerCase
+    const matchesSearch =
+      (post?.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      post?.content?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      false;
+  
     const matchesType = showDrafts ? post.blog_type === "draft" : post.blog_type !== "draft";
-
+  
     return matchesSearch && matchesType;
   });
 

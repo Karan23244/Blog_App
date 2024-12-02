@@ -44,7 +44,6 @@ class Editor extends Component {
       this.setState({ editorHtml: this.props.value });
     }
   }
-
   render() {
     return (
       <div>
