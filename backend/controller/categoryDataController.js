@@ -36,6 +36,7 @@ exports.getPostsByCategory = (req, res) => {
       posts.seoDescription,
       posts.created_at,
       posts.view_count,
+      posts.Custom_url,
       authors.full_name AS author_name,
       COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names,
       COALESCE(JSON_ARRAYAGG(categories.category_type), JSON_ARRAY()) AS category_types

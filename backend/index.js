@@ -1,13 +1,15 @@
 const app = require("./app");
-const express = require("express");
-require("dotenv").config();
+const multer = require('multer');
+const path = require('path');
+const express = require('express');
+const cors = require("cors");
+require('dotenv').config();
 
 // Serve static files (images)
-app.use("/uploads", express.static("uploads"));
-// Define a route for the root URL
-app.get("/", (req, res) => {
-  res.send("Hello, welcome to the homepage!"); // Content to display
-});
+const staticPath = path.join(__dirname, "uploads");
+app.use("/uploads", express.static(staticPath));
+console.log("Static files served from:", staticPath);
+
 const port = process.env.PORT || 5500;
 
 app.listen(port, () => {

@@ -39,7 +39,6 @@ const usePostsByCategory = () => {
       fetchPosts();
     }
   }, [categoryId]);
-
   return { posts, loading, error, categoryName, categoryType };
 };
 

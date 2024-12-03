@@ -4,7 +4,7 @@ import { logout } from "../state/Authslice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function Navbar({ onSearch }) {
+function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -62,6 +62,25 @@ function Navbar({ onSearch }) {
     dispatch(logout());
     navigate("/");
   };
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    if (location.pathname === "/") {
+      // Refresh the page if the user is already on the home page
+      window.location.reload();
+    } else {
+      // Navigate to the home page
+      navigate("/");
+    }
+  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false); // Hide dropdown when clicking outside
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSearchChange = (e) => {
     const query = e.target.value;
@@ -74,44 +93,22 @@ function Navbar({ onSearch }) {
           post.content.toLowerCase().includes(query.toLowerCase())
       );
       setSuggestions(matches.slice(0, 6));
-      setShowDropdown(matches.length > 0); // Show dropdown only if there are matches
+      setShowDropdown(matches.length > 0);
     } else {
-      setSuggestions([]); // Clear suggestions if the query is empty
+      setSuggestions([]);
       setShowDropdown(false);
     }
   };
 
-  const handleLogoClick = (e) => {
-    e.preventDefault();
-    if (location.pathname === "/") {
-      // Refresh the page if the user is already on the home page
-      window.location.reload();
-    } else {
-      // Navigate to the home page
-      navigate("/");
-    }
-  };
-  const handleSuggestionClick = (blogId, Custom_url) => {
-    navigate(`/posts/${blogId}/${createSlug(Custom_url)}`); // Navigate to the blog page
-    setSearchQuery(""); // Clear the search query
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuery(""); // Clear search input
     setSuggestions([]); // Clear suggestions
-  };
-  const handleFocus = () => {
-    if (searchQuery.trim() !== "") {
-      const matches = posts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          post.content.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSuggestions(matches.slice(0, 6)); // Update suggestions
-      setShowDropdown(matches.length > 0); // Show dropdown only if there are matches
-    }
-  };
-
-  const handleBlur = (e) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.relatedTarget)) {
-      setShowDropdown(false);
-    }
+    setShowDropdown(false); // Close dropdown
+    navigate(
+      `/${createSlug(suggestion?.category_names[0])}/${createSlug(
+        suggestion?.Custom_url
+      )}`
+    );
   };
 
   return (
@@ -227,37 +224,31 @@ function Navbar({ onSearch }) {
                         ))}
                       </ul>
                     </div>
-                    <div className="relative" onBlur={handleBlur}>
+                    <div className="relative">
                       <input
                         type="text"
                         value={searchQuery}
                         onChange={handleSearchChange}
-                        onFocus={handleFocus}
                         placeholder="Search blogs..."
-                        className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-1 focus:ring-[#00008B] w-full"
+                        className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-1 focus:ring-[#00008B]"
                       />
                       {showDropdown && (
                         <ul
                           ref={dropdownRef}
                           className="absolute bg-white border border-black rounded-xl shadow-lg w-[calc(100%+10rem)] -left-[10rem] mt-2 py-5 transition-all z-10">
-                          <div className="px-4">
+                             <div className="px-4">
                             <span className="text-md text-semibold">
                               Searching For
                             </span>
                           </div>
                           {suggestions.map((suggestion) => (
                             <li
-                              key={suggestion.id}
-                              onClick={() =>
-                                handleSuggestionClick(
-                                  suggestion.id,
-                                  suggestion.Custom_url
-                                )
-                              }
-                              className="px-6 py-2 flex items-center font-medium justify-between hover:bg-gray-200 hover:border-black hover:border-l-4 cursor-pointer transition-transform duration-200">
+                              key={suggestion?.id}
+                              className="px-6 py-2 flex items-center font-medium justify-between hover:bg-gray-200 hover:border-black hover:border-l-4 cursor-pointer transition-transform duration-200"
+                            onClick={() => handleSuggestionClick(suggestion)}>
                               <div>
                                 <span className="flex-grow">
-                                  {suggestion.title}
+                                  {suggestion?.title}
                                 </span>
                               </div>
                               <div>

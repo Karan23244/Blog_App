@@ -125,67 +125,131 @@ exports.getAllPosts = (req, res) => {
 };
 
 // Fetch a single post by ID
+// exports.getPostData = (req, res) => {
+//   const rawId = req.params.id.split("-")[0];
+//   const postId = parseInt(rawId, 10);
+//   if (isNaN(postId)) {
+//     return res.status(400).json({ message: "Invalid post ID" });
+//   }
+
+//   const incrementViewQuery = `UPDATE posts SET view_count = view_count + 1 WHERE id = ?`;
+
+//   // Increment the view count
+//   db.query(incrementViewQuery, [postId], (err) => {
+//     if (err) {
+//       return handleError(res, err, "Error incrementing view count");
+//     }
+
+//     const query = `
+//       SELECT 
+//         posts.id,
+//         posts.title,
+//         posts.content,
+//         posts.featured_image,
+//         posts.blog_type,
+//         posts.tags,
+//         posts.seoTitle,
+//         posts.seoDescription,
+//         posts.created_at,
+//         posts.Custom_url,
+//         authors.full_name AS author_name,
+//         COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
+//       FROM posts
+//       LEFT JOIN authors ON posts.author_id = authors.author_id
+//       LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+//       WHERE posts.id = ?
+//       GROUP BY posts.id
+//     `;
+
+//     db.query(query, [postId], (fetchErr, results) => {
+//       if (fetchErr) {
+//         return handleError(res, fetchErr, "Error fetching post");
+//       }
+
+//       if (results.length === 0) {
+//         return res.status(404).json({ message: "Post not found" });
+//       }
+
+//       const baseURL = `${req.protocol}://${req.get("host")}`;
+//       const post = results[0];
+
+//       // Replace relative image paths in content with absolute URLs
+//       post.content = post.content.replace(
+//         /<img src="\/uploads\/([^"]+)"/g,
+//         (match, fileName) => {
+//           return `<img src="${baseURL}/uploads/${fileName}"`;
+//         }
+//       );
+
+//       res.status(200).json({
+//         message: "Post retrieved successfully",
+//         data: post,
+//       });
+//     });
+//   });
+// };
 exports.getPostData = (req, res) => {
-  const rawId = req.params.id.split("-")[0];
-  const postId = parseInt(rawId, 10);
-  if (isNaN(postId)) {
-    return res.status(400).json({ message: "Invalid post ID" });
+  let rawIdentifier = req.params.id_or_slug; // Capture ID or slug
+  const isNumeric = /^\d+$/.test(rawIdentifier); // Check if it's numeric
+
+  let query;
+  const params = [];
+
+  if (isNumeric) {
+      query = `
+          SELECT 
+              posts.id, posts.title, posts.content, posts.featured_image,
+              posts.blog_type, posts.tags, posts.seoTitle, posts.seoDescription,
+              posts.created_at, posts.Custom_url,
+              authors.full_name AS author_name,
+              COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
+          FROM posts
+          LEFT JOIN authors ON posts.author_id = authors.author_id
+          LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+          WHERE posts.id = ?
+          GROUP BY posts.id
+      `;
+      params.push(rawIdentifier);
+  } else {
+      // Remove hyphens from the slug
+      rawIdentifier = rawIdentifier.replace(/-/g, ' ');
+      
+      query = `
+          SELECT 
+              posts.id, posts.title, posts.content, posts.featured_image,
+              posts.blog_type, posts.tags, posts.seoTitle, posts.seoDescription,
+              posts.created_at, posts.Custom_url,
+              authors.full_name AS author_name,
+              COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
+          FROM posts
+          LEFT JOIN authors ON posts.author_id = authors.author_id
+          LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+          WHERE REPLACE(posts.Custom_url, '-', '') = ?
+          GROUP BY posts.id
+      `;
+      params.push(rawIdentifier);
   }
 
-  const incrementViewQuery = `UPDATE posts SET view_count = view_count + 1 WHERE id = ?`;
-
-  // Increment the view count
-  db.query(incrementViewQuery, [postId], (err) => {
-    if (err) {
-      return handleError(res, err, "Error incrementing view count");
-    }
-
-    const query = `
-      SELECT 
-        posts.id,
-        posts.title,
-        posts.content,
-        posts.featured_image,
-        posts.blog_type,
-        posts.tags,
-        posts.seoTitle,
-        posts.seoDescription,
-        posts.created_at,
-        posts.Custom_url,
-        authors.full_name AS author_name,
-        COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
-      FROM posts
-      LEFT JOIN authors ON posts.author_id = authors.author_id
-      LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-      WHERE posts.id = ?
-      GROUP BY posts.id
-    `;
-
-    db.query(query, [postId], (fetchErr, results) => {
-      if (fetchErr) {
-        return handleError(res, fetchErr, "Error fetching post");
+  db.query(query, params, (err, results) => {
+      if (err) {
+          return handleError(res, err, "Error fetching post");
       }
 
       if (results.length === 0) {
-        return res.status(404).json({ message: "Post not found" });
+          return res.status(404).json({ message: "Post not found" });
       }
 
-      const baseURL = `${req.protocol}://${req.get("host")}`;
       const post = results[0];
-
-      // Replace relative image paths in content with absolute URLs
+      const baseURL = `${req.protocol}://${req.get("host")}`;
       post.content = post.content.replace(
-        /<img src="\/uploads\/([^"]+)"/g,
-        (match, fileName) => {
-          return `<img src="${baseURL}/uploads/${fileName}"`;
-        }
+          /<img src="\/uploads\/([^"]+)"/g,
+          (match, fileName) => `<img src="${baseURL}/uploads/${fileName}"`
       );
 
       res.status(200).json({
-        message: "Post retrieved successfully",
-        data: post,
+          message: "Post retrieved successfully",
+          data: post,
       });
-    });
   });
 };
 
@@ -231,7 +295,7 @@ exports.updatePost = (req, res) => {
     Custom_url,
   } = req.body;
 
-  const newImagePath = req.file ? req.file.path.replace(/\\/g, "/") : null;
+  const newImagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
   const saveImages = (htmlContent) => {
     const imageFolder = path.join(__dirname, "../uploads");

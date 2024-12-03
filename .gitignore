@@ -32,6 +32,8 @@ backend/*.pid
 backend/*.seed
 backend/coverage/
 backend/.nyc_output/
+backend/uploads/
+backend/controller/uploads/
 
 # Temporary files and directories
 *.tmp

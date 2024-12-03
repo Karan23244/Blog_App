@@ -13,7 +13,6 @@ const CategoryPosts = () => {
   const sortedPosts = [...posts].sort((a, b) => b.view_count - a.view_count);
   const mostViewedPost = sortedPosts[0]; // Most viewed post
   const remainingPosts = sortedPosts.slice(1); // Remaining posts
-
   // UI for Upgrade Yourself category
   const UpgradeYourselfUI = () => (
     <>
@@ -34,9 +33,9 @@ const CategoryPosts = () => {
               {mostViewedPost.title}
             </h2>
             <Link
-              to={`/posts/${mostViewedPost?.id}/${createSlug(
-                mostViewedPost?.Custom_url
-              )}`}
+              to={`/${createSlug(
+                mostViewedPost?.category_names[0]
+              )}/${createSlug(mostViewedPost?.Custom_url)}`}
               className="block">
               <img
                 src={
@@ -80,7 +79,9 @@ const CategoryPosts = () => {
                   {post?.seoDescription}
                 </p>
                 <Link
-                  to={`/posts/${post?.id}/${createSlug(post?.Custom_url)}`}
+                  to={`/${createSlug(post?.category_names[0])}/${createSlug(
+                    post?.Custom_url
+                  )}`}
                   className="text-[#00008B] hover:underline inline-block">
                   Read More...
                 </Link>
@@ -116,7 +117,7 @@ const CategoryPosts = () => {
               {/* Featured Post (Big Card) */}
               <div className="col-span-2 relative">
                 <Link
-                  to={`/posts/${posts[0]?.id}/${createSlug(
+                  to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(
                     posts[0]?.Custom_url
                   )}`}
                   className="block">
@@ -145,7 +146,7 @@ const CategoryPosts = () => {
                     key={post.id}
                     className="flex flex-col overflow-hidden bg-white">
                     <Link
-                      to={`/posts/${post?.id}/${createSlug(post?.Custom_url)}`}
+                      to={`/${createSlug(post?.category_names[0])}/${createSlug(post?.Custom_url)}`}
                       className="block">
                       <img
                         src={
@@ -194,9 +195,7 @@ const CategoryPosts = () => {
                         {post?.seoDescription}
                       </p>
                       <Link
-                        to={`/posts/${post?.id}/${createSlug(
-                          post?.Custom_url
-                        )}`}
+                      to={`/${createSlug(post?.category_names[0])}/${createSlug(post?.Custom_url)}`}
                         className="text-blue-600 hover:underline mt-2 inline-block">
                         Read More...
                       </Link>

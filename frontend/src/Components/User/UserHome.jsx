@@ -82,7 +82,7 @@ function UserHome() {
                 key={posts[0].id}
                 className="relative overflow-hidden hover:shadow-md">
                 <Link
-                  to={`/posts/${posts[0]?.id}/${createSlug(
+                  to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(
                     posts[0]?.Custom_url
                   )}`}
                   className="block">
@@ -137,7 +137,7 @@ function UserHome() {
                       {post?.seoDescription}
                     </p>
                     <Link
-                      to={`/posts/${post?.id}/${createSlug(post?.Custom_url)}`}
+                      to={`/${createSlug(post?.category_names[0])}/${createSlug(post?.Custom_url)}`}
                       className="text-[#00008B] hover:underline inline-block">
                       Read More...
                     </Link>
@@ -176,9 +176,7 @@ function UserHome() {
                         {post?.seoDescription}
                       </p>
                       <Link
-                        to={`/posts/${post?.id}/${createSlug(
-                          post?.Custom_url
-                        )}`}
+                        to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(post?.Custom_url)}`}
                         className="self-start mt-1">
                         <button className="text-xs text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                           Read More
@@ -221,7 +219,7 @@ function UserHome() {
                       {post?.seoDescription}
                     </p>
                     <Link
-                      to={`/posts/${post?.id}/${createSlug(post?.Custom_url)}`}
+                      to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(post?.Custom_url)}`}
                       className="text-[#00008B] hover:underline mt-1 inline-block">
                       <button className="text-xs text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                         Read More

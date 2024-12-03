@@ -2,26 +2,12 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
-
-const createSlug = (title) => {
-  // Check if the title is not null and is a string before processing
-  if (typeof title !== 'string') {
-    return ''; // Return an empty string or handle the case as needed
-  }
-
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "") // Remove special characters
-    .replace(/\s+/g, "-"); // Replace spaces with hyphens
-};
 const PostCard = ({ post }) => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Check if admin is authenticated
   const imageUrl = post.featured_image
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "https://via.placeholder.com/300x200.png?text=No+Image";
-  const postSlug = createSlug(post.Custom_url);
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
@@ -48,7 +34,7 @@ const PostCard = ({ post }) => {
       <p className="text-sm mt-2 text-gray-600">{post.seoDescription}</p>
       <div className="mt-4 flex items-center justify-between">
         <Link
-          to={`/posts/${post.id}/${postSlug}`}
+          to={`/${createSlug(post?.category_names[0])}/${createSlug(post?.Custom_url)}`}
           className="text-blue-500 hover:underline">
           Read More
         </Link>
@@ -69,6 +55,20 @@ const PostCard = ({ post }) => {
       </div>
     </div>
   );
+};
+
+// Helper function to create slug
+const createSlug = (title) => {
+  // Check if the title is not null and is a string before processing
+  if (typeof title !== "string") {
+    return ""; // Return an empty string or handle the case as needed
+  }
+
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-"); // Replace spaces with hyphens
 };
 
 export default PostCard;

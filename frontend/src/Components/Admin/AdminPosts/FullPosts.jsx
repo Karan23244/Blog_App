@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-
+import "../New_Post/styles.css"
 const FullPost = () => {
-  const { id } = useParams(); // Get post ID from the URL
+ const { id_or_slug } = useParams();
   const [post, setPost] = useState(null);
   const fetchedRef = useRef(false); // To prevent multiple fetches
 
@@ -12,21 +12,19 @@ const FullPost = () => {
     fetchedRef.current = true; // Mark as fetched
 
     const fetchPost = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/posts/${id}`
-        );
-        const responseData = await response.json();
-        const data = responseData.data; // Extract the 'data' array containing posts
-        setPost(data);
-      } catch (error) {
-        console.error("Error fetching post:", error);
-      }
-    };
-
-    fetchPost();
-  }, [id]);
-  console.log(post)
+                    try {
+                        const response = await fetch(
+                            `${import.meta.env.VITE_API_URL}/api/posts/${id_or_slug}`
+                        );
+                        const responseData = await response.json();
+                        setPost(responseData.data);
+                    } catch (error) {
+                        console.error("Error fetching post:", error);
+                    }
+                };
+        
+                fetchPost();
+  }, [id_or_slug]);
 
   if (!post) {
     return <p>Loading...</p>;
@@ -92,7 +90,7 @@ const FullPost = () => {
           <meta property="og:type" content="article" />
           <meta
             property="og:url"
-            content={`${import.meta.env.VITE_API_URL}/${id}/${postSlug}`}
+            content={`${import.meta.env.VITE_API_URL}/${postSlug}`}
           />
         </Helmet>
 
@@ -121,7 +119,7 @@ const FullPost = () => {
 
           {/* Post Content */}
           <div
-            className="content text-lg text-gray-700 leading-relaxed"
+            className="custom-html text-lg text-gray-700 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: decodedContent }}
           />
         </div>
