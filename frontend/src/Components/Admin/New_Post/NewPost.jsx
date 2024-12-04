@@ -39,9 +39,32 @@ function NewPost() {
           );
           const post = postResponse.data.data;
 
+          const replaceImageUrls = (content) => {
+            const baseUrl = `${import.meta.env.VITE_API_URL}`; // Correct base URL
+          
+            // Match <img> tags and adjust src paths
+            return content.replace(/<img\s+[^>]*src="([^"]+)"/g, (match, src) => {
+              if (src.startsWith("uploads/")) {
+                const correctedSrc = `${baseUrl}/${src}`;
+                return match.replace(src, correctedSrc);
+              }
+          
+              // Fix incorrect prefix
+              if (src.includes("smart-home-technology/uploads/")) {
+                const correctedSrc = src.replace("smart-home-technology/", "");
+                return match.replace(src, correctedSrc);
+              }
+          
+              return match; // Leave other paths unchanged
+            });
+          };
+          
+        
+          const decodedContent = replaceImageUrls(post.content);
+          
           setPostDetails({
             title: post.title || "",
-            content: post.content || "",
+            content: decodedContent || "",
             category: post.category_id?.split(",") || [],
             blogType: post.blog_type || "",
             author: post.author_id || "",
@@ -162,6 +185,7 @@ function NewPost() {
       alert("Error saving post");
     }
   };
+  
   return (
     <div className="p-5">
       <h2 className="text-2xl font-semibold text-gray-800">

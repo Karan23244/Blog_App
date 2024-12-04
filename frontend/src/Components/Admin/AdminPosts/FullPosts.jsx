@@ -77,12 +77,10 @@ const FullPost = () => {
   
 
   const decodedContent = replaceImageUrls(decodeHtml(post.content || ""));
-  console.log(decodedContent);
   const imageUrl = post.featured_image
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "";
   const postSlug = createSlug(post.Custom_url);
-  console.log(post)
   const timeAgo = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
