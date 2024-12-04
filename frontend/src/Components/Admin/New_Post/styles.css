@@ -1,24 +1,22 @@
+#root .ql-container {
+  border-bottom-left-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+  background: #fefcfc;
+}
 
-  
-  #root .ql-container {
-    border-bottom-left-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
-    background: #fefcfc;
-  }
-  
-  /* Snow Theme */
-  #root .ql-snow.ql-toolbar {
-    display: block;
-    background: #eaecec;
-    border-top-left-radius: 0.5em;
-    border-top-right-radius: 0.5em;
-  }
-  
-  #root .ql-editor {
-    min-height: 18em;
-    max-height: 30em;
-    overflow-y: auto; 
-  }
+/* Snow Theme */
+#root .ql-snow.ql-toolbar {
+  display: block;
+  background: #eaecec;
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+}
+
+#root .ql-editor {
+  min-height: 18em;
+  max-height: 30em;
+  overflow-y: auto;
+}
 .custom-html h2 {
   font-size: 30px;
   font-weight: 400 !important;
@@ -38,12 +36,26 @@
   font-size: 16px;
 }
 .custom-html p {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: black; 
+  font-size: 1rem;
+  line-height: 1.6;
+  color: black;
 }
 
 .custom-html a {
-    color: #2563eb; /* Tailwind's `text-blue-600` */
-    text-decoration: underline;
+  color: #2563eb; /* Tailwind's `text-blue-600` */
+  text-decoration: underline;
+}
+
+.custom-html ul {
+  padding-left: 40px; /* Add spacing for indentation */
+}
+
+.custom-html li {
+  list-style-type: disc; /* Can use: disc, square, decimal, etc. */
+}
+
+/* Style for list items */
+.custom-html li {
+  margin-bottom: 8px; /* Space between items */
+  padding: 5px;
 }
