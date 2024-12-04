@@ -21,8 +21,7 @@ frontend/coverage/
 frontend/*.map
 
 # Backend
-backend/uploads
-backend/controller/uploads
+backend/uploads/
 backend/*.sqlite
 backend/*.sqlite3
 backend/*.db
