@@ -17,7 +17,7 @@ const AboutUs = () => {
         </div>
         <div className="w-2/4">
           <img
-            src="about1.jpg"
+            src="about1.webp"
             alt="About_us"
             className="w-full h-[250px] object-cover"
           />
@@ -26,7 +26,7 @@ const AboutUs = () => {
       <div className="flex justify-center items-center gap-8 mb-10">
         <div className="w-2/4">
           <img
-            src="about2.jpg"
+            src="about2.webp"
             alt="About_us"
             className="w-full h-[250px] object-cover"
           />

@@ -19,7 +19,7 @@ const CategoryPosts = () => {
       <div
         className="relative w-full h-[200px] bg-cover bg-center flex items-center justify-center"
         style={{
-          backgroundImage: `linear-gradient(90deg, #000025 0%, rgba(0, 0, 139, 0.3) 100%), url('./background.jpeg')`,
+          backgroundImage: `linear-gradient(90deg, #000025 0%, rgba(0, 0, 139, 0.3) 100%), url('./background.webp')`,
           backgroundAttachment: "fixed",
         }}>
         <h1 className="text-5xl font-semibold text-center text-white">

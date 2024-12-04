@@ -117,7 +117,7 @@ function Navbar() {
         <div className="flex">
           <div className="flex flex-row items-center gap-4 w-[40%]">
             <div onClick={handleLogoClick}>
-              <img src="/headerlogo.png" alt="Logo" width={80} height={80} />
+              <img src="/headerlogo.webp" alt="Logo" width={80} height={80} />
             </div>
 
             {/* Horizontal Divider */}
