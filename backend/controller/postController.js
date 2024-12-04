@@ -36,7 +36,7 @@ const saveImages = (htmlContent) => {
     fs.writeFileSync(filePath, buffer);
 
     // Return the updated image URL
-    const imageUrl = `/uploads/${fileName}`;
+    const imageUrl = `uploads/${fileName}`;
     return `<img src="${imageUrl}"`;
   });
 };
@@ -54,7 +54,7 @@ exports.createPost = (req, res) => {
     seoDescription,
     Custom_url,
   } = req.body;
-  const featuredImage = req.file ? req.file.path : null;
+  const newImagePath = req.file ? `uploads/${req.file.filename}` : null;
 
   try {
     // Process content to save images and replace base64
@@ -295,7 +295,7 @@ exports.updatePost = (req, res) => {
     Custom_url,
   } = req.body;
 
-  const newImagePath = req.file ? `/uploads/${req.file.filename}` : null;
+  const newImagePath = req.file ? `uploads/${req.file.filename}` : null;
 
   const saveImages = (htmlContent) => {
     const imageFolder = path.join(__dirname, "../uploads");

@@ -21,6 +21,8 @@ frontend/coverage/
 frontend/*.map
 
 # Backend
+backend/uploads
+backend/controller/uploads
 backend/*.sqlite
 backend/*.sqlite3
 backend/*.db
@@ -32,8 +34,6 @@ backend/*.pid
 backend/*.seed
 backend/coverage/
 backend/.nyc_output/
-backend/uploads/
-backend/controller/uploads/
 
 # Temporary files and directories
 *.tmp
