@@ -28,6 +28,7 @@ function UserHome() {
     };
 
     fetchPosts();
+
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -59,7 +60,6 @@ function UserHome() {
 
     fetchData();
   }, []);
-
   return (
     <div className="px-10 py-5">
       {loading ? (
@@ -137,7 +137,9 @@ function UserHome() {
                       {post?.seoDescription}
                     </p>
                     <Link
-                      to={`/${createSlug(post?.category_names[0])}/${createSlug(post?.Custom_url)}`}
+                      to={`/${createSlug(post?.category_names[0])}/${createSlug(
+                        post?.Custom_url
+                      )}`}
                       className="text-[#00008B] hover:underline inline-block">
                       Read More...
                     </Link>
@@ -176,7 +178,9 @@ function UserHome() {
                         {post?.seoDescription}
                       </p>
                       <Link
-                        to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(post?.Custom_url)}`}
+                        to={`/${createSlug(
+                          posts[0]?.category_names[0]
+                        )}/${createSlug(post?.Custom_url)}`}
                         className="self-start mt-1">
                         <button className="text-xs text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                           Read More
@@ -219,7 +223,9 @@ function UserHome() {
                       {post?.seoDescription}
                     </p>
                     <Link
-                      to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(post?.Custom_url)}`}
+                      to={`/${createSlug(
+                        posts[0]?.category_names[0]
+                      )}/${createSlug(post?.Custom_url)}`}
                       className="text-[#00008B] hover:underline mt-1 inline-block">
                       <button className="text-xs text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                         Read More
