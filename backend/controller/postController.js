@@ -126,79 +126,54 @@ exports.getAllPosts = (req, res) => {
 
 // Fetch a single post by ID
 exports.getPostData = (req, res) => {
-  let rawIdentifier = req.params.id_or_slug; // Capture ID or slug
-  const isNumeric = /^\d+$/.test(rawIdentifier); // Check if it's numeric
+  // Ensure the rawId is the full string from the URL (e.g., 'beginner-friendly-diy-home-improvement-project')
+  const rawId = req.params.id_or_slug.replace(/-/g, " "); // Remove hyphens from the URL ID
 
-  let query;
-  const params = [];
-
+  // Increment the view count
   const incrementViewQuery = `
-  UPDATE posts SET view_count = view_count + 1 WHERE id = ?
-`;
+    UPDATE posts SET view_count = view_count + 1 WHERE Custom_url = ?
+  `;
 
-// Increment the view count
-db.query(incrementViewQuery, [postId], (err) => {
-  if (err) {
-    return handleError(res, err, "Error incrementing view count");
-  }
+  db.query(incrementViewQuery, [rawId], (err) => {
+    if (err) {
+      return handleError(res, err, "Error incrementing view count");
+    }
+    // Fetch the post data
+    const query = `
+      SELECT 
+        posts.id,
+        posts.title,
+        posts.content,
+        posts.featured_image,
+        posts.blog_type,
+        posts.tags,
+        posts.seoTitle,
+        posts.seoDescription,
+        posts.created_at,
+        authors.full_name AS author_name,
+        COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
+      FROM posts
+      LEFT JOIN authors ON posts.author_id = authors.author_id
+      LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+      WHERE posts.Custom_url = ?
+      GROUP BY posts.id
+    `;
 
-  if (isNumeric) {
-      query = `
-          SELECT 
-              posts.id, posts.title, posts.content, posts.featured_image,
-              posts.blog_type, posts.tags, posts.seoTitle, posts.seoDescription,
-              posts.created_at, posts.Custom_url,
-              authors.full_name AS author_name,
-              COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
-          FROM posts
-          LEFT JOIN authors ON posts.author_id = authors.author_id
-          LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-          WHERE posts.id = ?
-          GROUP BY posts.id
-      `;
-      params.push(rawIdentifier);
-  } else {
-      // Remove hyphens from the slug
-      rawIdentifier = rawIdentifier.replace(/-/g, ' ');
-      console.log(rawIdentifier)
-      query = `
-          SELECT 
-              posts.id, posts.title, posts.content, posts.featured_image,
-              posts.blog_type, posts.tags, posts.seoTitle, posts.seoDescription,
-              posts.created_at, posts.Custom_url,
-              authors.full_name AS author_name,
-              COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
-          FROM posts
-          LEFT JOIN authors ON posts.author_id = authors.author_id
-          LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-          WHERE REPLACE(posts.Custom_url, '-', '') = ?
-          GROUP BY posts.id
-      `;
-      params.push(rawIdentifier);
-  }
-
-  db.query(query, params, (err, results) => {
-      if (err) {
-          return handleError(res, err, "Error fetching post");
+    db.query(query, [rawId], (fetchErr, results) => {
+      if (fetchErr) {
+        return handleError(res, fetchErr, "Error fetching post");
       }
 
       if (results.length === 0) {
-          return res.status(404).json({ message: "Post not found" });
+        return res.status(404).json({ message: "Post not found" });
       }
 
-      const post = results[0];
-      const baseURL = `${req.protocol}://${req.get("host")}`;
-      post.content = post.content.replace(
-          /<img src="\/uploads\/([^"]+)"/g,
-          (match, fileName) => `<img src="${baseURL}/uploads/${fileName}"`
-      );
-
       res.status(200).json({
-          message: "Post retrieved successfully",
-          data: post,
+        message: "Post retrieved successfully",
+        data: results[0],
       });
+    });
   });
-});
 };
 
 // Fetch a post for editing
