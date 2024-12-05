@@ -13,7 +13,6 @@ const usePostsByCategory = () => {
   const categoryId = searchParams.get("categoryId");
   const categoryNameFromParams = searchParams.get("categoryName");
   const categoryTypeFromParams = searchParams.get("categoryType");
-
   useEffect(() => {
     if (categoryNameFromParams && categoryTypeFromParams) {
       setCategoryName(decodeURIComponent(categoryNameFromParams));

@@ -61,7 +61,7 @@ function UserHome() {
     fetchData();
   }, []);
   return (
-    <div className="px-10 py-5">
+    <div className="lg:px-10 lg:py-5 px-5 py-5">
       {loading ? (
         <p className="text-gray-500 text-center h-screen">Loading...</p>
       ) : error ? (
@@ -73,8 +73,10 @@ function UserHome() {
       ) : (
         <div className="flex flex-col lg:flex-row lg:justify-evenly gap-6">
           {/* Latest Blogs Section */}
-          <div className="flex flex-col lg:w-2/3 gap-4">
-            <h2 className="text-2xl font-semibold text-black">Latest Blogs</h2>
+          <div className="flex flex-col lg:w-2/3 lg:gap-4 gap-2">
+            <h2 className="lg:text-2xl text-base font-semibold text-black">
+              Latest Blogs
+            </h2>
 
             {/* Featured Post */}
             {posts && posts.length > 0 && (
@@ -86,7 +88,7 @@ function UserHome() {
                     posts[0]?.Custom_url
                   )}`}
                   className="block">
-                  <div class="relative w-full h-[300px]">
+                  <div class="relative w-full lg:h-[300px] h-[200px]">
                     <img
                       src={
                         posts[0]?.featured_image
@@ -101,10 +103,10 @@ function UserHome() {
                     <div class="absolute top-0 left-0 w-full h-full bg-gradient-custom"></div>
                   </div>
                   <div className="absolute bottom-0 left-0  text-white p-4 w-full">
-                    <h3 className="text-2xl font-medium line-clamp-2">
+                    <h3 className="lg:text-2xl text-lg font-medium line-clamp-2">
                       {posts[0]?.title}
                     </h3>
-                    <p className="text-sm mt-1 line-clamp-2">
+                    <p className="lg:text-sm text-xs mt-1 line-clamp-2">
                       {posts[0]?.seoDescription}
                     </p>
                   </div>
@@ -113,7 +115,7 @@ function UserHome() {
             )}
 
             {/* Smaller Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:gap-4 gap-2">
               {posts.slice(1, 7).map((post) => (
                 <div
                   key={post.id}
@@ -127,13 +129,13 @@ function UserHome() {
                         : "https://via.placeholder.com/300x200.png?text=No+Image"
                     }
                     alt={post?.title}
-                    className="w-full h-48 object-cover"
+                    className="w-full lg:h-48 h-20 object-cover"
                   />
                   <div className="p-2">
-                    <h3 className="text-md font-semibold line-clamp-2">
+                    <h3 className="lg:text-base text-sm font-semibold line-clamp-2">
                       {post?.title}
                     </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                    <p className="lg:text-sm text-xs text-gray-600 line-clamp-2">
                       {post?.seoDescription}
                     </p>
                     <Link
@@ -150,14 +152,14 @@ function UserHome() {
           </div>
 
           <div className="lg:w-1/2 w-full mb-8">
-            <h2 className="text-2xl font-semibold mb-4 text-black">
+            <h2 className="lg:text-2xl text-base font-semibold mb-4 text-black">
               Top Reads
             </h2>
             <div className="grid grid-cols-1 gap-4">
               {topReads.map((post) => (
                 <React.Fragment key={post.id}>
-                  <div className="post-card flex flex-col sm:flex-row gap-4 transition-shadow duration-300 ease-in-out">
-                    <div className="lg:w-2/5">
+                  <div className="post-card flex flex-row gap-4 transition-shadow duration-300 ease-in-out">
+                    <div className="w-2/5">
                       <img
                         src={
                           post?.featured_image
@@ -167,14 +169,14 @@ function UserHome() {
                             : "https://via.placeholder.com/300x200.png?text=No+Image"
                         }
                         alt={post?.title}
-                        className="w-full h-[130px] object-cover"
+                        className="w-full h-[135px] object-cover"
                       />
                     </div>
-                    <div className="flex flex-col gap-1 lg:w-3/5">
-                      <h3 className="text-base font-semibold text-gray-800 line-clamp-2">
+                    <div className="flex flex-col lg:gap-1 gap-3 w-3/5">
+                      <h3 className="lg:text-base text-sm font-semibold text-gray-800 line-clamp-2">
                         {post?.title}
                       </h3>
-                      <p className="text-sm mt-1 text-gray-600 line-clamp-2">
+                      <p className="lg:text-sm text-xs mt-1 text-gray-600 line-clamp-2">
                         {post?.seoDescription}
                       </p>
                       <Link
@@ -182,7 +184,7 @@ function UserHome() {
                           posts[0]?.category_names[0]
                         )}/${createSlug(post?.Custom_url)}`}
                         className="self-start mt-1">
-                        <button className="text-xs text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
+                        <button className="lg:text-base text-sm text-white px-3 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                           Read More
                         </button>
                       </Link>
@@ -199,7 +201,7 @@ function UserHome() {
             <h3 className="text-2xl font-semibold mb-4 text-black">
               Editor’s Choice
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {editorsChoice.map((post) => (
                 <div
                   key={post.id}
@@ -216,10 +218,10 @@ function UserHome() {
                     className="w-full lg:h-[100px] h-48 object-cover"
                   />
                   <div className="p-2">
-                    <h3 className="text-base font-semibold text-gray-800 line-clamp-2">
+                    <h3 className="lg:text-base text-sm font-semibold text-gray-800 line-clamp-2">
                       {post?.title}
                     </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                    <p className="lg:text-sm text-xs text-gray-600 line-clamp-2">
                       {post?.seoDescription}
                     </p>
                     <Link

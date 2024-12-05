@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../state/Authslice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import axios from "axios";
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchBarOpen, setSearchBarOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -55,7 +58,21 @@ function Navbar() {
     return acc;
   }, {});
   const toggleMenu = () => {
+    // If the search bar is open, close it when toggling the menu
+    if (searchBarOpen) {
+      setSearchBarOpen(false);
+    }
+    // Toggle the menu state
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleSearchBar = () => {
+    // If the menu is open, close it when toggling the search bar
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+    // Toggle the search bar state
+    setSearchBarOpen(!searchBarOpen);
   };
 
   const handleLogout = () => {
@@ -113,57 +130,83 @@ function Navbar() {
 
   return (
     <header>
-      <nav className="border-gray-200 px-4 lg:py-1 lg:px-7 py-2.5 border border-b-1 shadow-xl">
-        <div className="flex">
-          <div className="flex flex-row items-center gap-4 w-[40%]">
+      <nav className="relative border-gray-200 border border-b-1 shadow-xl">
+        <div className="flex justify-between items-center">
+          <div className="flex flex-row items-center  lg:gap-4 gap-2 lg:w-[40%] pl-3 py-1">
             <div onClick={handleLogoClick}>
               <img src="/headerlogo.webp" alt="Logo" width={80} height={80} />
             </div>
-
             {/* Horizontal Divider */}
             <div className="w-[2px] h-12 bg-black"></div>
             <div>
-              <h1 className="text-lg font-medium text-center">
+              <h1 className="lg:text-lg text-sm font-medium text-center">
                 Inspiring Spaces for Life
               </h1>
             </div>
           </div>
 
-          <div className="flex items-center lg:order-2">
+          <div className="flex items-center lg:order-2 pr-3">
+            {!isAuthenticated && (
+              <button
+                className="text-gray-600 mr-4 lg:hidden"
+                onClick={toggleSearchBar}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M11 5a7 7 0 100 14 7 7 0 000-14z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-4.35-4.35"
+                  />
+                </svg>
+              </button>
+            )}
             <button
               onClick={toggleMenu}
-              data-collapse-toggle="mobile-menu-2"
-              type="button"
-              className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-              aria-controls="mobile-menu-2"
-              aria-expanded={isMenuOpen}>
+              className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
               <span className="sr-only">Open main menu</span>
+              {/* Hamburger Icon */}
               <svg
                 className={`w-6 h-6 ${isMenuOpen ? "hidden" : "block"}`}
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
                 <path
-                  fillRule="evenodd"
-                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clipRule="evenodd"></path>
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
               </svg>
+              {/* Close Icon */}
               <svg
                 className={`w-6 h-6 ${isMenuOpen ? "block" : "hidden"}`}
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
                 <path
-                  fillRule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"></path>
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
+          {/* Desktop Links */}
           <div
-            className={`${
-              isMenuOpen ? "flex" : "hidden"
-            }  items-center lg:flex justify-end lg:w-[60%] lg:order-1`}
+            className="lg:flex items-center hidden justify-end lg:w-[60%] lg:order-1 pr-3"
             id="mobile-menu-2">
             <ul className="flex flex-col items-center gap-5 text-black font-medium lg:flex-row">
               {isAuthenticated ? (
@@ -236,7 +279,7 @@ function Navbar() {
                         <ul
                           ref={dropdownRef}
                           className="absolute bg-white border border-black rounded-xl shadow-lg w-[calc(100%+10rem)] -left-[10rem] mt-2 py-5 transition-all z-10">
-                             <div className="px-4">
+                          <div className="px-4">
                             <span className="text-md text-semibold">
                               Searching For
                             </span>
@@ -245,7 +288,7 @@ function Navbar() {
                             <li
                               key={suggestion?.id}
                               className="px-6 py-2 flex items-center font-medium justify-between hover:bg-gray-200 hover:border-black hover:border-l-4 cursor-pointer transition-transform duration-200"
-                            onClick={() => handleSuggestionClick(suggestion)}>
+                              onClick={() => handleSuggestionClick(suggestion)}>
                               <div>
                                 <span className="flex-grow">
                                   {suggestion?.title}
@@ -275,6 +318,126 @@ function Navbar() {
                 </>
               )}
             </ul>
+          </div>
+
+          {/* Mobile Links */}
+          <div
+            className={`lg:hidden absolute w-full bg-white shadow-lg transition-all duration-300 ease-in-out ${
+              isMenuOpen
+                ? "opacity-100 top-[100%] visible"
+                : "opacity-0 -top-full invisible"
+            }`}
+            style={{ zIndex: 1000 }}>
+            <ul className="space-y-4 p-4">
+              {isAuthenticated ? (
+                <>
+                  <li>
+                    <Link
+                      to="/admin/category"
+                      className="text-gray-700 hover:text-blue-600">
+                      Category
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/admin/authors"
+                      className="text-gray-700 hover:text-blue-600">
+                      Authors
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 w-full">
+                      Logout
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-col gap-4">
+                    {Object.keys(groupedCategories).map((type) => (
+                      <div key={type} className="relative group">
+                        {/* Category Header */}
+                        <button
+                          className="flex justify-between items-center w-full px-4 py-2 text-black text-xl font-semibold hover:text-[#00008B] border-b"
+                          onClick={() =>
+                            setActiveCategory(
+                              activeCategory === type ? null : type
+                            )
+                          }>
+                          {type}
+                          {/* Chevron icon */}
+                          {activeCategory === type ? (
+                            <FaChevronUp className="text-gray-600 text-sm" />
+                          ) : (
+                            <FaChevronDown className="text-gray-600 text-sm" />
+                          )}
+                        </button>
+                        {/* Dropdown Content */}
+                        <ul
+                          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                            activeCategory === type
+                              ? "max-h-[500px]"
+                              : "max-h-0"
+                          }`}>
+                          {groupedCategories[type].map((category) => (
+                            <li
+                              key={category.category_id}
+                              className="px-4 py-2">
+                              <Link
+                                to={`/categoryData?categoryId=${
+                                  category.category_id
+                                }&categoryName=${encodeURIComponent(
+                                  category.category_name
+                                )}&categoryType=${encodeURIComponent(
+                                  category.category_type
+                                )}`}
+                                className="block hover:text-blue-600">
+                                {category.category_name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </ul>
+          </div>
+
+          {/* Search Bar */}
+          <div
+            className={`lg:hidden absolute w-full bg-white shadow-lg transition-all duration-300 ease-in-out ${
+              searchBarOpen
+                ? "opacity-100 top-[100%] visible"
+                : "opacity-0 -top-full invisible"
+            }`}
+            style={{ zIndex: 1000 }}>
+            <div className="p-4 relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search blogs..."
+                className="border border-gray-300 rounded-lg px-4 py-2 w-full"
+              />
+              {showDropdown && (
+                <ul
+                  ref={dropdownRef}
+                  className="absolute bg-white border rounded-lg mt-2 w-full z-10">
+                  {suggestions.map((suggestion) => (
+                    <li
+                      key={suggestion.id}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                      {suggestion.title}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </div>
       </nav>

@@ -24,7 +24,6 @@ const sendResponse = (res, statusCode, message, data = null) => {
 // Fetch posts by category
 exports.getPostsByCategory = (req, res) => {
   const { categoryId } = req.query;
-
   const query = `
     SELECT 
       posts.id,

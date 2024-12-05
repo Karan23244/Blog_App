@@ -132,6 +132,16 @@ exports.getPostData = (req, res) => {
   let query;
   const params = [];
 
+  const incrementViewQuery = `
+  UPDATE posts SET view_count = view_count + 1 WHERE id = ?
+`;
+
+// Increment the view count
+db.query(incrementViewQuery, [postId], (err) => {
+  if (err) {
+    return handleError(res, err, "Error incrementing view count");
+  }
+
   if (isNumeric) {
       query = `
           SELECT 
@@ -188,6 +198,7 @@ exports.getPostData = (req, res) => {
           data: post,
       });
   });
+});
 };
 
 // Fetch a post for editing
