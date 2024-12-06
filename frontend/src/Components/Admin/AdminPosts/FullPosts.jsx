@@ -8,11 +8,11 @@ const FullPost = () => {
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const fetchedRef = useRef(false);
-
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
-
+    setPost(null);
+    setError(null);
     const fetchPost = async () => {
       try {
         const response = await fetch(
@@ -31,7 +31,6 @@ const FullPost = () => {
 
     fetchPost();
   }, [id_or_slug]);
-
   if (error) {
     return <p className="text-center text-red-600">{error}</p>;
   }
@@ -57,24 +56,23 @@ const FullPost = () => {
 
   const replaceImageUrls = (content) => {
     const baseUrl = `${import.meta.env.VITE_API_URL}`; // Correct base URL
-  
+
     // Match <img> tags and adjust src paths
     return content.replace(/<img\s+[^>]*src="([^"]+)"/g, (match, src) => {
       if (src.startsWith("uploads/")) {
         const correctedSrc = `${baseUrl}/${src}`;
         return match.replace(src, correctedSrc);
       }
-  
+
       // Fix incorrect prefix
       if (src.includes("smart-home-technology/uploads/")) {
         const correctedSrc = src.replace("smart-home-technology/", "");
         return match.replace(src, correctedSrc);
       }
-  
+
       return match; // Leave other paths unchanged
     });
   };
-  
 
   const decodedContent = replaceImageUrls(decodeHtml(post.content || ""));
   const imageUrl = post.featured_image
@@ -103,15 +101,12 @@ const FullPost = () => {
 
   return (
     <HelmetProvider>
-      <div className="container mx-auto px-4 py-6 md:px-8 lg:px-16">
+      <div className="container mx-auto md:px-8 lg:px-16">
         <Helmet>
           <title>{post.seoTitle || "Blog Post"}</title>
           <meta name="description" content={post.seoDescription || ""} />
           <meta property="og:title" content={post.seoTitle || "Blog Post"} />
-          <meta
-            property="og:description"
-            content={post.seoDescription || ""}
-          />
+          <meta property="og:description" content={post.seoDescription || ""} />
           <meta property="og:image" content={imageUrl} />
           <meta property="og:type" content="article" />
           <meta
@@ -121,7 +116,7 @@ const FullPost = () => {
         </Helmet>
 
         <div className="bg-white shadow-lg rounded-lg p-6 md:p-8">
-          <h1 className="text-4xl font-semibold text-gray-900 mb-4">
+          <h1 className="lg:text-4xl text-xl font-semibold text-gray-900 mb-4">
             {post.title || "Untitled"}
           </h1>
           <div className="flex gap-3">
@@ -135,12 +130,12 @@ const FullPost = () => {
             <img
               src={imageUrl}
               alt={post.title || "Featured"}
-              className="w-full lg:h-[400px] h-[400px] object-cover rounded-md mb-6"
+              className="w-full lg:h-[400px] h-[250px] object-cover rounded-md mb-6"
             />
           )}
 
           <div
-            className="custom-html text-lg text-gray-700 leading-relaxed"
+            className="custom-html text-gray-700 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: decodedContent }}
           />
         </div>

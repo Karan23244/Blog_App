@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 
 const usePostsByCategory = () => {
@@ -13,6 +13,7 @@ const usePostsByCategory = () => {
   const categoryId = searchParams.get("categoryId");
   const categoryNameFromParams = searchParams.get("categoryName");
   const categoryTypeFromParams = searchParams.get("categoryType");
+
   useEffect(() => {
     if (categoryNameFromParams && categoryTypeFromParams) {
       setCategoryName(decodeURIComponent(categoryNameFromParams));
@@ -24,8 +25,14 @@ const usePostsByCategory = () => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categoryData?categoryId=${categoryId}`);
-        const filteredPosts = response.data.data.filter(post => post.blog_type === "published");
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/categoryData?categoryId=${categoryId}`
+        );
+        const filteredPosts = response.data.data.filter(
+          (post) => post.blog_type === "published"
+        );
         setPosts(filteredPosts);
       } catch (err) {
         setError(err);
@@ -38,6 +45,10 @@ const usePostsByCategory = () => {
       fetchPosts();
     }
   }, [categoryId]);
+
+  // Log posts after they are updated
+  useEffect(() => {}, [posts]);
+
   return { posts, loading, error, categoryName, categoryType };
 };
 

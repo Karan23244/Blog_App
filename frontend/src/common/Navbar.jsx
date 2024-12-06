@@ -1,9 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../state/Authslice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import axios from "axios";
+
+const debounce = (func, delay) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => func(...args), delay);
+  };
+};
 
 function Navbar() {
   const location = useLocation();
@@ -50,13 +64,7 @@ function Navbar() {
     fetchPosts();
     fetchCategories(); // Call the function to fetch categories on component mount
   }, []);
-  const groupedCategories = categories.reduce((acc, category) => {
-    if (!acc[category.category_type]) {
-      acc[category.category_type] = [];
-    }
-    acc[category.category_type].push(category);
-    return acc;
-  }, {});
+
   const toggleMenu = () => {
     // If the search bar is open, close it when toggling the menu
     if (searchBarOpen) {
@@ -89,38 +97,61 @@ function Navbar() {
       navigate("/");
     }
   };
+
+  const groupedCategories = useMemo(() => {
+    return categories.reduce((acc, category) => {
+      if (!acc[category.category_type]) {
+        acc[category.category_type] = [];
+      }
+      acc[category.category_type].push(category);
+      return acc;
+    }, {});
+  }, [categories]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false); // Hide dropdown when clicking outside
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        !event.target.closest(".suggestion-item")
+      ) {
+        setShowDropdown(false);
+        setSearchBarOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Stable debounced function
+  const debouncedSearch = useCallback(
+    debounce((query) => {
+      if (query.trim()) {
+        const matches = posts.filter(
+          (post) =>
+            post.title.toLowerCase().includes(query.toLowerCase()) ||
+            post.content.toLowerCase().includes(query.toLowerCase())
+        );
+        setSuggestions(matches.slice(0, 6));
+        setShowDropdown(matches.length > 0);
+        setSearchBarOpen(true);
+      } else {
+        setSuggestions([]);
+        setShowDropdown(false);
+      }
+    }, 300),
+    [posts]
+  );
   const handleSearchChange = (e) => {
     const query = e.target.value;
-    setSearchQuery(query);
-
-    if (query.trim() !== "") {
-      const matches = posts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(query.toLowerCase()) ||
-          post.content.toLowerCase().includes(query.toLowerCase())
-      );
-      setSuggestions(matches.slice(0, 6));
-      setShowDropdown(matches.length > 0);
-    } else {
-      setSuggestions([]);
-      setShowDropdown(false);
-    }
+    setSearchQuery(query); // Update the input value
+    debouncedSearch(query); // Trigger debounced search
   };
-
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery(""); // Clear search input
     setSuggestions([]); // Clear suggestions
     setShowDropdown(false); // Close dropdown
+    setSearchBarOpen(false);
     navigate(
       `/${createSlug(suggestion?.category_names[0])}/${createSlug(
         suggestion?.Custom_url
@@ -278,7 +309,7 @@ function Navbar() {
                       {showDropdown && (
                         <ul
                           ref={dropdownRef}
-                          className="absolute bg-white border border-black rounded-xl shadow-lg w-[calc(100%+10rem)] -left-[10rem] mt-2 py-5 transition-all z-10">
+                          className="suggestion-item absolute bg-white border border-black rounded-xl shadow-lg w-[calc(100%+10rem)] -left-[10rem] mt-2 py-5 transition-all z-10">
                           <div className="px-4">
                             <span className="text-md text-semibold">
                               Searching For
@@ -426,7 +457,7 @@ function Navbar() {
               {showDropdown && (
                 <ul
                   ref={dropdownRef}
-                  className="absolute bg-white border rounded-lg mt-2 w-full z-10">
+                  className="suggestion-item absolute bg-white border rounded-lg mt-2 w-full z-10">
                   {suggestions.map((suggestion) => (
                     <li
                       key={suggestion.id}
