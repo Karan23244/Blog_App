@@ -28,6 +28,7 @@ const PostCard = ({ post }) => {
         src={imageUrl}
         alt={post.title}
         className="w-full h-48 object-cover rounded-md mb-4"
+        loading='lazy'
       />
       <h3 className="text-xl font-semibold text-gray-800">{post.title}</h3>
       <p className="text-gray-600">By {post.author_name}</p>

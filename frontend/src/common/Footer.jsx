@@ -24,7 +24,7 @@ function Footer() {
             <div
               onClick={handleLogoClick}
               className="flex items-center space-x-3 mb-4 cursor-pointer">
-              <img src="/footerlogo.webp" alt="Logo" width={120} height={120} />
+              <img src="/footerlogo.webp" alt="Logo" width={120} height={120} loading='lazy'/>
             </div>
             <h1 className="lg:text-xl text-base font-bold text-center">
               Inspiring Spaces for Life

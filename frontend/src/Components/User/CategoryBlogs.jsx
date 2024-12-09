@@ -47,6 +47,7 @@ const CategoryPosts = () => {
                 }
                 alt={mostViewedPost.title}
                 className="w-full h-[300px] object-cover mb-4"
+                loading='lazy'
               />
               <p className="lg:text-lg text-base text-gray-700">
                 {mostViewedPost.seoDescription ||
@@ -70,6 +71,7 @@ const CategoryPosts = () => {
                 }
                 alt={post.title}
                 className="w-full h-40 object-cover mb-2"
+                loading='lazy'
               />
               <div className="p-2">
                 <h3 className="lg:text-md text-base font-semibold line-clamp-2">
@@ -131,6 +133,7 @@ const CategoryPosts = () => {
                     }
                     alt={posts[0]?.title}
                     className="w-full lg:h-[450px] h-[250px] object-cover"
+                    loading='lazy'
                   />
                 </Link>
                 <div className="text-black pt-3">
@@ -164,6 +167,7 @@ const CategoryPosts = () => {
                         }
                         alt={post?.title}
                         className="w-full h-[150px] object-cover"
+                        loading='lazy'
                       />
                     </Link>
                     <div className="text-black lg:p-4">
@@ -197,6 +201,7 @@ const CategoryPosts = () => {
                         }
                         alt={post?.title}
                         className="w-full lg:h-[150px] h-[130px] object-cover"
+                        loading='lazy'
                       />
                     </div>
                     <div className="w-2/3">

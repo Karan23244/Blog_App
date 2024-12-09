@@ -7,59 +7,78 @@ function UserHome() {
   const [error, setError] = useState(null);
   const [topReads, setTopReads] = useState([]);
   const [editorsChoice, setEditorsChoice] = useState([]);
+  const [imagePreloaded, setImagePreloaded] = useState(false);
+  //preload Image
+  const preloadLCPImage = (url) => {
+    console.log("Preloading image:", url); // Log the URL
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = url;
+    document.head.appendChild(link);
+  };
+  useEffect(() => {
+    if (posts.length === 0) {
+      // Prevent fetching if posts already exist
+      const fetchPosts = async () => {
+        console.log("Fetching posts...");
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/posts`
+          );
+          const responseData = await response.json();
+          const filteredPosts = responseData.data.filter(
+            (post) => post.blog_type === "published"
+          );
+          setPosts(filteredPosts);
+        } catch (error) {
+          setError(error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchPosts();
+    }
+
+    if (topReads.length === 0 && editorsChoice.length === 0) {
+      // Prevent fetching if top reads are already loaded
+      const fetchData = async () => {
+        console.log("Fetching top reads and editor's choice...");
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/posts/topReadsAndEditorsChoice`
+          );
+          const result = await response.json();
+          const filteredtopReadsPosts = result.data.topReads.filter(
+            (post) => post.blog_type === "published"
+          );
+          const filterededitorsChoicePosts = result.data.editorsChoice.filter(
+            (post) => post.blog_type === "published"
+          );
+          setTopReads(filteredtopReadsPosts);
+          setEditorsChoice(filterededitorsChoicePosts);
+        } catch (error) {
+          setError(error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchData();
+    }
+  }, [posts, topReads]); // Adding posts and topReads as dependencies
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/posts`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch posts");
-        }
-        const responseData = await response.json();
-        const data = responseData.data; // Extract the 'data' array containing posts
-        setPosts(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (posts && posts[0]?.featured_image && !imagePreloaded) {
+      const imageUrl = `${import.meta.env.VITE_API_URL}/${
+        posts[0]?.featured_image
+      }`;
+      preloadLCPImage(imageUrl);
+      setImagePreloaded(true); // Mark the image as preloaded
+    }
+  }, [posts, imagePreloaded]);
 
-    fetchPosts();
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/posts/topReadsAndEditorsChoice`
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        // Filter data to include only posts with blog_type: "published"
-        const filteredTopReads = (result.data.topReads || []).filter(
-          (post) => post.blog_type === "published"
-        );
-        const filteredEditorsChoice = (result.data.editorsChoice || []).filter(
-          (post) => post.blog_type === "published"
-        );
-
-        setTopReads(filteredTopReads);
-        setEditorsChoice(filteredEditorsChoice);
-      } catch (err) {
-        console.error("Error fetching data:", err.message);
-        setError("Failed to load data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
   return (
     <div className="lg:px-10 lg:py-5 px-5 py-5">
       {loading ? (
@@ -98,7 +117,7 @@ function UserHome() {
                           : "https://via.placeholder.com/600x400.png?text=No+Image"
                       }
                       alt={posts[0]?.title}
-                      className="w-full h-full object-cover"
+                      style={{ objectFit: "cover" }} // Add objectFit here
                     />
                     <div class="absolute top-0 left-0 w-full h-full bg-gradient-custom"></div>
                   </div>
@@ -130,6 +149,7 @@ function UserHome() {
                     }
                     alt={post?.title}
                     className="w-full lg:h-48 h-20 object-cover"
+                    loading="lazy"
                   />
                   <div className="p-2">
                     <h3 className="lg:text-base text-sm font-semibold line-clamp-2">
@@ -170,6 +190,7 @@ function UserHome() {
                         }
                         alt={post?.title}
                         className="w-full h-[135px] object-cover"
+                        loading="lazy"
                       />
                     </div>
                     <div className="flex flex-col lg:gap-1 gap-3 w-3/5">
@@ -216,6 +237,7 @@ function UserHome() {
                     }
                     alt={post?.title}
                     className="w-full lg:h-[100px] h-48 object-cover"
+                    loading="lazy"
                   />
                   <div className="p-2">
                     <h3 className="lg:text-base text-sm font-semibold text-gray-800 line-clamp-2">

@@ -165,7 +165,7 @@ function Navbar() {
         <div className="flex justify-between items-center">
           <div className="flex flex-row items-center  lg:gap-4 gap-2 lg:w-[40%] pl-3 py-1">
             <div onClick={handleLogoClick}>
-              <img src="/headerlogo.webp" alt="Logo" width={80} height={80} />
+              <img src="/headerlogo.webp" alt="Logo" width={80} height={80} loading='lazy' />
             </div>
             {/* Horizontal Divider */}
             <div className="w-[2px] h-12 bg-black"></div>
@@ -239,23 +239,23 @@ function Navbar() {
           <div
             className="lg:flex items-center hidden justify-end lg:w-[60%] lg:order-1 pr-3"
             id="mobile-menu-2">
-            <ul className="flex flex-col items-center gap-5 text-black font-medium lg:flex-row">
+            <div className="flex flex-col items-center gap-5 text-black font-medium lg:flex-row">
               {isAuthenticated ? (
-                <>
-                  <li>
+                <>   
+                  <div>
                     <Link
                       to="/admin/category"
                       className="block py-2 pr-4 pl-3 text-black lg:py-1 lg:px-4 hover:text-[#00008B] font-bold">
                       Category
                     </Link>
-                  </li>
-                  <li>
+                  </div>
+                  <div>
                     <Link
                       to="/admin/authors"
                       className="block py-2 pr-4 pl-3 text-black lg:py-1 lg:px-4 hover:text-[#00008B] font-bold">
                       Authors
                     </Link>
-                  </li>
+                  </div>
                   <button
                     onClick={handleLogout}
                     className="text-white bg-blue-600 hover:bg-[#00008B] focus:ring-4 focus:ring-[#00008B] rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 font-bold focus:outline-none">
@@ -348,7 +348,7 @@ function Navbar() {
                   </div>
                 </>
               )}
-            </ul>
+            </div>
           </div>
 
           {/* Mobile Links */}
