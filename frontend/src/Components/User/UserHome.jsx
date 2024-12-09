@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import "../Admin/New_Post/styles.css"
 function UserHome() {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -21,7 +21,6 @@ function UserHome() {
     if (posts.length === 0) {
       // Prevent fetching if posts already exist
       const fetchPosts = async () => {
-        console.log("Fetching posts...");
         try {
           const response = await fetch(
             `${import.meta.env.VITE_API_URL}/api/posts`
@@ -44,7 +43,6 @@ function UserHome() {
     if (topReads.length === 0 && editorsChoice.length === 0) {
       // Prevent fetching if top reads are already loaded
       const fetchData = async () => {
-        console.log("Fetching top reads and editor's choice...");
         try {
           const response = await fetch(
             `${import.meta.env.VITE_API_URL}/api/posts/topReadsAndEditorsChoice`
@@ -107,7 +105,7 @@ function UserHome() {
                     posts[0]?.Custom_url
                   )}`}
                   className="block">
-                  <div class="relative w-full lg:h-[300px] h-[200px]">
+                  <div className="relative w-full lg:h-[300px] h-[200px]">
                     <img
                       src={
                         posts[0]?.featured_image
@@ -116,10 +114,13 @@ function UserHome() {
                             }`
                           : "https://via.placeholder.com/600x400.png?text=No+Image"
                       }
+                      fetchpriority="high"
                       alt={posts[0]?.title}
-                      style={{ objectFit: "cover" }} // Add objectFit here
+                      width="100%"
+                      height="100%"
+                      style={{ objectFit: "cover" }}
                     />
-                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-custom"></div>
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-custom"></div>
                   </div>
                   <div className="absolute bottom-0 left-0  text-white p-4 w-full">
                     <h3 className="lg:text-2xl text-lg font-medium line-clamp-2">
@@ -148,7 +149,7 @@ function UserHome() {
                         : "https://via.placeholder.com/300x200.png?text=No+Image"
                     }
                     alt={post?.title}
-                    className="w-full lg:h-48 h-20 object-cover"
+                    className="img-responsive"
                     loading="lazy"
                   />
                   <div className="p-2">
@@ -170,7 +171,7 @@ function UserHome() {
               ))}
             </div>
           </div>
-
+          {/* top reads section */}
           <div className="lg:w-1/2 w-full mb-8">
             <h2 className="lg:text-2xl text-base font-semibold mb-4 text-black">
               Top Reads
@@ -189,7 +190,11 @@ function UserHome() {
                             : "https://via.placeholder.com/300x200.png?text=No+Image"
                         }
                         alt={post?.title}
-                        className="w-full h-[135px] object-cover"
+                        width="100%"
+                        style={{
+                          height: "140px",
+                          objectFit: "cover",
+                        }}
                         loading="lazy"
                       />
                     </div>
@@ -205,7 +210,7 @@ function UserHome() {
                           posts[0]?.category_names[0]
                         )}/${createSlug(post?.Custom_url)}`}
                         className="self-start mt-1">
-                        <button className="lg:text-base text-sm text-white px-3 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
+                        <button className="lg:text-base text-sm text-white px-5 py-2 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                           Read More
                         </button>
                       </Link>
@@ -236,8 +241,10 @@ function UserHome() {
                         : "https://via.placeholder.com/300x200.png?text=No+Image"
                     }
                     alt={post?.title}
-                    className="w-full lg:h-[100px] h-48 object-cover"
                     loading="lazy"
+                    width="100%"
+                    height={100}
+                    style={{ objectFit: "cover" }}
                   />
                   <div className="p-2">
                     <h3 className="lg:text-base text-sm font-semibold text-gray-800 line-clamp-2">
@@ -251,7 +258,7 @@ function UserHome() {
                         posts[0]?.category_names[0]
                       )}/${createSlug(post?.Custom_url)}`}
                       className="text-[#00008B] hover:underline mt-1 inline-block">
-                      <button className="text-xs text-white px-2 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
+                      <button className="lg:text-base text-sm text-white px-4 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:from-[#00008B] hover:to-[#00008B] hover:shadow-lg transition duration-300 ease-in-out">
                         Read More
                       </button>
                     </Link>

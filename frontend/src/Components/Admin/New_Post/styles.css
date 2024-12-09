@@ -108,3 +108,14 @@
   }
 }
 
+.img-responsive {
+  width: 100%;
+  height: 80px;  /* Default height for small screens */
+  object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+  .img-responsive {
+    height: 192px;  /* Height for large screens */
+  }
+}
