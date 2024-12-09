@@ -10,7 +10,6 @@ function UserHome() {
   const [imagePreloaded, setImagePreloaded] = useState(false);
   //preload Image
   const preloadLCPImage = (url) => {
-    console.log("Preloading image:", url); // Log the URL
     const link = document.createElement("link");
     link.rel = "preload";
     link.as = "image";
