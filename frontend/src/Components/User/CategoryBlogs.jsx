@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 const CategoryPosts = () => {
   const { posts, loading, error, categoryName, categoryType } =
     usePostsByCategory();
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (loading) return <div className="text-gray-500 text-center h-screen">Loading...</div>;
+  if (error) return <div className="text-gray-500 text-center h-screen">Error: {error.message}</div>;
   // Sort posts by view_count in descending order
   const sortedPosts = [...posts].sort((a, b) => b.view_count - a.view_count);
   const mostViewedPost = sortedPosts[0]; // Most viewed post

@@ -36,7 +36,7 @@ const FullPost = () => {
   }
 
   if (!post) {
-    return <p>Loading...</p>;
+    return <p className="text-gray-500 text-center h-screen">Loading...</p>;
   }
 
   const createSlug = (title) => {

@@ -113,7 +113,9 @@ function UserHome() {
                             }`
                           : "https://via.placeholder.com/600x400.png?text=No+Image"
                       }
+                       loading="lazy"
                       fetchpriority="high"
+                      importance="high"
                       alt={posts[0]?.title}
                       width="100%"
                       height="100%"

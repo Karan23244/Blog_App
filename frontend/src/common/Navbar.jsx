@@ -165,7 +165,13 @@ function Navbar() {
         <div className="flex justify-between items-center">
           <div className="flex flex-row items-center  lg:gap-4 gap-2 lg:w-[40%] pl-3 py-1">
             <div onClick={handleLogoClick}>
-              <img src="/headerlogo.webp" alt="Logo" width={80} height={80} loading='lazy' />
+              <img
+                src="/headerlogo.webp"
+                alt="Logo"
+                width={80}
+                height={80}
+                loading="lazy"
+              />
             </div>
             {/* Horizontal Divider */}
             <div className="w-[2px] h-12 bg-black"></div>
@@ -180,7 +186,8 @@ function Navbar() {
             {!isAuthenticated && (
               <button
                 className="text-gray-600 mr-4 lg:hidden"
-                onClick={toggleSearchBar}>
+                onClick={toggleSearchBar}
+                aria-label="Search">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -241,7 +248,7 @@ function Navbar() {
             id="mobile-menu-2">
             <div className="flex flex-col items-center gap-5 text-black font-medium lg:flex-row">
               {isAuthenticated ? (
-                <>   
+                <>
                   <div>
                     <Link
                       to="/admin/category"
