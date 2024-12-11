@@ -1,7 +1,8 @@
 const db = require("../config/db");
 const fs = require("fs");
 const path = require("path");
-
+const cron = require("node-cron");
+const moment = require("moment");
 // Helper function for sending responses
 const sendResponse = (res, statusCode, message, data = null) => {
   const response = { message };
@@ -40,7 +41,33 @@ const saveImages = (htmlContent) => {
     return `<img src="${imageUrl}"`;
   });
 };
+// Schedule job to run every minute
+cron.schedule('0,30 * * * *', () => {
+  const now = moment().format('YYYY-MM-DD HH:mm:ss'); // Current time
+  console.log(`[CRON JOB STARTED]: Checking posts for scheduleDate ${now}`);
+  // SQL query to get posts where the scheduleDate matches current time
+  const query = "SELECT * FROM posts WHERE scheduleDate = ? AND blog_type = 'draft'";
+  console.log(query,now)
+  db.query(query, [now], (err, posts) => {
+    if (err) {
+      console.error("Error checking scheduled posts:", err);
+      return;
+    }
 
+    posts.forEach((post) => {
+      // Publish the post, change the status or blog_type to 'published'
+      const publishQuery = "UPDATE posts SET blog_type = 'published' WHERE id = ?";
+      console.log(publishQuery);
+      db.query(publishQuery, [post.id], (err) => {
+        if (err) {
+          console.error("Error publishing post:", err);
+        } else {
+          console.log(`Post ${post.id} published successfully`);
+        }
+      });
+    });
+  });
+});
 // Create a new post
 exports.createPost = (req, res) => {
   const {
@@ -53,17 +80,17 @@ exports.createPost = (req, res) => {
     seoTitle,
     seoDescription,
     Custom_url,
+    scheduleDate,
   } = req.body;
   const featuredImage = req.file ? `uploads/${req.file.filename}` : null;
-
   try {
     // Process content to save images and replace base64
     const content = saveImages(rawContent);
 
     const query = `
       INSERT INTO posts 
-      (title, content, featured_image, blog_type, author_id, category_id, tags, seoTitle, seoDescription, Custom_url) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (title, content, featured_image, blog_type, author_id, category_id, tags, seoTitle, seoDescription, Custom_url,scheduleDate) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     `;
     const queryParams = [
       title,
@@ -76,6 +103,7 @@ exports.createPost = (req, res) => {
       seoTitle,
       seoDescription,
       Custom_url,
+      scheduleDate,
     ];
 
     db.query(query, queryParams, (err, result) => {
@@ -216,9 +244,11 @@ exports.updatePost = (req, res) => {
     seoTitle,
     seoDescription,
     Custom_url,
+    scheduleDate,
   } = req.body;
-
   const newImagePath = req.file ? `uploads/${req.file.filename}` : null;
+
+console.log(scheduleDate)
 
   const saveImages = (htmlContent) => {
     const imageFolder = path.join(__dirname, "../uploads");
@@ -255,7 +285,7 @@ exports.updatePost = (req, res) => {
     // Prepare query and parameters
     let query = `
       UPDATE posts 
-      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, Custom_url = ?
+      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, Custom_url = ?,scheduleDate = ?
     `;
     const queryParams = [
       title,
@@ -267,6 +297,7 @@ exports.updatePost = (req, res) => {
       seoTitle,
       seoDescription,
       Custom_url,
+      scheduleDate,
     ];
 
     if (newImagePath) {
@@ -318,8 +349,7 @@ exports.getTopReadsAndEditorsChoice = async (req, res) => {
       posts.seoDescription,
       posts.Custom_url
     FROM posts
-    ORDER BY view_count DESC
-    LIMIT 8;`;
+    ORDER BY view_count DESC;`;
 
     const editorsChoiceQuery = `SELECT 
       posts.id,
@@ -333,8 +363,7 @@ exports.getTopReadsAndEditorsChoice = async (req, res) => {
     FROM posts
     LEFT JOIN authors ON posts.author_id = authors.author_id
     WHERE posts.view_count >= 10
-    ORDER BY posts.view_count DESC
-    LIMIT 10;`;
+    ORDER BY posts.view_count DESC;`;
 
     // Execute both queries
     const [topReads, editorsChoice] = await Promise.all([

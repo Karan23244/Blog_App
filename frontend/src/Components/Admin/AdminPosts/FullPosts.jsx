@@ -7,12 +7,17 @@ const FullPost = () => {
   const { id_or_slug } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
+  const [toc, setToc] = useState([]);
+  const [activeSection, setActiveSection] = useState("");
+  const [updatedContent, setUpdatedContent] = useState(null);
   const fetchedRef = useRef(false);
+
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
     setPost(null);
     setError(null);
+
     const fetchPost = async () => {
       try {
         const response = await fetch(
@@ -31,14 +36,72 @@ const FullPost = () => {
 
     fetchPost();
   }, [id_or_slug]);
+
+  useEffect(() => {
+    if (post) {
+      // Generate TOC and add IDs to headings
+      const parser = new DOMParser();
+      const contentDocument = parser.parseFromString(
+        decodeHtml(post.content || ""),
+        "text/html"
+      );
+      const headings = Array.from(contentDocument.querySelectorAll("h2, h3"));
+      const tocData = headings.map((heading, index) => {
+        const id = `heading-${index}`;
+        heading.id = id; // Assign ID to each heading
+        return {
+          id,
+          text: heading.textContent,
+          level: heading.tagName.toLowerCase(),
+        };
+      });
+      setToc(tocData);
+      // Set the updated content only once
+      const updatedContent = contentDocument.body.innerHTML;
+      setUpdatedContent(updatedContent);
+    }
+  }, [post]);
+
+  const decodeHtml = (html) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  };
+
+  const handleScroll = () => {
+    const sections = document.querySelectorAll("h1, h2, h3");
+    let currentSection = "";
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 100 && rect.bottom >= 100) {
+        currentSection = section.id;
+      }
+    });
+    setActiveSection(currentSection);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleTOCClick = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      window.scrollTo({
+        top: section.offsetTop - 80, // Adjust for header or padding
+        behavior: "smooth",
+      });
+    }
+  };
+
   if (error) {
-    return <p className="text-center text-red-600">{error}</p>;
+    return <p className="text-center text-red-600 h-screen">{error}</p>;
   }
 
   if (!post) {
     return <p className="text-gray-500 text-center h-screen">Loading...</p>;
   }
-
   const createSlug = (title) => {
     if (typeof title !== "string") return "";
     return title
@@ -47,34 +110,6 @@ const FullPost = () => {
       .replace(/[^\w\s-]/g, "")
       .replace(/\s+/g, "-");
   };
-
-  const decodeHtml = (html) => {
-    const txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
-  };
-
-  const replaceImageUrls = (content) => {
-    const baseUrl = `${import.meta.env.VITE_API_URL}`; // Correct base URL
-
-    // Match <img> tags and adjust src paths
-    return content.replace(/<img\s+[^>]*src="([^"]+)"/g, (match, src) => {
-      if (src.startsWith("uploads/")) {
-        const correctedSrc = `${baseUrl}/${src}`;
-        return match.replace(src, correctedSrc);
-      }
-
-      // Fix incorrect prefix
-      if (src.includes("smart-home-technology/uploads/")) {
-        const correctedSrc = src.replace("smart-home-technology/", "");
-        return match.replace(src, correctedSrc);
-      }
-
-      return match; // Leave other paths unchanged
-    });
-  };
-
-  const decodedContent = replaceImageUrls(decodeHtml(post.content || ""));
   const imageUrl = post.featured_image
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "";
@@ -100,47 +135,97 @@ const FullPost = () => {
   };
 
   return (
-    <HelmetProvider>
-      <div className="container mx-auto md:px-8 lg:px-16">
-        <Helmet>
-          <title>{post.seoTitle || "Blog Post"}</title>
-          <meta name="description" content={post.seoDescription || ""} />
-          <meta property="og:title" content={post.seoTitle || "Blog Post"} />
-          <meta property="og:description" content={post.seoDescription || ""} />
-          <meta property="og:image" content={imageUrl} />
-          <meta property="og:type" content="article" />
-          <meta
-            property="og:url"
-            content={`${import.meta.env.VITE_API_URL}/${postSlug}`}
-          />
-        </Helmet>
-
-        <div className="bg-white shadow-lg rounded-lg p-6 md:p-8">
-          <h1 className="lg:text-4xl text-xl font-semibold text-gray-900 mb-4">
-            {post.title || "Untitled"}
-          </h1>
-          <div className="flex gap-3">
-            <p className="text-gray-600 mb-4">
-              By {post.author_name || "Unknown Author"}
-            </p>
-            <p className="text-gray-500 mb-6">{timeAgo(post.created_at)}</p>
+    <>
+      <HelmetProvider>
+        <div
+          className="bg-white bg-cover bg-center h-[600px] rounded-lg relative"
+          style={{
+            backgroundImage: `url(${post.featured_image ? imageUrl : ""})`,
+          }}>
+          <div className="absolute w-full p-6 md:p-8 flex flex-col justify-between h-full bg-opacity-60 bg-black">
+            <div className="flex flex-col justify-start mt-[10%] ml-[2%]">
+              <h1 className="lg:text-4xl text-xl font-semibold text-white mb-4">
+                {post.title || "Untitled"}
+              </h1>
+              <div className="flex gap-3">
+                <p className="text-gray-300 mb-4">
+                  By {post.author_name || "Unknown Author"}
+                </p>
+                <p className="text-gray-300 mb-6">{timeAgo(post.created_at)}</p>
+              </div>
+            </div>
+            {/* Bottom spacing for the content */}
           </div>
-
-          {post.featured_image && (
-            <img
-              src={imageUrl}
-              alt={post.title || "Featured"}
-              className="w-full lg:h-[400px] h-[250px] object-cover rounded-md mb-6"
-            />
-          )}
-
-          <div
-            className="custom-html text-gray-700 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: decodedContent }}
-          />
         </div>
-      </div>
-    </HelmetProvider>
+
+        <div className="mx-auto px-4 lg:px-8 pt-16">
+          {/* Main Layout */}
+          <div className="flex">
+            {/* Sidebar for Table of Contents */}
+            <aside className="hidden lg:block w-1/4 pr-8">
+              <div className="sticky top-16 bg-gray-100 p-4 shadow-lg rounded-lg h-[calc(100vh-4rem)] overflow-auto">
+                <h2 className="text-lg font-semibold mb-4">
+                  Table of Contents
+                </h2>
+                <ul className="space-y-2">
+                  {toc.map((item) => (
+                    <li
+                      key={item.id}
+                      className={`pl-${
+                        item.level === "h2"
+                          ? "4"
+                          : item.level === "h3"
+                          ? "8"
+                          : "0"
+                      } ${
+                        activeSection === item.id
+                          ? "font-bold text-blue-600"
+                          : "text-gray-700"
+                      }`}>
+                      <a
+                        href={`#${item.id}`}
+                        className="hover:underline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleTOCClick(item.id);
+                        }}>
+                        {item.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </aside>
+
+            {/* Blog Content */}
+            <main className="w-full lg:w-3/5">
+              <Helmet>
+                <title>{post.seoTitle || "Blog Post"}</title>
+                <meta name="description" content={post.seoDescription || ""} />
+                <meta
+                  property="og:title"
+                  content={post.seoTitle || "Blog Post"}
+                />
+                <meta
+                  property="og:description"
+                  content={post.seoDescription || ""}
+                />
+                <meta property="og:image" content={imageUrl} />
+                <meta property="og:type" content="article" />
+                <meta
+                  property="og:url"
+                  content={`${import.meta.env.VITE_API_URL}/${postSlug}`}
+                />
+              </Helmet>
+              <div
+                className="custom-html text-gray-700 leading-relaxed mb-8"
+                dangerouslySetInnerHTML={{ __html: updatedContent }}
+              />
+            </main>
+          </div>
+        </div>
+      </HelmetProvider>
+    </>
   );
 };
 

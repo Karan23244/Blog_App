@@ -113,7 +113,6 @@ function UserHome() {
                             }`
                           : "https://via.placeholder.com/600x400.png?text=No+Image"
                       }
-                       loading="lazy"
                       fetchpriority="high"
                       importance="high"
                       alt={posts[0]?.title}
@@ -137,7 +136,7 @@ function UserHome() {
 
             {/* Smaller Cards */}
             <div className="grid grid-cols-2 md:grid-cols-2 lg:gap-4 gap-2">
-              {posts.slice(1, 7).map((post) => (
+              {posts.slice(1).map((post) => (
                 <div
                   key={post.id}
                   className="overflow-hidden hover:shadow-md border border-gray-200">

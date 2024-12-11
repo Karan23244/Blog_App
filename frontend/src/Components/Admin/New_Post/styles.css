@@ -17,6 +17,9 @@
   max-height: 30em;
   overflow-y: auto;
 }
+.react-datepicker-wrapper {
+  width: 100% !important;
+}
 .custom-html h2 {
   font-size: 30px;
   font-weight: 400 !important;
@@ -44,6 +47,7 @@
   font-size: 1rem;
   line-height: 1.6;
   color: black;
+  text-align: justify;
 }
 
 .custom-html a {
@@ -60,7 +64,9 @@
   margin-bottom: 8px; /* Space between items */
   padding: 5px;
 }
-
+.custom-html img {
+  width: 100%;
+}
 /* Responsive Styles */
 @media (max-width: 768px) {
   .custom-html h2 {
@@ -80,6 +86,7 @@
   }
   .custom-html p {
     font-size: 0.9rem;
+    text-align: justify;
   }
 }
 
@@ -102,6 +109,7 @@
   .custom-html p {
     font-size: 0.85rem;
     line-height: 1.4;
+    text-align: justify;
   }
   .custom-html ul {
     padding-left: 20px;

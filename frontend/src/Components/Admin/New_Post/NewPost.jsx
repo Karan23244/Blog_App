@@ -3,6 +3,8 @@ import axios from "axios";
 import Editor from "./Editor"; // Assuming you have an Editor component
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function NewPost() {
   const { id } = useParams();
@@ -16,13 +18,15 @@ function NewPost() {
     author: "",
     seoTitle: "",
     seoDescription: "",
-    Custom_url:""
+    Custom_url: "",
+    scheduleDate: "",
   });
   const [categories, setCategories] = useState([]);
   const [authors, setAuthors] = useState([]);
   const [featuredImage, setFeaturedImage] = useState(null);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,27 +45,32 @@ function NewPost() {
 
           const replaceImageUrls = (content) => {
             const baseUrl = `${import.meta.env.VITE_API_URL}`; // Correct base URL
-          
+
             // Match <img> tags and adjust src paths
-            return content.replace(/<img\s+[^>]*src="([^"]+)"/g, (match, src) => {
-              if (src.startsWith("uploads/")) {
-                const correctedSrc = `${baseUrl}/${src}`;
-                return match.replace(src, correctedSrc);
+            return content.replace(
+              /<img\s+[^>]*src="([^"]+)"/g,
+              (match, src) => {
+                if (src.startsWith("uploads/")) {
+                  const correctedSrc = `${baseUrl}/${src}`;
+                  return match.replace(src, correctedSrc);
+                }
+
+                // Fix incorrect prefix
+                if (src.includes("smart-home-technology/uploads/")) {
+                  const correctedSrc = src.replace(
+                    "smart-home-technology/",
+                    ""
+                  );
+                  return match.replace(src, correctedSrc);
+                }
+
+                return match; // Leave other paths unchanged
               }
-          
-              // Fix incorrect prefix
-              if (src.includes("smart-home-technology/uploads/")) {
-                const correctedSrc = src.replace("smart-home-technology/", "");
-                return match.replace(src, correctedSrc);
-              }
-          
-              return match; // Leave other paths unchanged
-            });
+            );
           };
-          
-        
+
           const decodedContent = replaceImageUrls(post.content);
-          
+
           setPostDetails({
             title: post.title || "",
             content: decodedContent || "",
@@ -70,7 +79,8 @@ function NewPost() {
             author: post.author_id || "",
             seoDescription: post.seoDescription || "",
             seoTitle: post.seoTitle || "",
-            Custom_url:post.Custom_url || "",
+            Custom_url: post.Custom_url || "",
+            scheduleDate: post.scheduleDate || "",
           });
           setTags(post.tags?.split(",") || []);
           const imageUrl = post.featured_image
@@ -103,10 +113,17 @@ function NewPost() {
     formData.append("seoTitle", postDetails.seoTitle);
     formData.append("seoDescription", postDetails.seoDescription);
     formData.append("Custom_url", postDetails.Custom_url);
+    formData.append(
+      "scheduleDate",
+      postDetails.scheduleDate ? postDetails.scheduleDate : ""
+    );
 
     if (featuredImage && typeof featuredImage !== "string") {
       formData.append("featuredImage", featuredImage);
     }
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(`${key}: ${value}`);
+    // }
     try {
       if (id) {
         try {
@@ -119,6 +136,9 @@ function NewPost() {
               },
             }
           );
+          for (const [key, value] of Object.entries(formData)) {
+            console.log(`${key}: ${value}`);
+          }
           if (res.status === 200 || res.status === 201) {
             // Check if the response status is successful (200)
             alert("Post updated successfully!");
@@ -141,7 +161,7 @@ function NewPost() {
               },
             }
           );
-        
+
           if (res.status === 200 || res.status === 201) {
             alert("Post created successfully!");
             navigate("/admin/home"); // Navigate after successful creation
@@ -150,12 +170,14 @@ function NewPost() {
           }
         } catch (error) {
           console.error("Error creating post:", error);
-        
+
           if (error.response) {
             // Server responded with a status code other than 2xx
             console.error("Response data:", error.response.data);
             console.error("Response status:", error.response.status);
-            alert(`Error: ${error.response.data.message || "Failed to create post"}`);
+            alert(
+              `Error: ${error.response.data.message || "Failed to create post"}`
+            );
           } else if (error.request) {
             // Request was made but no response received
             console.error("Request data:", error.request);
@@ -163,10 +185,11 @@ function NewPost() {
           } else {
             // Something happened while setting up the request
             console.error("Error setting up request:", error.message);
-            alert("Error creating the post. Please check your input and try again.");
+            alert(
+              "Error creating the post. Please check your input and try again."
+            );
           }
         }
-        
       }
       setPostDetails({
         title: "",
@@ -176,7 +199,8 @@ function NewPost() {
         author: "",
         seoTitle: "",
         seoDescription: "",
-        Custom_url:"",
+        Custom_url: "",
+        scheduleDate: "",
       });
       setTags([]);
       setFeaturedImage(null);
@@ -185,7 +209,6 @@ function NewPost() {
       alert("Error saving post");
     }
   };
-  
   return (
     <div className="p-5">
       <h2 className="text-2xl font-semibold text-gray-800">
@@ -203,6 +226,8 @@ function NewPost() {
           setTags={setTags}
           tagInput={tagInput}
           setTagInput={setTagInput}
+          startDate={startDate}
+          setStartDate={setStartDate}
         />
         <ContentEditor
           postDetails={postDetails}
@@ -230,6 +255,8 @@ const Sidebar = memo(
     setTags,
     tagInput,
     setTagInput,
+    startDate,
+    setStartDate,
   }) => (
     <div className="lg:w-1/4 p-6 bg-gray-100 rounded-lg shadow-md">
       <ImageUploader
@@ -239,6 +266,12 @@ const Sidebar = memo(
       <PublishStatus
         postDetails={postDetails}
         setPostDetails={setPostDetails}
+      />
+      <ScheduleDate
+        postDetails={postDetails}
+        setPostDetails={setPostDetails}
+        startDate={startDate}
+        setStartDate={setStartDate}
       />
       <CategorySelector
         categories={categories}
@@ -393,7 +426,82 @@ const PublishStatus = memo(({ postDetails, setPostDetails }) => (
     </button>
   </div>
 ));
+const ScheduleDate = ({
+  postDetails,
+  setPostDetails,
+  startDate,
+  setStartDate,
+}) => {
+  const handleDateChange = (date) => {
+    setStartDate(date);
+    // Create a new Date object from the input date
+    const formattedDate = new Date(date);
 
+    // Extract individual components
+    const year = formattedDate.getFullYear();
+    const month = String(formattedDate.getMonth() + 1).padStart(2, "0"); // Add 1 as months are 0-indexed
+    const day = String(formattedDate.getDate()).padStart(2, "0");
+    const hours = String(formattedDate.getHours()).padStart(2, "0");
+    const minutes = String(formattedDate.getMinutes()).padStart(2, "0");
+    const seconds = String(formattedDate.getSeconds()).padStart(2, "0");
+
+    // Format the date into 'YYYY-MM-DD HH:mm:ss' format
+    const formattedString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    console.log(formattedString);
+    setPostDetails((prev) => ({ ...prev, scheduleDate: formattedString }));
+  };
+  const now = new Date();
+  const maxDate = new Date();
+  const minTime =
+    startDate && startDate.toDateString() === now.toDateString()
+      ? now
+      : new Date(0, 0, 0, 0, 0);
+  const maxTime =
+    startDate && startDate.toDateString() === maxDate.toDateString()
+      ? new Date(0, 0, 0, 23, 59)
+      : new Date(0, 0, 0, 23, 59);
+  return (
+    <>
+      {/* Schedule Date (only for drafts) */}
+      {postDetails.blogType === "draft" && (
+        <div className="mt-4">
+          <label className="block text-gray-700 mb-2">
+            Schedule Date & Time
+          </label>
+          <DatePicker
+            selected={startDate}
+            onChange={handleDateChange}
+            showTimeSelect
+            minDate={now}
+            minTime={minTime}
+            maxTime={maxTime}
+            dateFormat="Pp"
+            className="w-full p-2 border border-gray-300 rounded"
+            placeholderText="Select a date and time"
+          />
+        </div>
+      )}
+
+      {/* Status Message */}
+      {postDetails.blogType === "published" && (
+        <div className="mt-4 p-4 bg-green-100 text-green-700 border border-blue-400 rounded">
+          This blog is already published and will not be scheduled.
+        </div>
+      )}
+
+      {/* Draft Message */}
+      {postDetails.blogType === "draft" && (
+        <div className="mt-4 p-4 bg-yellow-100 text-yellow-700 border border-yellow-400 rounded">
+          This blog is in draft mode and will be scheduled for:{" "}
+          <strong>
+            {postDetails.scheduleDate?.toLocaleString() || "Not Set"}
+          </strong>
+        </div>
+      )}
+    </>
+  );
+};
 const CategorySelector = memo(({ categories, postDetails, setPostDetails }) => {
   // Filter categories by type
   const upgradeCategories = categories.filter(
