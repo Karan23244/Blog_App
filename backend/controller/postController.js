@@ -82,16 +82,24 @@ exports.createPost = (req, res) => {
     Custom_url,
     scheduleDate,
   } = req.body;
+
+  // If scheduleDate is 'null' (string), set it to actual null
+  const processedScheduleDate = scheduleDate === 'null' ? null : scheduleDate;
+
   const featuredImage = req.file ? `uploads/${req.file.filename}` : null;
+
   try {
     // Process content to save images and replace base64
     const content = saveImages(rawContent);
 
-    const query = `
+    // Prepare query to exclude scheduleDate if not provided
+    let query = `
       INSERT INTO posts 
-      (title, content, featured_image, blog_type, author_id, category_id, tags, seoTitle, seoDescription, Custom_url,scheduleDate) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+      (title, content, featured_image, blog_type, author_id, category_id, tags, seoTitle, seoDescription, Custom_url${processedScheduleDate ? ', scheduleDate' : ''}) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?${processedScheduleDate ? ', ?' : ''})
     `;
+    
+    // Prepare query parameters, only include scheduleDate if it's provided
     const queryParams = [
       title,
       content,
@@ -103,7 +111,7 @@ exports.createPost = (req, res) => {
       seoTitle,
       seoDescription,
       Custom_url,
-      scheduleDate,
+      ...(processedScheduleDate ? [processedScheduleDate] : []),  // Conditionally include scheduleDate
     ];
 
     db.query(query, queryParams, (err, result) => {
@@ -123,7 +131,6 @@ exports.createPost = (req, res) => {
     res.status(500).json({ error: "Error processing post content" });
   }
 };
-
 // Fetch all posts
 exports.getAllPosts = (req, res) => {
   const query = `
@@ -246,9 +253,10 @@ exports.updatePost = (req, res) => {
     Custom_url,
     scheduleDate,
   } = req.body;
+  // If scheduleDate is 'null' (string), set it to actual null
+  const processedScheduleDate = scheduleDate === 'null' ? null : scheduleDate;
+  console.log(scheduleDate);
   const newImagePath = req.file ? `uploads/${req.file.filename}` : null;
-
-console.log(scheduleDate)
 
   const saveImages = (htmlContent) => {
     const imageFolder = path.join(__dirname, "../uploads");
@@ -282,11 +290,13 @@ console.log(scheduleDate)
   try {
     // Process content to replace base64 images
     const processedContent = saveImages(content);
-    // Prepare query and parameters
+    
+    // Prepare query to conditionally include scheduleDate
     let query = `
       UPDATE posts 
-      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, Custom_url = ?,scheduleDate = ?
+      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, Custom_url = ?${processedScheduleDate ? ', scheduleDate = ?' : ''}
     `;
+    
     const queryParams = [
       title,
       processedContent,
@@ -297,7 +307,7 @@ console.log(scheduleDate)
       seoTitle,
       seoDescription,
       Custom_url,
-      scheduleDate,
+      ...(processedScheduleDate ? [processedScheduleDate] : []),  // Conditionally include scheduleDate
     ];
 
     if (newImagePath) {
@@ -307,7 +317,7 @@ console.log(scheduleDate)
 
     query += ` WHERE id = ?`;
     queryParams.push(id);
-    // Execute query
+
     db.query(query, queryParams, (err, result) => {
       if (err) return handleError(res, err, "Error updating post");
       if (result.affectedRows === 0) {
@@ -321,6 +331,9 @@ console.log(scheduleDate)
     res.status(500).json({ error: "Error processing post content" });
   }
 };
+
+
+
 
 // Delete a post
 exports.deletePost = (req, res) => {

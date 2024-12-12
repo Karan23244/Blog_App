@@ -26,7 +26,7 @@ function NewPost() {
   const [featuredImage, setFeaturedImage] = useState(null);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,7 +80,6 @@ function NewPost() {
             seoDescription: post.seoDescription || "",
             seoTitle: post.seoTitle || "",
             Custom_url: post.Custom_url || "",
-            scheduleDate: post.scheduleDate || "",
           });
           setTags(post.tags?.split(",") || []);
           const imageUrl = post.featured_image
@@ -117,7 +116,6 @@ function NewPost() {
       "scheduleDate",
       postDetails.scheduleDate ? postDetails.scheduleDate : ""
     );
-
     if (featuredImage && typeof featuredImage !== "string") {
       formData.append("featuredImage", featuredImage);
     }
@@ -433,7 +431,8 @@ const ScheduleDate = ({
   setStartDate,
 }) => {
   const handleDateChange = (date) => {
-    setStartDate(date);
+    if (!date) return; // Prevent updating if no valid date is selected
+
     // Create a new Date object from the input date
     const formattedDate = new Date(date);
 
@@ -448,9 +447,12 @@ const ScheduleDate = ({
     // Format the date into 'YYYY-MM-DD HH:mm:ss' format
     const formattedString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-    console.log(formattedString);
-    setPostDetails((prev) => ({ ...prev, scheduleDate: formattedString }));
+    setPostDetails((prev) => ({
+      ...prev,
+      scheduleDate: formattedString,
+    }));
   };
+
   const now = new Date();
   const maxDate = new Date();
   const minTime =
@@ -461,6 +463,7 @@ const ScheduleDate = ({
     startDate && startDate.toDateString() === maxDate.toDateString()
       ? new Date(0, 0, 0, 23, 59)
       : new Date(0, 0, 0, 23, 59);
+
   return (
     <>
       {/* Schedule Date (only for drafts) */}
@@ -494,14 +497,13 @@ const ScheduleDate = ({
       {postDetails.blogType === "draft" && (
         <div className="mt-4 p-4 bg-yellow-100 text-yellow-700 border border-yellow-400 rounded">
           This blog is in draft mode and will be scheduled for:{" "}
-          <strong>
-            {postDetails.scheduleDate?.toLocaleString() || "Not Set"}
-          </strong>
+          <strong>{postDetails.scheduleDate || "Not Set"}</strong>
         </div>
       )}
     </>
   );
 };
+
 const CategorySelector = memo(({ categories, postDetails, setPostDetails }) => {
   // Filter categories by type
   const upgradeCategories = categories.filter(

@@ -20,6 +20,9 @@
 .react-datepicker-wrapper {
   width: 100% !important;
 }
+.custom-html{
+  color: black;
+}
 .custom-html h2 {
   font-size: 30px;
   font-weight: 400 !important;

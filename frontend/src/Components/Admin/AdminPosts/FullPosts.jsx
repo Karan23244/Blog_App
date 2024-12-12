@@ -143,15 +143,23 @@ const FullPost = () => {
             backgroundImage: `url(${post.featured_image ? imageUrl : ""})`,
           }}>
           <div className="absolute w-full p-6 md:p-8 flex flex-col justify-between h-full bg-opacity-60 bg-black">
-            <div className="flex flex-col justify-start mt-[10%] ml-[2%]">
-              <h1 className="lg:text-4xl text-xl font-semibold text-white mb-4">
+            <div className="flex flex-col justify-start mt-[10%] ml-[4%] mr-[20%]">
+              <h1 className="lg:text-5xl text-xl font-semibold text-white mb-4 leading-4">
                 {post.title || "Untitled"}
               </h1>
               <div className="flex gap-3">
-                <p className="text-gray-300 mb-4">
+                <p className="text-white font-semibold text-xl">
                   By {post.author_name || "Unknown Author"}
                 </p>
-                <p className="text-gray-300 mb-6">{timeAgo(post.created_at)}</p>
+                <div className="border-l-2 pl-3 border-white">
+                  <p className="text-white font-semibold text-xl ">
+                    {new Date(post.created_at).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
               </div>
             </div>
             {/* Bottom spacing for the content */}
@@ -163,11 +171,12 @@ const FullPost = () => {
           <div className="flex">
             {/* Sidebar for Table of Contents */}
             <aside className="hidden lg:block w-1/4 pr-8">
-              <div className="sticky top-16 bg-gray-100 p-4 shadow-lg rounded-lg h-[calc(100vh-4rem)] overflow-auto">
-                <h2 className="text-lg font-semibold mb-4">
+              <div className="sticky top-16 p-4 h-[calc(100vh-4rem)] overflow-auto border-r-2 border-black">
+                <h2 className="text-3xl text-center font-semibold text-gray-900 mb-2">
                   Table of Contents
                 </h2>
-                <ul className="space-y-2">
+                <hr className="w-[60%] h-1 rounded-lg mx-auto bg-black mb-4" />
+                <ul className="space-y-3">
                   {toc.map((item) => (
                     <li
                       key={item.id}
@@ -180,11 +189,11 @@ const FullPost = () => {
                       } ${
                         activeSection === item.id
                           ? "font-bold text-blue-600"
-                          : "text-gray-700"
-                      }`}>
+                          : "text-gray-800"
+                      } text-lg`}>
                       <a
                         href={`#${item.id}`}
-                        className="hover:underline"
+                        className="hover:text-blue-800 hover:underline text-lg font-medium"
                         onClick={(e) => {
                           e.preventDefault();
                           handleTOCClick(item.id);
