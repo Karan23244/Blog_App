@@ -26,7 +26,8 @@ function NewPost() {
   const [featuredImage, setFeaturedImage] = useState(null);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
-  const [startDate, setStartDate] = useState();
+  const [startDate, setStartDate] = useState(new Date());
+  console.log(postDetails.scheduleDate)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -413,7 +414,11 @@ const PublishStatus = memo(({ postDetails, setPostDetails }) => (
     </button>
     <button
       onClick={() =>
-        setPostDetails((prev) => ({ ...prev, blogType: "published" }))
+        setPostDetails((prev) => ({
+          ...prev,
+          blogType: "published",
+          scheduleDate: "",
+        }))
       }
       className={`mt-2 w-full p-2 rounded-md ${
         postDetails.blogType === "published"
@@ -424,12 +429,7 @@ const PublishStatus = memo(({ postDetails, setPostDetails }) => (
     </button>
   </div>
 ));
-const ScheduleDate = ({
-  postDetails,
-  setPostDetails,
-  startDate,
-  setStartDate,
-}) => {
+const ScheduleDate = ({ postDetails, setPostDetails, startDate }) => {
   const handleDateChange = (date) => {
     if (!date) return; // Prevent updating if no valid date is selected
 
@@ -463,7 +463,6 @@ const ScheduleDate = ({
     startDate && startDate.toDateString() === maxDate.toDateString()
       ? new Date(0, 0, 0, 23, 59)
       : new Date(0, 0, 0, 23, 59);
-
   return (
     <>
       {/* Schedule Date (only for drafts) */}
@@ -473,7 +472,11 @@ const ScheduleDate = ({
             Schedule Date & Time
           </label>
           <DatePicker
-            selected={startDate}
+            selected={
+              postDetails.scheduleDate
+                ? new Date(postDetails.scheduleDate)
+                : null
+            }
             onChange={handleDateChange}
             showTimeSelect
             minDate={now}

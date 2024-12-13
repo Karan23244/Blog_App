@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import "../New_Post/styles.css";
 
@@ -11,7 +11,8 @@ const FullPost = () => {
   const [activeSection, setActiveSection] = useState("");
   const [updatedContent, setUpdatedContent] = useState(null);
   const fetchedRef = useRef(false);
-
+  console.log(id_or_slug);
+  const specificBlogId = "interior-design-ideas-glass-mirrors";
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
@@ -114,36 +115,16 @@ const FullPost = () => {
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "";
   const postSlug = createSlug(post.Custom_url);
-  const timeAgo = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const seconds = Math.floor((now - date) / 1000);
-
-    if (seconds < 60) return `${seconds} seconds ago`;
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes} minutes ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours} hours ago`;
-    const days = Math.floor(hours / 24);
-    if (days < 7) return `${days} days ago`;
-    const weeks = Math.floor(days / 7);
-    if (weeks < 4) return `${weeks} weeks ago`;
-    const months = Math.floor(days / 30);
-    if (months < 12) return `${months} months ago`;
-    const years = Math.floor(days / 365);
-    return `${years} years ago`;
-  };
-
   return (
     <>
       <HelmetProvider>
         <div
-          className="bg-white bg-cover bg-center h-[600px] rounded-lg relative"
+          className="bg-white bg-cover bg-center h-[400px] rounded-lg relative"
           style={{
             backgroundImage: `url(${post.featured_image ? imageUrl : ""})`,
           }}>
           <div className="absolute w-full p-6 md:p-8 flex flex-col justify-between h-full bg-opacity-60 bg-black">
-            <div className="flex flex-col justify-start mt-[10%] ml-[4%] mr-[20%]">
+            <div className="flex flex-col justify-start mt-[4%] ml-[4%] mr-[20%]">
               <h1 className="lg:text-5xl text-xl font-semibold text-white mb-4 leading-4">
                 {post.title || "Untitled"}
               </h1>
@@ -170,8 +151,8 @@ const FullPost = () => {
           {/* Main Layout */}
           <div className="flex">
             {/* Sidebar for Table of Contents */}
-            <aside className="hidden lg:block w-1/4 pr-8">
-              <div className="sticky top-16 p-4 h-[calc(100vh-4rem)] overflow-auto border-r-2 border-black">
+            <aside className="hidden lg:block w-1/4 pr-8 ">
+              <div className="sticky top-16 p-4 overflow-auto border-r-2 border-black h-screen">
                 <h2 className="text-3xl text-center font-semibold text-gray-900 mb-2">
                   Table of Contents
                 </h2>
@@ -180,17 +161,18 @@ const FullPost = () => {
                   {toc.map((item) => (
                     <li
                       key={item.id}
-                      className={`pl-${
+                      className={`padding-${
                         item.level === "h2"
                           ? "4"
                           : item.level === "h3"
                           ? "8"
                           : "0"
-                      } ${
+                      }
+                      ${
                         activeSection === item.id
                           ? "font-bold text-blue-600"
                           : "text-gray-800"
-                      } text-lg`}>
+                      }`}>
                       <a
                         href={`#${item.id}`}
                         className="hover:text-blue-800 hover:underline text-lg font-medium"
@@ -231,6 +213,15 @@ const FullPost = () => {
                 dangerouslySetInnerHTML={{ __html: updatedContent }}
               />
             </main>
+            {id_or_slug === specificBlogId && (
+              <aside className="hidden lg:block w-1/4 ">
+                <div className="sticky top-16 p-4 border m-4 overflow-auto h-screen">
+                  <Link to="https://tracking.clickorbits.in/click?campaign_id=6221&pub_id=469&p1=click_id&source=hi" target="_blank">
+                  <img src="/toptop_ad.webp" alt="ad" />
+                  </Link>    
+                </div>
+              </aside>
+            )}
           </div>
         </div>
       </HelmetProvider>
