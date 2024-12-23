@@ -38,16 +38,18 @@ const saveImages = (htmlContent) => {
 
     // Return the updated image URL
     const imageUrl = `uploads/${fileName}`;
+    console.log(imageUrl, "imageUrl");
     return `<img src="${imageUrl}"`;
   });
 };
 // Schedule job to run every minute
-cron.schedule('0,30 * * * *', () => {
-  const now = moment().format('YYYY-MM-DD HH:mm:ss'); // Current time
+cron.schedule("0,30 * * * *", () => {
+  const now = moment().format("YYYY-MM-DD HH:mm:ss"); // Current time
   console.log(`[CRON JOB STARTED]: Checking posts for scheduleDate ${now}`);
   // SQL query to get posts where the scheduleDate matches current time
-  const query = "SELECT * FROM posts WHERE scheduleDate = ? AND blog_type = 'draft'";
-  console.log(query,now)
+  const query =
+    "SELECT * FROM posts WHERE scheduleDate = ? AND blog_type = 'draft'";
+  console.log(query, now);
   db.query(query, [now], (err, posts) => {
     if (err) {
       console.error("Error checking scheduled posts:", err);
@@ -56,7 +58,8 @@ cron.schedule('0,30 * * * *', () => {
 
     posts.forEach((post) => {
       // Publish the post, change the status or blog_type to 'published'
-      const publishQuery = "UPDATE posts SET blog_type = 'published' WHERE id = ?";
+      const publishQuery =
+        "UPDATE posts SET blog_type = 'published' WHERE id = ?";
       console.log(publishQuery);
       db.query(publishQuery, [post.id], (err) => {
         if (err) {
@@ -82,24 +85,20 @@ exports.createPost = (req, res) => {
     Custom_url,
     scheduleDate,
   } = req.body;
-
   // If scheduleDate is 'null' (string), set it to actual null
-  const processedScheduleDate = scheduleDate === 'null' ? null : scheduleDate;
-
+  const processedScheduleDate = scheduleDate === "null" ? null : scheduleDate;
   const featuredImage = req.file ? `uploads/${req.file.filename}` : null;
-
   try {
     // Process content to save images and replace base64
     const content = saveImages(rawContent);
 
-    // Prepare query to exclude scheduleDate if not provided
     let query = `
       INSERT INTO posts 
-      (title, content, featured_image, blog_type, author_id, category_id, tags, seoTitle, seoDescription, Custom_url${processedScheduleDate ? ', scheduleDate' : ''}) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?${processedScheduleDate ? ', ?' : ''})
+      (title, content, featured_image, blog_type, author_id, category_id, tags, seoTitle, seoDescription, Custom_url${
+        processedScheduleDate ? ", scheduleDate" : ""
+      }) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?${processedScheduleDate ? ", ?" : ""})
     `;
-    
-    // Prepare query parameters, only include scheduleDate if it's provided
     const queryParams = [
       title,
       content,
@@ -111,7 +110,7 @@ exports.createPost = (req, res) => {
       seoTitle,
       seoDescription,
       Custom_url,
-      ...(processedScheduleDate ? [processedScheduleDate] : []),  // Conditionally include scheduleDate
+      ...(processedScheduleDate ? [processedScheduleDate] : []),
     ];
 
     db.query(query, queryParams, (err, result) => {
@@ -131,6 +130,7 @@ exports.createPost = (req, res) => {
     res.status(500).json({ error: "Error processing post content" });
   }
 };
+
 // Fetch all posts
 exports.getAllPosts = (req, res) => {
   const query = `
@@ -164,48 +164,79 @@ exports.getPostData = (req, res) => {
   // Ensure the rawId is the full string from the URL (e.g., 'beginner-friendly-diy-home-improvement-project')
   const rawId = req.params.id_or_slug.replace(/-/g, " "); // Remove hyphens from the URL ID
 
-  // Increment the view count
-  const incrementViewQuery = `
-    UPDATE posts SET view_count = view_count + 1 WHERE Custom_url = ?
+  // Fetch the post ID from the 'posts' table using the rawId (Custom_url)
+  const fetchPostIdQuery = `
+    SELECT id FROM posts WHERE Custom_url = ?
   `;
 
-  db.query(incrementViewQuery, [rawId], (err) => {
-    if (err) {
-      return handleError(res, err, "Error incrementing view count");
+  db.query(fetchPostIdQuery, [rawId], (fetchErr, fetchResults) => {
+    if (fetchErr) {
+      return handleError(res, fetchErr, "Error fetching post ID");
     }
-    // Fetch the post data
-    const query = `
-      SELECT 
-        posts.id,
-        posts.title,
-        posts.content,
-        posts.featured_image,
-        posts.blog_type,
-        posts.tags,
-        posts.seoTitle,
-        posts.seoDescription,
-        posts.created_at,
-        authors.full_name AS author_name,
-        COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
-      FROM posts
-      LEFT JOIN authors ON posts.author_id = authors.author_id
-      LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-      WHERE posts.Custom_url = ?
-      GROUP BY posts.id
+
+    if (fetchResults.length === 0) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const postId = fetchResults[0].id;
+
+    // Update view count (you can do it here before fetching the post data)
+    const today = new Date().toISOString().slice(0, 10); // Get current date (YYYY-MM-DD)
+    const updateViewCountQuery = `
+      INSERT INTO post_views (post_id, view_date, views)
+      VALUES (?, ?, 1)
+      ON DUPLICATE KEY UPDATE views = views + 1;
     `;
-
-    db.query(query, [rawId], (fetchErr, results) => {
-      if (fetchErr) {
-        return handleError(res, fetchErr, "Error fetching post");
+    console.log("updateViewCountQuery", updateViewCountQuery);
+    db.query(updateViewCountQuery, [postId, today], (updateErr) => {
+      if (updateErr) {
+        return handleError(res, updateErr, "Error incrementing view count");
       }
 
-      if (results.length === 0) {
-        return res.status(404).json({ message: "Post not found" });
-      }
+      // Fetch the post data
+      const query = `
+        SELECT 
+          posts.id,
+          posts.title,
+          posts.content,
+          posts.featured_image,
+          posts.blog_type,
+          posts.tags,
+          posts.seoTitle,
+          posts.seoDescription,
+          posts.created_at,
+          authors.full_name AS author_name,
+          COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
+        FROM posts
+        LEFT JOIN authors ON posts.author_id = authors.author_id
+        LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+        WHERE posts.Custom_url = ?
+        GROUP BY posts.id
+      `;
 
-      res.status(200).json({
-        message: "Post retrieved successfully",
-        data: results[0],
+      db.query(query, [rawId], (fetchPostErr, results) => {
+        if (fetchPostErr) {
+          return handleError(res, fetchPostErr, "Error fetching post data");
+        }
+
+        if (results === 0) {
+          return res.status(404).json({ message: "Post not found" });
+        }
+        const baseURL = `${req.protocol}://${req.get("host")}`;
+        console.log(baseURL);
+        const postData = results[0];
+        console.log(postData);
+        // Replace relative image paths in content with absolute URLs
+        postData.content = postData.content.replace(
+          /<img src="\/uploads\/([^"]+)"/g,
+          (match, fileName) => {
+            return `<img src="${baseURL}/uploads/${fileName}"`;
+          }
+        );
+        res.status(200).json({
+          message: "Post retrieved successfully",
+          data: postData,
+        });
       });
     });
   });
@@ -253,11 +284,9 @@ exports.updatePost = (req, res) => {
     Custom_url,
     scheduleDate,
   } = req.body;
-  // If scheduleDate is 'null' (string), set it to actual null
-  const processedScheduleDate = scheduleDate === 'null' ? null : scheduleDate;
-  console.log(scheduleDate);
   const newImagePath = req.file ? `uploads/${req.file.filename}` : null;
-
+  // If scheduleDate is 'null' (string), set it to actual null
+  const processedScheduleDate = scheduleDate === "null" ? null : scheduleDate;
   const saveImages = (htmlContent) => {
     const imageFolder = path.join(__dirname, "../uploads");
     if (!fs.existsSync(imageFolder)) {
@@ -277,6 +306,7 @@ exports.updatePost = (req, res) => {
         fs.writeFileSync(filePath, buffer);
 
         const imageUrl = `/uploads/${fileName}`;
+        console.log(imageUrl, "imageUrl");
         return `<img src="${imageUrl}"`;
       } catch (error) {
         console.error("Error saving image:", error);
@@ -290,13 +320,13 @@ exports.updatePost = (req, res) => {
   try {
     // Process content to replace base64 images
     const processedContent = saveImages(content);
-    
     // Prepare query to conditionally include scheduleDate
     let query = `
       UPDATE posts 
-      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, Custom_url = ?${processedScheduleDate ? ', scheduleDate = ?' : ''}
+      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, Custom_url = ?${
+        processedScheduleDate ? ", scheduleDate = ?" : ""
+      }
     `;
-    
     const queryParams = [
       title,
       processedContent,
@@ -307,7 +337,7 @@ exports.updatePost = (req, res) => {
       seoTitle,
       seoDescription,
       Custom_url,
-      ...(processedScheduleDate ? [processedScheduleDate] : []),  // Conditionally include scheduleDate
+      ...(processedScheduleDate ? [processedScheduleDate] : []),
     ];
 
     if (newImagePath) {
@@ -317,7 +347,7 @@ exports.updatePost = (req, res) => {
 
     query += ` WHERE id = ?`;
     queryParams.push(id);
-
+    // Execute query
     db.query(query, queryParams, (err, result) => {
       if (err) return handleError(res, err, "Error updating post");
       if (result.affectedRows === 0) {
@@ -331,9 +361,6 @@ exports.updatePost = (req, res) => {
     res.status(500).json({ error: "Error processing post content" });
   }
 };
-
-
-
 
 // Delete a post
 exports.deletePost = (req, res) => {
@@ -351,66 +378,54 @@ exports.deletePost = (req, res) => {
 /**
  * Get Top Reads and Editor's Choice blogs
  */
-exports.getTopReadsAndEditorsChoice = async (req, res) => {
-  try {
-    const topReadsQuery = `SELECT 
-      posts.id,
-      posts.title,
-      posts.content,
-      posts.featured_image,
-      posts.blog_type,
-      posts.seoDescription,
-      posts.Custom_url
-    FROM posts
-    ORDER BY view_count DESC;`;
+exports.getTopReadsAndEditorsChoice = (req, res) => {
+  const topReadsQuery = `
+    SELECT 
+    p.id, p.title, p.content, p.featured_image, 
+    p.blog_type, p.seoDescription, p.Custom_url, 
+    SUM(pv.views) AS total_views
+    FROM posts p
+    JOIN post_views pv ON p.id = pv.post_id
+    WHERE pv.view_date >= CURDATE() - INTERVAL 1 DAY
+    GROUP BY p.id
+    ORDER BY total_views DESC;`;
 
-    const editorsChoiceQuery = `SELECT 
-      posts.id,
-      posts.title,
-      posts.content,
-      posts.blog_type,
-      posts.featured_image,
-      posts.seoDescription,
-      posts.Custom_url,
-      authors.full_name AS author_name
-    FROM posts
-    LEFT JOIN authors ON posts.author_id = authors.author_id
-    WHERE posts.view_count >= 10
-    ORDER BY posts.view_count DESC;`;
+  const editorsChoiceQuery = `
+    SELECT 
+    p.id, p.title, p.content, p.featured_image, 
+    p.blog_type, p.seoDescription, p.Custom_url, 
+    SUM(pv.views) AS total_views
+    FROM posts p
+    JOIN post_views pv ON p.id = pv.post_id
+    WHERE pv.view_date >= CURDATE() - INTERVAL 15 DAY
+    GROUP BY p.id
+    ORDER BY total_views DESC;`;
 
-    // Execute both queries
-    const [topReads, editorsChoice] = await Promise.all([
-      new Promise((resolve, reject) =>
-        db.query(topReadsQuery, (err, results) => {
-          if (err) {
-            console.error("Error in topReads query:", err);
-            reject(err);
-          } else {
-            resolve(results);
-          }
-        })
-      ),
-      new Promise((resolve, reject) =>
-        db.query(editorsChoiceQuery, (err, results) => {
-          if (err) {
-            console.error("Error in editorsChoice query:", err);
-            reject(err);
-          } else {
-            resolve(results);
-          }
-        })
-      ),
-    ]);
+  // First query: Top Reads
+  db.query(topReadsQuery, (topReadsErr, topReadsResults) => {
+    if (topReadsErr) {
+      console.error("Error fetching Top Reads:", topReadsErr);
+      return handleError(res, topReadsErr, "Error fetching Top Reads");
+    }
 
-    // Send response
-    sendResponse(
-      res,
-      200,
-      "Top Reads and Editor's Choice blogs retrieved successfully",
-      { topReads, editorsChoice }
-    );
-  } catch (err) {
-    console.error("Error in getTopReadsAndEditorsChoice:", err);
-    handleError(res, err, "Error fetching Top Reads and Editor's Choice");
-  }
+    // Second query: Editor's Choice
+    db.query(editorsChoiceQuery, (editorsChoiceErr, editorsChoiceResults) => {
+      if (editorsChoiceErr) {
+        console.error("Error fetching Editor's Choice:", editorsChoiceErr);
+        return handleError(
+          res,
+          editorsChoiceErr,
+          "Error fetching Editor's Choice"
+        );
+      }
+
+      // Send response with separate results for Top Reads and Editor's Choice
+      sendResponse(
+        res,
+        200,
+        "Top Reads and Editor's Choice blogs retrieved successfully",
+        { topReads: topReadsResults, editorsChoice: editorsChoiceResults }
+      );
+    });
+  });
 };

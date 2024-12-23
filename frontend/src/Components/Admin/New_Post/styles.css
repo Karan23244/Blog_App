@@ -1,11 +1,11 @@
-#root .ql-container {
+/* #root .ql-container {
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
   background: #fefcfc;
 }
 
 /* Snow Theme */
-#root .ql-snow.ql-toolbar {
+/* #root .ql-snow.ql-toolbar {
   display: block;
   background: #eaecec;
   border-top-left-radius: 0.5em;
@@ -16,7 +16,7 @@
   min-height: 18em;
   max-height: 30em;
   overflow-y: auto;
-}
+} */ */
 .react-datepicker-wrapper {
   width: 100% !important;
 }
@@ -113,6 +113,7 @@
     font-size: 0.85rem;
     line-height: 1.4;
     text-align: justify;
+    white-space: pre-wrap !important;
   }
   .custom-html ul {
     padding-left: 20px;
@@ -140,4 +141,235 @@
 .padding-8{
   margin-left: 30px;
   
+}
+/* .flex-container {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.flex-column {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 10px;
+  min-height: 100px;
+}
+
+.ql-toolbar .ql-formats button {
+  display: inline-flex;
+  align-items: center;
+}
+div[style*="display: flex"] {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+div[style*="display: flex"] > div {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 10px;
+} */
+
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.editor-wrapper {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.editor-content {
+  min-height: 200px;
+  padding: 10px;
+  scroll-behavior: auto;
+}
+
+
+.toolbar button {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease-in-out;
+}
+
+.toolbar button:hover {
+  background: #e2e6ea;
+}
+
+
+strong, em, s {
+  margin: 0;
+}
+
+
+
+input[type="file"] {
+  margin-top: 10px;
+}
+
+/* Example Flexbox CSS */
+.editor-container .ProseMirror {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Basic editor styles */
+.tiptap :first-child {
+  margin-top: 0;
+}
+
+.tiptap table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tiptap table td,
+.tiptap table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  position: relative;
+  text-align: left;
+}
+
+.tiptap table td.selectedCell:after,
+.tiptap table th.selectedCell:after {
+  content: "";
+  position: absolute;
+  background: #e6e6e6;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.tiptap table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.tiptap table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #000;
+  cursor: col-resize;
+}
+
+/* Code block styles */
+.tiptap code {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 0.9em;
+  padding: 2px 4px;
+}
+
+.tiptap pre {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.tiptap hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid black;
+}
+/* Ensure this CSS is included in your project */
+.ProseMirror img {
+  resize: both;
+  overflow: hidden;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.ProseMirror img.resizing {
+  cursor: nwse-resize;
+}
+/* FlexboxComponent.css */
+.custom-flexbox {
+  display: flex;
+  justify-content: space-around; /* Adjust based on your layout preference */
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px dashed gray;
+  margin: 10px 0;
+}
+
+.flex-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.add-item-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.remove-item-button {
+  background-color: #f44336;
+  padding: 5px;
+  color: white;
+  border-radius: 10px;
+}
+.custom-html table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.custom-html table td, #customers th {
+  padding: 8px;
+}
+
+.custom-html table tr:nth-child(even){background-color: #ddd;}
+
+/* .custom-html table tr:hover {background-color: #f2f2f2;} */
+
+.custom-html table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: black;
+}
+.custom-html ul, ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+  }
+.custom-html  li p {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+/* Styles for the custom table */
+.custom-table {
+  border: 2px solid #3498db;
+  background-color: #f0f8ff;
+}
+
+.custom-table td, .custom-table th {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #3498db;
 }

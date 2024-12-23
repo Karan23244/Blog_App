@@ -1,16 +1,74 @@
 const app = require("./app");
-const multer = require('multer');
 const path = require('path');
 const express = require('express');
-const cors = require("cors");
+const nodemailer = require('nodemailer');
+const db = require("./config/db");
 require('dotenv').config();
 
 // Serve static files (images)
 const staticPath = path.join(__dirname, "uploads");
 app.use("/uploads", express.static(staticPath));
 console.log("Static files served from:", staticPath);
-
 const port = process.env.PORT || 5500;
+
+const transporter = nodemailer.createTransport({
+    host: "smtpout.secureserver.net",
+    port: 465,              
+    secure: true,                    
+    auth: {
+      user: process.env.EMAIL,       
+      pass: process.env.PASSWORD,     
+    },
+  });
+  
+transporter.verify((error, success) => {
+    if (error) {
+        console.error("SMTP Transporter error:", error);
+    } else {
+        console.log("SMTP Transporter is ready");
+    }
+});
+
+app.post('/subscribe', (req, res) => {
+    const { email } = req.body;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+    const query = `SELECT * FROM subscribers WHERE email = ?`;
+    db.query(query, [email], (err, results) => {
+        if (err) return res.status(500).json({ message: 'Database error', error: err });
+
+        if (results.length > 0) {
+            return res.status(400).json({ message: 'Email already subscribed' });
+        }
+
+        const insertQuery = `INSERT INTO subscribers (email) VALUES (?)`;
+        db.query(insertQuery, [email], (err, result) => {
+            if (err) return res.status(500).json({ message: 'Database error', error: err });
+
+            const mailOptions = {
+                from: process.env.EMAIL,
+                to: email,
+                subject: 'Thank You for Subscribing!',
+                text: 'Thank you for subscribing to our updates. Stay tuned for the latest news!',
+            };
+
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    console.error("Error sending email:", err);
+                    return res.status(500).json({ message: 'Error sending email', error: err });
+                }
+                console.log("Email sent successfully:", info.response);
+                return res.status(200).json({ message: 'Subscription successful! Thank you email sent.' });
+            });
+        });
+    });
+});
+
+
 
 app.listen(port, () => {
   console.log(`Server running on ${port}`);

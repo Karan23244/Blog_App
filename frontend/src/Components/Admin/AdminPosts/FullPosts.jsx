@@ -11,7 +11,6 @@ const FullPost = () => {
   const [activeSection, setActiveSection] = useState("");
   const [updatedContent, setUpdatedContent] = useState(null);
   const fetchedRef = useRef(false);
-  console.log(id_or_slug);
   const specificBlogId = "interior-design-ideas-glass-mirrors";
   useEffect(() => {
     if (fetchedRef.current) return;
@@ -114,6 +113,7 @@ const FullPost = () => {
   const imageUrl = post.featured_image
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "";
+  
   const postSlug = createSlug(post.Custom_url);
   return (
     <>
@@ -123,9 +123,9 @@ const FullPost = () => {
           style={{
             backgroundImage: `url(${post.featured_image ? imageUrl : ""})`,
           }}>
-          <div className="absolute w-full p-6 md:p-8 flex flex-col justify-between h-full bg-opacity-60 bg-black">
-            <div className="flex flex-col justify-start mt-[4%] ml-[4%] mr-[20%]">
-              <h1 className="lg:text-5xl text-xl font-semibold text-white mb-4 leading-4">
+          <div className="absolute w-full md:p-8 flex flex-col justify-evenly h-full bg-opacity-60 bg-black">
+            <div className="flex flex-col justify-start ml-[4%] mr-[20%]">
+              <h1 className="lg:text-5xl text-xl font-semibold text-white mb-4">
                 {post.title || "Untitled"}
               </h1>
               <div className="flex gap-3">

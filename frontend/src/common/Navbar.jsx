@@ -10,7 +10,7 @@ import { logout } from "../state/Authslice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import axios from "axios";
-
+import ScrollButtons from "./ScrollButton";
 const debounce = (func, delay) => {
   let timer;
   return (...args) => {
@@ -160,7 +160,8 @@ function Navbar() {
   };
 
   return (
-    <header>
+    <>
+        <header>
       <nav className="relative border-gray-200 border border-b-1 shadow-xl">
         <div className="flex justify-between items-center">
           <div className="flex flex-row items-center  lg:gap-4 gap-2 lg:w-[40%] pl-3 py-1">
@@ -480,6 +481,8 @@ function Navbar() {
         </div>
       </nav>
     </header>
+    <ScrollButtons />
+    </>
   );
 }
 // Helper function to create slug

@@ -12,6 +12,8 @@ import Privacy_Policy from "./common/Privacy_Policy";
 import About_us from "./common/About_Us";
 import Terms_and_Condition from "./common/Terms_and_Condition";
 import CategoryBlogs from "./Components/User/CategoryBlogs";
+import Subscribe from "./common/Subscribe";
+import Popup from "./common/Popup";
 // Lazy loading components for Admin
 const AdminLogin = React.lazy(() => import("./Components/Admin/AdminLogin"));
 const Admin = React.lazy(() => import("./Components/Admin/Admin"));
@@ -26,7 +28,7 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar/>
-
+      <Popup/>
       <Suspense fallback={<div>Loading public content...</div>}>
         <Routes>
           {/* Public Routes */}
@@ -65,7 +67,7 @@ function App() {
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>
-
+      <Subscribe/>
       <Footer />
     </BrowserRouter>
   );

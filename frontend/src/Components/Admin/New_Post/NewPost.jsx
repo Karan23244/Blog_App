@@ -27,7 +27,6 @@ function NewPost() {
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [startDate, setStartDate] = useState(new Date());
-  console.log(postDetails.scheduleDate)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -135,9 +134,6 @@ function NewPost() {
               },
             }
           );
-          for (const [key, value] of Object.entries(formData)) {
-            console.log(`${key}: ${value}`);
-          }
           if (res.status === 200 || res.status === 201) {
             // Check if the response status is successful (200)
             alert("Post updated successfully!");
