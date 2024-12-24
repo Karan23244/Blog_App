@@ -13,7 +13,7 @@ const SubscribePopup = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/subscribe`,
+        `${import.meta.env.VITE_API_URL}/api/subscribe`,
         { email }
       );
       setMessage(response.data.message);
