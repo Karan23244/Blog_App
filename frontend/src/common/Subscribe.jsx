@@ -45,7 +45,7 @@ const Subscribe = () => {
             />
             <button
               type="submit"
-              className="lg:w-2/12 w-full bg-bg-[#00008B] text-white font-semibold px-6 py-2 rounded-md transition-all duration-300">
+              className="lg:w-2/12 w-full bg-[#00008B] text-white font-semibold px-6 py-2 rounded-md transition-all duration-300">
               Subscribe
             </button>
           </form>

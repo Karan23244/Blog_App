@@ -49,11 +49,18 @@ app.post('/subscribe', (req, res) => {
         db.query(insertQuery, [email], (err, result) => {
             if (err) return res.status(500).json({ message: 'Database error', error: err });
 
+            // Define an HTML template with an image
+            const htmlTemplate = `
+                <div style="text-align: center; font-family: Arial, sans-serif;">
+                    <img src="https://raw.githubusercontent.com/Karan23244/Image/refs/heads/main/Thankyou%20Card_11zon.webp" alt="Thank You" style="width: 100%; max-width: 600px; margin-top: 20px;" />
+                </div>
+            `;
+
             const mailOptions = {
                 from: process.env.EMAIL,
                 to: email,
                 subject: 'Thank You for Subscribing!',
-                text: 'Thank you for subscribing to our updates. Stay tuned for the latest news!',
+                html: htmlTemplate, // Use HTML content
             };
 
             transporter.sendMail(mailOptions, (err, info) => {
@@ -67,6 +74,7 @@ app.post('/subscribe', (req, res) => {
         });
     });
 });
+
 
 
 

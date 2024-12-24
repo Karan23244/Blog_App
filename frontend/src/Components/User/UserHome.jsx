@@ -275,11 +275,11 @@ function UserHome() {
           </div>
         </div>
       )}
-      <div className="mt-[5%]">
-        <div className="text-5xl font-bold text-center">
+      <div className="mt-8 md:mt-[5%]">
+        <div className="text-xl md:text-5xl font-bold text-center px-4">
           <h2>Recommended Videos for You</h2>
         </div>
-        <div className="text-2xl font-medium text-center mt-5">
+        <div className="text-base md:text-2xl font-medium text-center lg:mt-5 mt-2 px-4">
           <h2>
             Explore fresh perspectives on home improvement that inspire and
             excite.
@@ -287,18 +287,31 @@ function UserHome() {
         </div>
         <div>
           <CustomCarousel>
-            <video autoPlay muted loop>
-              <source src="/vid2.mp4" className="h-[720px]" />
+            <video
+              autoPlay
+              muted
+              loop
+              className="h-[50vh] md:h-[70vh] w-full object-cover">
+              <source src="/vid2.mp4" />
             </video>
-            <video autoPlay muted loop>
-              <source src="/vid2.mp4" className="h-[720px] w-full" />
+            <video
+              autoPlay
+              muted
+              loop
+              className="h-[50vh] md:h-[70vh] w-full object-cover">
+              <source src="/vid2.mp4" />
             </video>
-            <video autoPlay muted loop>
-              <source src="/vid2.mp4" className="h-[720px] w-full" />
+            <video
+              autoPlay
+              muted
+              loop
+              className="h-[50vh] md:h-[70vh] w-full object-cover">
+              <source src="/vid2.mp4" />
             </video>
           </CustomCarousel>
         </div>
       </div>
+
       <CategoryBlogs posts={posts} />
     </div>
   );
@@ -332,7 +345,6 @@ const CategoryBlogs = ({ posts }) => {
     },
   ];
 
-  // Filter posts where blog_type is "published" and category matches
   const filteredPosts = posts.filter(
     (post) =>
       post.blog_type === "published" &&
@@ -341,7 +353,6 @@ const CategoryBlogs = ({ posts }) => {
       )
   );
 
-  // Group posts by category
   const groupedPosts = categoryFilter.map((category) => ({
     category,
     posts: filteredPosts.filter((post) =>
@@ -350,96 +361,57 @@ const CategoryBlogs = ({ posts }) => {
   }));
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 px-4 sm:px-6 lg:px-8">
       {groupedPosts.map(({ category, posts }, index) => (
         <div
           key={category.name}
           className={`flex flex-col md:flex-row ${
             index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-          } gap-8`}>
+          } gap-6`}>
           {/* Main Content */}
-          <div className="mt-[3%] md:w-[70%]">
-            <div className="text-5xl font-bold text-center">
+          <div className="mt-6 md:w-[70%]">
+            <div className="text-3xl md:text-5xl font-bold text-center">
               <h2>{category.name}</h2>
             </div>
-            <div className="text-2xl font-medium text-center mt-5">
+            <div className="text-lg md:text-2xl font-medium text-center mt-4">
               {category.description}
             </div>
 
-            {/* Alternate Designs */}
-            {index % 2 === 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-8">
-                {posts.slice(0, 3).map((post) => (
-                  <div
-                    key={post.id}
-                    className="relative bg-[#E0E0E0] rounded-t-2xl group overflow-hidden shadow-lg">
-                    <img
-                      src={
-                        post.featured_image
-                          ? `${import.meta.env.VITE_API_URL}/${
-                              post.featured_image
-                            }`
-                          : "https://via.placeholder.com/300x200.png?text=No+Image"
-                      }
-                      alt={post.title}
-                      className="w-full h-[250px] object-cover mb-2 rounded-t-2xl"
-                      loading="lazy"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold">{post?.title}</h3>
-                      <p className="text-sm text-black pt-2">
-                        {post?.seoDescription}
-                      </p>
-                    </div>
-                    <div className="absolute inset-0 bg-[#E0E0E0] flex flex-col px-4 py-6 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <h3 className="text-lg font-semibold">{post?.title}</h3>
-                      <p className="text-sm pt-2">{post?.seoDescription}</p>
-                    </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {posts.slice(0, 3).map((post) => (
+                <div
+                  key={post.id}
+                  className="relative bg-[#E0E0E0] rounded-lg group overflow-hidden shadow-lg">
+                  <img
+                    src={
+                      post.featured_image
+                        ? `${import.meta.env.VITE_API_URL}/${
+                            post.featured_image
+                          }`
+                        : "https://via.placeholder.com/300x200.png?text=No+Image"
+                    }
+                    alt={post.title}
+                    className="w-full h-[200px] md:h-[250px] object-cover rounded-t-lg"
+                    loading="lazy"
+                  />
+                  <div className="p-4">
+                    <h3 className="text-md md:text-lg font-semibold">
+                      {post?.title}
+                    </h3>
+                    <p className="text-sm text-black pt-2">
+                      {post?.seoDescription}
+                    </p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-                {posts.slice(0, 3).map((post) => (
-                  <div
-                    key={post.id}
-                    className="relative bg-white shadow-md overflow-hidden group perspective-1000">
-                    <div className="relative w-full h-[400px] transform-style-preserve-3d group-hover:scale-x-[-1] transition-transform duration-700">
-                      <img
-                        src={
-                          post.featured_image
-                            ? `${import.meta.env.VITE_API_URL}/${
-                                post.featured_image
-                              }`
-                            : "https://via.placeholder.com/300x200.png?text=No+Image"
-                        }
-                        alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-x-[-1] transition-transform duration-700"
-                        loading="lazy"
-                      />
-
-                      {/* Title Overlay */}
-                      <div className="absolute top-4 left-4 group-hover:opacity-0 text-white text-xl font-semibold z-10">
-                        {post?.title}
-                      </div>
-                    </div>
-                    <div className="absolute inset-0 group-hover:opacity-100 opacity-0 transition-opacity duration-500 p-6 bg-[#E0E0E0]">
-                      <div>
-                        <h3 className="text-2xl font-bold text-black">
-                          {post?.title}
-                        </h3>
-                        <p className="text-black mt-4">
-                          {post?.seoDescription}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="absolute inset-0 bg-[#E0E0E0] flex flex-col px-4 py-6 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <h3 className="text-lg font-semibold">{post?.title}</h3>
+                    <p className="text-sm pt-2">{post?.seoDescription}</p>
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
 
             <div className="flex justify-center mt-6">
-              <button className="bg-[#E0E0E0] text-xl px-8 py-4 text-black border-black rounded-lg shadow-md transition-all duration-300 ease-in-out hover:bg-[#00008B] hover:text-white">
+              <button className="bg-[#E0E0E0] text-sm md:text-xl px-6 md:px-8 py-3 md:py-4 text-black border-black rounded-lg shadow-md transition-all duration-300 ease-in-out hover:bg-[#00008B] hover:text-white">
                 <Link to={category.link} className="block">
                   Discover More
                 </Link>
@@ -464,6 +436,7 @@ const CategoryBlogs = ({ posts }) => {
     </div>
   );
 };
+
 
 // Helper function to create slug
 const createSlug = (title) => {
