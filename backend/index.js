@@ -13,8 +13,8 @@ const port = process.env.PORT || 5500;
 
 const transporter = nodemailer.createTransport({
     host: "smtpout.secureserver.net",
-    port: 587,
-    secure: false,                   
+    port: 465,
+    secure: true,                   
     auth: {
       user: process.env.EMAIL,       
       pass: process.env.PASSWORD,     
@@ -29,9 +29,9 @@ transporter.verify((error, success) => {
     }
 });
 
-app.post('/subscribe', (req, res) => {
+app.post('/api/subscribe', (req, res) => {
     const { email } = req.body;
-
+    console.log(email)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
