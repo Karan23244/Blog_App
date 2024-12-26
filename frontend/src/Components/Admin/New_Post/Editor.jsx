@@ -15,7 +15,6 @@ import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 import HardBreak from "@tiptap/extension-hard-break";
-import FlexboxNode from "./FlexboxNode";
 import {
   MdFormatColorFill,
   MdTextFormat,
@@ -86,7 +85,7 @@ const Toolbar = ({ editor }) => {
     }
     input.click();
   };
-  
+
   return (
     <div className="toolbar">
       {/* Text Formatting */}
@@ -130,12 +129,16 @@ const Toolbar = ({ editor }) => {
       </button>
       {/* Headings */}
       <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        onClick={() => {
+          editor.chain().focus().setNode("heading", { level: 1 }).run();
+        }}
         title="Heading 1">
         H1
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        onClick={() => {
+          editor.chain().focus().setNode("heading", { level: 2 }).run();
+        }}
         title="Heading 2">
         H2
       </button>
@@ -310,25 +313,45 @@ const Toolbar = ({ editor }) => {
 export default function Editor({ value, onChange, placeholder }) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      HardBreak.extend({
-        addKeyboardShortcuts() {
-          return {
-            Enter: () => {
-              // Prevent duplicate <br> tags
-              const { state, dispatch } = this.editor.view;
-              const { tr } = state;
-
-              // Insert a single hard break
-              this.editor.commands.insertContent("<br>");
-
-              // Prevent default behavior and ensure the cursor is moved to the right position
-              dispatch(tr.scrollIntoView());
-              return true; // Prevents default Enter behavior
-            },
-          };
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6], // Keep all heading levels
         },
+        hardBreak: true, // Enable hard breaks
       }),
+      HardBreak.configure({
+        keepMarks: true, // Retain styling (bold, italic, etc.)
+        keepAttributes: true, // Retain attributes like color
+      }),
+      // StarterKit.configure({
+      //   hardBreak: false, // Disable default hard breaks
+      // }),
+      // HardBreak.extend({
+      //   addKeyboardShortcuts() {
+      //     return {
+      //       Enter: () => {
+      //         // Prevent duplicate <br> tags
+      //         const { state, dispatch } = this.editor.view;
+      //         const { tr } = state;
+
+      //         // Insert a single hard break
+      //         this.editor.commands.insertContent("<br>");
+
+      //         // Prevent default behavior and ensure the cursor is moved to the right position
+      //         dispatch(tr.scrollIntoView());
+      //         return true; // Prevents default Enter behavior
+      //       },
+      //     };
+      //   },
+      // }),
+      // HardBreak.extend({
+      //   addKeyboardShortcuts() {
+      //     return {
+      //       Enter: () => this.editor.commands.setHardBreak(), // Press Enter for a new line
+      //     };
+      //   },
+      // }),
+
       Image.configure({
         resizable: true,
         inline: true,
@@ -340,7 +363,7 @@ export default function Editor({ value, onChange, placeholder }) {
       Table.configure({
         resizable: true,
         HTMLAttributes: {
-          class: 'my-custom-heading1',
+          class: "my-custom-heading1",
         },
       }),
       TableRow,
@@ -371,7 +394,15 @@ export default function Editor({ value, onChange, placeholder }) {
   return (
     <div className="editor-wrapper">
       <Toolbar editor={editor} />
-      <div className="editor-content">
+      <div
+        className="editor-content"
+        style={{
+          height: "300px",
+          overflowY: "auto",
+          border: "1px solid #ddd",
+          borderRadius: "5px",
+          padding: "10px",
+        }}>
         <EditorContent editor={editor} />
       </div>
     </div>

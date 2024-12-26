@@ -142,35 +142,6 @@
   margin-left: 30px;
   
 }
-/* .flex-container {
-  display: flex;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.flex-column {
-  flex: 1;
-  border: 1px solid #ddd;
-  padding: 10px;
-  min-height: 100px;
-}
-
-.ql-toolbar .ql-formats button {
-  display: inline-flex;
-  align-items: center;
-}
-div[style*="display: flex"] {
-  display: flex;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-div[style*="display: flex"] > div {
-  flex: 1;
-  border: 1px solid #ccc;
-  padding: 10px;
-} */
-
 
 .toolbar {
   display: flex;
@@ -186,7 +157,7 @@ div[style*="display: flex"] > div {
 }
 
 .editor-content {
-  min-height: 200px;
+  height: 400px;
   padding: 10px;
   scroll-behavior: auto;
 }
@@ -372,4 +343,34 @@ input[type="file"] {
   padding: 10px;
   text-align: center;
   border: 1px solid #3498db;
+}
+.ProseMirror h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+.ProseMirror h2 {
+  font-size: 1.75em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+.ProseMirror h3 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+.ProseMirror h4 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+.ProseMirror h5 {
+  font-size: 1em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+.ProseMirror h6 {
+  font-size: 0.875em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
 }

@@ -292,7 +292,7 @@ function UserHome() {
               muted
               loop
               className="h-[50vh] md:h-[70vh] w-full object-cover">
-              <source src="/vid2.mp4" />
+              <source src="/vid1.mp4" />
             </video>
             <video
               autoPlay
@@ -306,7 +306,7 @@ function UserHome() {
               muted
               loop
               className="h-[50vh] md:h-[70vh] w-full object-cover">
-              <source src="/vid2.mp4" />
+              <source src="/vid3.mp4" />
             </video>
           </CustomCarousel>
         </div>
@@ -320,7 +320,7 @@ function UserHome() {
 const CategoryBlogs = ({ posts }) => {
   const categoryFilter = [
     {
-      name: "Reviews",
+      name: "Review",
       description: "Shop Smart: Read Our Expert Reviews Before You Buy!",
       adimg: "review.webp",
       link: "categoryData?categoryId=8&categoryName=Review&categoryType=Home%20Insights",
@@ -359,7 +359,7 @@ const CategoryBlogs = ({ posts }) => {
       post.category_names.includes(category.name)
     ),
   }));
-
+  console.log(groupedPosts);
   return (
     <div className="space-y-10 px-4 sm:px-6 lg:px-8">
       {groupedPosts.map(({ category, posts }, index) => (
@@ -367,48 +367,94 @@ const CategoryBlogs = ({ posts }) => {
           key={category.name}
           className={`flex flex-col md:flex-row ${
             index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-          } gap-6`}>
+          } flex-wrap gap-6`}>
           {/* Main Content */}
-          <div className="mt-6 md:w-[70%]">
+          <div className="mt-6 md:w-[65%]">
             <div className="text-3xl md:text-5xl font-bold text-center">
               <h2>{category.name}</h2>
             </div>
             <div className="text-lg md:text-2xl font-medium text-center mt-4">
               {category.description}
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-              {posts.slice(0, 3).map((post) => (
-                <div
-                  key={post.id}
-                  className="relative bg-[#E0E0E0] rounded-lg group overflow-hidden shadow-lg">
-                  <img
-                    src={
-                      post.featured_image
-                        ? `${import.meta.env.VITE_API_URL}/${
+            {index % 2 === 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-8">
+                {posts.slice(0, 3).map((post) => (
+                  <Link
+                    to={`/${createSlug(
+                      posts[0]?.category_names[0]
+                    )}/${createSlug(post?.Custom_url)}`}>
+                    <div
+                      key={post.id}
+                      className="relative bg-[#E0E0E0] rounded-t-2xl group overflow-hidden shadow-lg h-[500px] flex flex-col">
+                      <img
+                        src={
+                          post.featured_image
+                            ? `${import.meta.env.VITE_API_URL}/${
+                                post.featured_image
+                              }`
+                            : "https://via.placeholder.com/300x200.png?text=No+Image"
+                        }
+                        alt={post.title}
+                        className="w-full h-[250px] object-cover mb-2 rounded-t-2xl"
+                        loading="lazy"
+                      />
+                      <div className="p-4 flex-grow">
+                        <h3 className="text-lg font-semibold">{post?.title}</h3>
+                        <p className="text-sm text-black pt-2">
+                          {post?.seoDescription}
+                        </p>
+                      </div>
+                      <div className="absolute inset-0 bg-[#E0E0E0] flex flex-col px-4 py-6 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 className="text-lg font-semibold">{post?.title}</h3>
+                        <p className="text-sm pt-2">{post?.seoDescription}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                {posts.slice(0, 3).map((post) => (
+                  <Link
+                    to={`/${createSlug(
+                      posts[0]?.category_names[0]
+                    )}/${createSlug(post?.Custom_url)}`}>
+                    <div
+                      key={post.id}
+                      className="relative bg-white shadow-md overflow-hidden group perspective-1000 min-h-[350px] flex flex-col">
+                      <div className="relative w-full h-[400px] transform-style-preserve-3d group-hover:scale-x-[-1] transition-transform duration-700">
+                        <img
+                          src={
                             post.featured_image
-                          }`
-                        : "https://via.placeholder.com/300x200.png?text=No+Image"
-                    }
-                    alt={post.title}
-                    className="w-full h-[200px] md:h-[250px] object-cover rounded-t-lg"
-                    loading="lazy"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-md md:text-lg font-semibold">
-                      {post?.title}
-                    </h3>
-                    <p className="text-sm text-black pt-2">
-                      {post?.seoDescription}
-                    </p>
-                  </div>
-                  <div className="absolute inset-0 bg-[#E0E0E0] flex flex-col px-4 py-6 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <h3 className="text-lg font-semibold">{post?.title}</h3>
-                    <p className="text-sm pt-2">{post?.seoDescription}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                              ? `${import.meta.env.VITE_API_URL}/${
+                                  post.featured_image
+                                }`
+                              : "https://via.placeholder.com/300x200.png?text=No+Image"
+                          }
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-x-[-1] transition-transform duration-700"
+                          loading="lazy"
+                        />
+                        {/* Title Overlay */}
+                        <div className="absolute top-4 left-4 group-hover:opacity-0 text-white text-xl font-semibold z-10">
+                          {post?.title}
+                        </div>
+                      </div>
+                      <div className="absolute inset-0 group-hover:opacity-100 opacity-0 transition-opacity duration-500 p-6 bg-[#E0E0E0]">
+                        <div>
+                          <h3 className="text-2xl font-bold text-black">
+                            {post?.title}
+                          </h3>
+                          <p className="text-black mt-4">
+                            {post?.seoDescription}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             <div className="flex justify-center mt-6">
               <button className="bg-[#E0E0E0] text-sm md:text-xl px-6 md:px-8 py-3 md:py-4 text-black border-black rounded-lg shadow-md transition-all duration-300 ease-in-out hover:bg-[#00008B] hover:text-white">
@@ -436,7 +482,6 @@ const CategoryBlogs = ({ posts }) => {
     </div>
   );
 };
-
 
 // Helper function to create slug
 const createSlug = (title) => {
