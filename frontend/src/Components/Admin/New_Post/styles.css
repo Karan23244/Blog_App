@@ -1,22 +1,4 @@
-/* #root .ql-container {
-  border-bottom-left-radius: 0.5em;
-  border-bottom-right-radius: 0.5em;
-  background: #fefcfc;
-}
 
-/* Snow Theme */
-/* #root .ql-snow.ql-toolbar {
-  display: block;
-  background: #eaecec;
-  border-top-left-radius: 0.5em;
-  border-top-right-radius: 0.5em;
-}
-
-#root .ql-editor {
-  min-height: 18em;
-  max-height: 30em;
-  overflow-y: auto;
-} */ */
 .react-datepicker-wrapper {
   width: 100% !important;
 }
@@ -58,14 +40,16 @@
   text-decoration: underline;
 }
 
-.custom-html ul {
-  padding-left: 40px; /* Add spacing for indentation */
-}
 
 .custom-html li {
-  list-style-type: disc; /* Can use: disc, square, decimal, etc. */
-  margin-bottom: 8px; /* Space between items */
-  padding: 5px;
+  list-style-type: disc;
+  margin-bottom: 4px;
+  margin-left: 20px;
+}
+.custom-html ol {
+  list-style-type: decimal;
+  margin-left: 20px;
+  margin-bottom: 4px;
 }
 .custom-html img {
   width: 100%;
@@ -114,6 +98,7 @@
     line-height: 1.4;
     text-align: justify;
     white-space: pre-wrap !important;
+    padding-bottom: 30px !important;
   }
   .custom-html ul {
     padding-left: 20px;
@@ -304,26 +289,21 @@ input[type="file"] {
   color: white;
   border-radius: 10px;
 }
-.custom-html table {
-  font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.custom-html table td, #customers th {
-  padding: 8px;
-}
-
-.custom-html table tr:nth-child(even){background-color: #ddd;}
-
 /* .custom-html table tr:hover {background-color: #f2f2f2;} */
-
 .custom-html table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
   background-color: #04AA6D;
   color: black;
+}
+.custom-html table td, #customers th {
+  padding: 8px;
+}
+.custom-html table tr:nth-child(even){background-color: #ddd;}
+.custom-html table {
+  border-collapse: collapse;
+  width: 100%;
 }
 .custom-html ul, ol {
     padding: 0 1rem;
@@ -334,16 +314,6 @@ input[type="file"] {
     margin-bottom: 0.25em;
   }
 /* Styles for the custom table */
-.custom-table {
-  border: 2px solid #3498db;
-  background-color: #f0f8ff;
-}
-
-.custom-table td, .custom-table th {
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #3498db;
-}
 .ProseMirror h1 {
   font-size: 2em;
   font-weight: bold;
@@ -373,4 +343,17 @@ input[type="file"] {
   font-size: 0.875em;
   font-weight: bold;
   margin-bottom: 0.5em;
+}
+.ProseMirror ul {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  margin-left: 20px;
+}
+
+p:empty {
+  margin: 20px !important;
 }

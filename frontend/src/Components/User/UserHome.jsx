@@ -359,7 +359,6 @@ const CategoryBlogs = ({ posts }) => {
       post.category_names.includes(category.name)
     ),
   }));
-  console.log(groupedPosts);
   return (
     <div className="space-y-10 px-4 sm:px-6 lg:px-8">
       {groupedPosts.map(({ category, posts }, index) => (

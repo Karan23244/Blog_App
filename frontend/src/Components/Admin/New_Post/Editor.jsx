@@ -162,6 +162,11 @@ const Toolbar = ({ editor }) => {
         title="Heading 6">
         H6
       </button>
+      <button
+        onClick={() => editor.chain().focus().setNode("paragraph").run()}
+        title="Paragraph">
+        P
+      </button>
       {/* Lists */}
       <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -318,10 +323,6 @@ export default function Editor({ value, onChange, placeholder }) {
           levels: [1, 2, 3, 4, 5, 6], // Keep all heading levels
         },
         hardBreak: true, // Enable hard breaks
-      }),
-      HardBreak.configure({
-        keepMarks: true, // Retain styling (bold, italic, etc.)
-        keepAttributes: true, // Retain attributes like color
       }),
       // StarterKit.configure({
       //   hardBreak: false, // Disable default hard breaks
