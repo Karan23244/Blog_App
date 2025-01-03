@@ -26,7 +26,6 @@ const FullPost = () => {
           `${import.meta.env.VITE_API_URL}/api/posts/${id_or_slug}`,
           { withCredentials: true }
         );
-        console.log(response.data.data);
         setPost(response.data.data);
       } catch (err) {
         console.error("Error fetching post:", err);
