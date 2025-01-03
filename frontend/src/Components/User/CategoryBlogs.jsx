@@ -1,8 +1,10 @@
 import React from "react";
 import usePostsByCategory from "../../hooks/usePostsByCategory";
 import { Link } from "react-router-dom";
+import usePageTracker from "../../hooks/usePageTracker";
 
 const CategoryPosts = () => {
+  usePageTracker("category");
   const { posts, loading, error, categoryName, categoryType } =
     usePostsByCategory();
   if (loading) return <div className="text-gray-500 text-center h-screen">Loading...</div>;

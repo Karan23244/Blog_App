@@ -2,29 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../Admin/New_Post/styles.css";
 import CustomCarousel from "./CustomCrousel";
+import usePageTracker from "../../hooks/usePageTracker";
 import axios from "axios";
 function UserHome() {
-  // const parseUserAgent = (userAgent) => {
-  //   const browserRegex =
-  //     /(Chrome|Firefox|Safari|Opera|Edg|MSIE|Trident)\/[\d.]+/;
-  //   const osRegex =
-  //     /(Windows NT|Mac OS X|Linux|Android|iPhone OS|iPad OS)[^;)]+/;
-  //   const deviceRegex = /(Mobile|Tablet|Win64|x64|iPhone|iPad|Android)/;
-
-  //   const browser = userAgent.match(browserRegex)?.[0] || "Unknown Browser";
-  //   const os = userAgent.match(osRegex)?.[0] || "Unknown OS";
-  //   const device = userAgent.match(deviceRegex)?.[0] || "Desktop";
-
-  //   return { browser, os, device };
-  // };
-
-  // // Example usage
-  // const userAgent = navigator.userAgent;
-  // // Get user language
-  // const language = navigator.language;
-
-  // const parsedData = parseUserAgent(userAgent);
-
+  usePageTracker("home");
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);

@@ -38,18 +38,15 @@ const saveImages = (htmlContent) => {
 
     // Return the updated image URL
     const imageUrl = `uploads/${fileName}`;
-    console.log(imageUrl, "imageUrl");
     return `<img src="${imageUrl}"`;
   });
 };
 // Schedule job to run every minute
 cron.schedule("0,30 * * * *", () => {
   const now = moment().format("YYYY-MM-DD HH:mm:ss"); // Current time
-  console.log(`[CRON JOB STARTED]: Checking posts for scheduleDate ${now}`);
   // SQL query to get posts where the scheduleDate matches current time
   const query =
     "SELECT * FROM posts WHERE scheduleDate = ? AND blog_type = 'draft'";
-  console.log(query, now);
   db.query(query, [now], (err, posts) => {
     if (err) {
       console.error("Error checking scheduled posts:", err);
@@ -60,12 +57,10 @@ cron.schedule("0,30 * * * *", () => {
       // Publish the post, change the status or blog_type to 'published'
       const publishQuery =
         "UPDATE posts SET blog_type = 'published' WHERE id = ?";
-      console.log(publishQuery);
       db.query(publishQuery, [post.id], (err) => {
         if (err) {
           console.error("Error publishing post:", err);
         } else {
-          console.log(`Post ${post.id} published successfully`);
         }
       });
     });
@@ -163,7 +158,10 @@ exports.getAllPosts = (req, res) => {
 exports.getPostData = (req, res) => {
   // Ensure the rawId is the full string from the URL (e.g., 'beginner-friendly-diy-home-improvement-project')
   const rawId = req.params.id_or_slug.replace(/-/g, " "); // Remove hyphens from the URL ID
-
+  const userId = req.cookies.userId;
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
   // Fetch the post ID from the 'posts' table using the rawId (Custom_url)
   const fetchPostIdQuery = `
     SELECT id FROM posts WHERE Custom_url = ?
@@ -183,12 +181,11 @@ exports.getPostData = (req, res) => {
     // Update view count (you can do it here before fetching the post data)
     const today = new Date().toISOString().slice(0, 10); // Get current date (YYYY-MM-DD)
     const updateViewCountQuery = `
-      INSERT INTO post_views (post_id, view_date, views)
-      VALUES (?, ?, 1)
-      ON DUPLICATE KEY UPDATE views = views + 1;
-    `;
-    console.log("updateViewCountQuery", updateViewCountQuery);
-    db.query(updateViewCountQuery, [postId, today], (updateErr) => {
+INSERT INTO post_views (post_id, view_date, views, user_id)
+VALUES (?, ?, 1, ?)
+ON DUPLICATE KEY UPDATE views = views + 1;
+`;
+    db.query(updateViewCountQuery, [postId, today, userId], (updateErr) => {
       if (updateErr) {
         return handleError(res, updateErr, "Error incrementing view count");
       }
@@ -204,6 +201,7 @@ exports.getPostData = (req, res) => {
           posts.tags,
           posts.seoTitle,
           posts.seoDescription,
+          posts.scheduleDate,
           posts.created_at,
           authors.full_name AS author_name,
           COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
@@ -223,9 +221,7 @@ exports.getPostData = (req, res) => {
           return res.status(404).json({ message: "Post not found" });
         }
         const baseURL = `${req.protocol}://${req.get("host")}`;
-        console.log(baseURL);
         const postData = results[0];
-        console.log(postData);
         // Replace relative image paths in content with absolute URLs
         postData.content = postData.content.replace(
           /<img src="\/uploads\/([^"]+)"/g,
@@ -306,7 +302,6 @@ exports.updatePost = (req, res) => {
         fs.writeFileSync(filePath, buffer);
 
         const imageUrl = `/uploads/${fileName}`;
-        console.log(imageUrl, "imageUrl");
         return `<img src="${imageUrl}"`;
       } catch (error) {
         console.error("Error saving image:", error);

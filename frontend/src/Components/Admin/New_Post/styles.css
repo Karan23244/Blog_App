@@ -42,12 +42,16 @@
 
 
 .custom-html li {
-  list-style-type: disc;
   margin-bottom: 4px;
   margin-left: 20px;
 }
 .custom-html ol {
   list-style-type: decimal;
+  margin-left: 20px;
+  margin-bottom: 4px;
+}
+.custom-html ul {
+  list-style-type: disc;
   margin-left: 20px;
   margin-bottom: 4px;
 }
@@ -293,22 +297,21 @@ input[type="file"] {
 .custom-html table th {
   padding-top: 12px;
   padding-bottom: 12px;
+  padding-left: 10px;
   text-align: left;
-  background-color: #04AA6D;
-  color: black;
+  background-color: #00008B;
+}
+.custom-html table th p{
+  color: white !important;
 }
 .custom-html table td, #customers th {
   padding: 8px;
 }
-.custom-html table tr:nth-child(even){background-color: #ddd;}
+.custom-html table tr:nth-child(even){background-color: #DEDEFF;}
 .custom-html table {
   border-collapse: collapse;
   width: 100%;
 }
-.custom-html ul, ol {
-    padding: 0 1rem;
-    margin: 1.25rem 1rem 1.25rem 0.4rem;
-  }
 .custom-html  li p {
     margin-top: 0.25em;
     margin-bottom: 0.25em;

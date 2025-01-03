@@ -324,34 +324,6 @@ export default function Editor({ value, onChange, placeholder }) {
         },
         hardBreak: true, // Enable hard breaks
       }),
-      // StarterKit.configure({
-      //   hardBreak: false, // Disable default hard breaks
-      // }),
-      // HardBreak.extend({
-      //   addKeyboardShortcuts() {
-      //     return {
-      //       Enter: () => {
-      //         // Prevent duplicate <br> tags
-      //         const { state, dispatch } = this.editor.view;
-      //         const { tr } = state;
-
-      //         // Insert a single hard break
-      //         this.editor.commands.insertContent("<br>");
-
-      //         // Prevent default behavior and ensure the cursor is moved to the right position
-      //         dispatch(tr.scrollIntoView());
-      //         return true; // Prevents default Enter behavior
-      //       },
-      //     };
-      //   },
-      // }),
-      // HardBreak.extend({
-      //   addKeyboardShortcuts() {
-      //     return {
-      //       Enter: () => this.editor.commands.setHardBreak(), // Press Enter for a new line
-      //     };
-      //   },
-      // }),
 
       Image.configure({
         resizable: true,

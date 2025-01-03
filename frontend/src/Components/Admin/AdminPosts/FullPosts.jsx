@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import "../New_Post/styles.css";
-
+import usePageTracker from "../../../hooks/usePageTracker";
 const FullPost = () => {
+  usePageTracker("blogs");
   const { id_or_slug } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
@@ -20,14 +22,12 @@ const FullPost = () => {
 
     const fetchPost = async () => {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/posts/${id_or_slug}`
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/posts/${id_or_slug}`,
+          { withCredentials: true }
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch post.");
-        }
-        const responseData = await response.json();
-        setPost(responseData.data);
+        console.log(response.data.data);
+        setPost(response.data.data);
       } catch (err) {
         console.error("Error fetching post:", err);
         setError("Unable to load the post. Please try again later.");
@@ -113,7 +113,7 @@ const FullPost = () => {
   const imageUrl = post.featured_image
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "";
-  
+
   const postSlug = createSlug(post.Custom_url);
   return (
     <>
@@ -133,8 +133,10 @@ const FullPost = () => {
                   By {post.author_name || "Unknown Author"}
                 </p>
                 <div className="border-l-2 pl-3 border-white">
-                  <p className="text-white font-semibold text-xl ">
-                    {new Date(post.created_at).toLocaleDateString("en-US", {
+                  <p className="text-white font-semibold text-xl">
+                    {new Date(
+                      post.scheduleDate || post.created_at
+                    ).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -216,9 +218,11 @@ const FullPost = () => {
             {id_or_slug === specificBlogId && (
               <aside className="hidden lg:block w-1/4 ">
                 <div className="sticky top-16 p-4 border m-4 overflow-auto h-screen">
-                  <Link to="https://tracking.clickorbits.in/click?campaign_id=6221&pub_id=469&p1=click_id&source=hi" target="_blank">
-                  <img src="/toptop_ad.webp" alt="ad" />
-                  </Link>    
+                  <Link
+                    to="https://tracking.clickorbits.in/click?campaign_id=6221&pub_id=469&p1=click_id&source=hi"
+                    target="_blank">
+                    <img src="/toptop_ad.webp" alt="ad" />
+                  </Link>
                 </div>
               </aside>
             )}

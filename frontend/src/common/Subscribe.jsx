@@ -29,7 +29,7 @@ const Subscribe = () => {
         {/* Left section */}
         <div className="lg:w-1/2 text-center lg:text-left">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold leading-relaxed">
-            Transform your home—subscribe for the latest trends and ideas
+            Transform your home subscribe for the latest trends and ideas
           </h2>
         </div>
 
