@@ -114,7 +114,6 @@ const FullPost = () => {
     : "";
 
   const postSlug = createSlug(post.Custom_url);
-  console.log(postSlug);
   return (
     <>
       <Helmet>

@@ -54,7 +54,7 @@ const CategoryPosts = () => {
           "Uncover the best home improvement strategies with Versus. Get expert comparisons and tips to elevate your living space today!",
         keywords: "Home Improvement Versus, Product Versus, Traditional vs Modern Homes, DIY vs Professional Home Improvement, Renovation vs Remodeling, Interior Design vs Interior Decoration, Smart Home vs Regular Home",
       },
-      "Review": {
+      "Reviews": {
         title: "Discover Top Home Improvement Reviews at Homimprovement",
         description:
           "Looking for reliable home improvement reviews? Homimprovement provides expert insights to help you choose the right products for your home.",

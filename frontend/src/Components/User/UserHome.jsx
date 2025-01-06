@@ -320,7 +320,7 @@ function UserHome() {
 const CategoryBlogs = ({ posts }) => {
   const categoryFilter = [
     {
-      name: "Review",
+      name: "Reviews",
       description: "Shop Smart: Read Our Expert Reviews Before You Buy!",
       adimg: "review.webp",
       link: "categoryData?categoryId=8&categoryName=Review&categoryType=Home%20Insights",
