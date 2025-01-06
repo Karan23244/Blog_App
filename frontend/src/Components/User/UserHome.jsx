@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "../Admin/New_Post/styles.css";
 import CustomCarousel from "./CustomCrousel";
 import usePageTracker from "../../hooks/usePageTracker";
-import axios from "axios";
+import { Helmet } from "react-helmet-async";
 function UserHome() {
   usePageTracker("home");
   const [loading, setLoading] = useState(true);
@@ -94,9 +94,9 @@ function UserHome() {
         <div className="flex flex-col lg:flex-row lg:justify-evenly gap-6 items-stretch h-full">
           {/* Latest Blogs Section */}
           <div className="flex flex-col lg:w-2/3 gap-4 h-full">
-            <h2 className="lg:text-2xl text-base font-semibold text-black">
+            <h1 className="lg:text-2xl text-base font-semibold text-black">
               Latest Blogs
-            </h2>
+            </h1>
             {posts && posts.length > 0 && (
               <div className="relative overflow-hidden hover:shadow-md flex-grow">
                 <Link
@@ -294,6 +294,25 @@ function UserHome() {
       </div>
 
       <CategoryBlogs posts={posts} />
+      <Helmet>
+        <title>HomImprovement - Home</title>
+        <meta
+          name="description"
+          content="Discover expert home improvement tips, DIY projects, and renovation ideas at Homimprovement. Transform your space with our easy-to-follow guides!"
+        />
+        <meta name="keywords" content="Home improvement,DIY home projects,Home renovation tips,Interior design ideas,Home maintenance,Renovation guides,Home decor inspiration,Sustainable home improvements,Home improvement resources,Expert home advice" />
+        <meta property="og:title" content="HomImprovement - Home" />
+        <meta property="og:description" content= "Home improvement,DIY home projects,Home renovation tips,Interior design ideas,Home maintenance,Renovation guides,Home decor inspiration,Sustainable home improvements,Home improvement resources,Expert home advice"/>
+        <meta property="og:type" content="Homepage" />
+        <meta
+          property="og:url"
+          content={`${import.meta.env.VITE_API_URL}`}
+        />
+        <link
+          rel="canonical"
+          href={`${import.meta.env.VITE_API_URL}`}
+        />
+      </Helmet>
     </div>
   );
 }

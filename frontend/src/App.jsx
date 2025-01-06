@@ -14,6 +14,7 @@ import Terms_and_Condition from "./common/Terms_and_Condition";
 import CategoryBlogs from "./Components/User/CategoryBlogs";
 import Subscribe from "./common/Subscribe";
 import Popup from "./common/Popup";
+import { HelmetProvider } from "react-helmet-async";
 // Lazy loading components for Admin
 const AdminLogin = React.lazy(() => import("./Components/Admin/AdminLogin"));
 const Admin = React.lazy(() => import("./Components/Admin/Admin"));
@@ -26,6 +27,7 @@ function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   return (
+    <HelmetProvider>
     <BrowserRouter>
       <Navbar/>
       <Popup/>
@@ -70,6 +72,7 @@ function App() {
       <Subscribe/>
       <Footer />
     </BrowserRouter>
+    </HelmetProvider>
   );
 }
 

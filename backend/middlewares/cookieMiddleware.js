@@ -3,7 +3,9 @@ const db = require("../config/db");
 
 const cookieMiddleware = (req, res, next) => {
   let userId = req.cookies?.userId;
+  const userIp = req.headers['x-forwarded-for']?.split(',')[0] || req.ip;
 
+  console.log(userIp);
   if (!userId) {
     const newUserId = uuidv4();
     res.cookie("userId", newUserId, {

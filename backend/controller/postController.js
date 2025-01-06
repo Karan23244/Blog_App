@@ -202,6 +202,7 @@ ON DUPLICATE KEY UPDATE views = views + 1;
           posts.seoTitle,
           posts.seoDescription,
           posts.scheduleDate,
+          posts.Custom_url,
           posts.created_at,
           authors.full_name AS author_name,
           COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
