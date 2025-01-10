@@ -4,7 +4,6 @@ exports.trackPage = (req, res) => {
   const { page } = req.body;
   const userId = req.userId;
   const userAgent = req.headers["user-agent"];
-  console.log(userId);
 
   const pageColumns = {
     home: "home_page_views",
