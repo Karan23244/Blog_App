@@ -8,10 +8,11 @@ const postRoutes = require("./routes/posts");
 const categoryDataRoutes = require("./routes/categoryData");
 const subscribeRoutes = require("./routes/subscriber");
 const trackingRoutes = require("./routes/trackingRoutes.js");
-const cookieMiddleware = require("./middlewares/cookieMiddleware");
+
 const app = express();
 
 app.use(express.json());
+
 // Middleware
 const corsOptions = {
   origin: (origin, callback) => {
@@ -31,18 +32,15 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 app.use(cookieParser());
-app.use(cookieMiddleware);
 
+// Define routes
 app.use("/api/adminlogin", authRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/authors", authorRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/categoryData", categoryDataRoutes);
 app.use("/api/subscribe", subscribeRoutes);
-app.use("/api/track-page", trackingRoutes);
+app.use("/api/track-page", trackingRoutes); // Attach tracking routes
 
 module.exports = app;
-
-

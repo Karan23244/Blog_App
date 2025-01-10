@@ -382,7 +382,7 @@ exports.getTopReadsAndEditorsChoice = (req, res) => {
     SUM(pv.views) AS total_views
     FROM posts p
     JOIN post_views pv ON p.id = pv.post_id
-    WHERE pv.view_date >= CURDATE() - INTERVAL 1 DAY
+    WHERE pv.view_date >= CURDATE() - INTERVAL 7 DAY
     GROUP BY p.id
     ORDER BY total_views DESC;`;
 
