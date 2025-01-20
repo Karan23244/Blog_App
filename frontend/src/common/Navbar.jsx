@@ -203,7 +203,7 @@ function Navbar() {
                   />
                   <path
                     strokeLinecap="round"
-                    strokeLinejoin="round"
+                    strokeLinejoin="round"w
                     d="M21 21l-4.35-4.35"
                   />
                 </svg>

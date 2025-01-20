@@ -18,7 +18,6 @@ const CategoryPosts = () => {
           "Homimprovement offers cutting-edge smart home technology to elevate your lifestyle. Discover automation, security, and energy-saving solutions today!",
         keywords:
           "Smart Home Technology,Home Automation,Smart Home Solutions,Energy Efficiency,Home Security Systems,Smart Devices,IoT Home Technology,Home Improvement,Smart Living,Home Tech Innovations",
-        
       },
       "DIY Home Projects": {
         title: "Homimprovement: Easy DIY Home Projects to Enhance Your Home",
@@ -41,20 +40,21 @@ const CategoryPosts = () => {
         keywords:
           "Home Improvement,Home Renovation Tips,Home Maintenance,Outdoor Improvement,Home Decor Ideas",
       },
-      "Best": {
+      Best: {
         title: "Best Home Improvement Ideas for Every Space | Homimprovement",
         description:
           "Explore the best home improvement solutions, DIY tips, and renovation ideas for every space in your house. Homimprovement has you covered!",
         keywords:
           "Best home improvement ideas,Best home upgrades,Best budget home products, Best home improvement tips, Best home improvement projects, Best tools for DIY home improvement, Best home upgrades for resale value, Best home renovation ideas, Best living room decor upgrades, Best seasonal home maintenance tips",
       },
-      "VS": {
+      VS: {
         title: "Expert Tips and Comparisons for Home Improvement Versus",
         description:
           "Uncover the best home improvement strategies with Versus. Get expert comparisons and tips to elevate your living space today!",
-        keywords: "Home Improvement Versus, Product Versus, Traditional vs Modern Homes, DIY vs Professional Home Improvement, Renovation vs Remodeling, Interior Design vs Interior Decoration, Smart Home vs Regular Home",
+        keywords:
+          "Home Improvement Versus, Product Versus, Traditional vs Modern Homes, DIY vs Professional Home Improvement, Renovation vs Remodeling, Interior Design vs Interior Decoration, Smart Home vs Regular Home",
       },
-      "Reviews": {
+      Reviews: {
         title: "Discover Top Home Improvement Reviews at Homimprovement",
         description:
           "Looking for reliable home improvement reviews? Homimprovement provides expert insights to help you choose the right products for your home.",
@@ -89,12 +89,12 @@ const CategoryPosts = () => {
   const UpgradeYourselfUI = () => (
     <>
       <div
-        className="relative w-full lg:h-[200px] h-[150px] flex items-center justify-center"
+        className="flex items-center w-full bg-fixed"
         style={{
-          backgroundImage: `linear-gradient(90deg, #000025 0%, rgba(0, 0, 139, 0.3) 100%), url('./background.webp')`,
-          backgroundSize: "contain",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
+          backgroundImage: `url('./background.jpg')`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "contain", // Ensures the full image is shown
+          height: "450px", // Or use h-[450px] if you prefer Tailwind classes
         }}>
         <h1 className="lg:text-5xl text-xl font-semibold text-center text-white">
           {categoryName}
@@ -311,16 +311,10 @@ const CategoryPosts = () => {
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta property="og:title" content={title} />
-        <meta property="og:description" content= {description}/>
+        <meta property="og:description" content={description} />
         <meta property="og:type" content="Category Blogs" />
-        <meta
-          property="og:url"
-          content={`${import.meta.env.VITE_API_URL}`}
-        />
-        <link
-          rel="canonical"
-          href={`${import.meta.env.VITE_API_URL}`}
-        />
+        <meta property="og:url" content={`${import.meta.env.VITE_API_URL}`} />
+        <link rel="canonical" href={`${import.meta.env.VITE_API_URL}`} />
       </Helmet>
       {categoryType === "Upgrade Yourself" && <UpgradeYourselfUI />}
       {categoryType === "Home Insights" && <HomeInsightsUI />}
