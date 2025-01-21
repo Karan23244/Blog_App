@@ -19,6 +19,7 @@ const corsOptions = {
     const allowedOrigins = [
       "http://localhost:5173",
       "https://homimprovement.com",
+      "https://www.homimprovement.com/"
     ];
 
     // Allow requests from allowed origins
