@@ -90,93 +90,57 @@ function UserHome() {
           No matching blog posts found.
         </p>
       ) : (
-        <div className="flex flex-col lg:flex-row lg:justify-evenly gap-6 items-stretch h-full">
-          {/* Latest Blogs Section */}
-          <div className="flex flex-col lg:w-2/3 gap-4 h-full">
-            <h1 className="lg:text-2xl text-base font-semibold text-black">
-              Latest Blogs
+        <>
+          <div className="p-4">
+            <h1 className="lg:text-2xl text-center font-semibold text-black">
+              Homimprovement: Your Go-To Source for Home Improvement Tips
             </h1>
-            {posts && posts.length > 0 && (
-              <div className="relative overflow-hidden hover:shadow-md flex-grow">
-                <Link
-                  to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(
-                    posts[0]?.Custom_url
-                  )}`}
-                  className="block h-full">
-                  <div className="relative w-full lg:h-[350px] h-[200px]">
-                    <img
-                      src={
-                        posts[0]?.featured_image
-                          ? `${import.meta.env.VITE_API_URL}/${
-                              posts[0]?.featured_image
-                            }`
-                          : "https://via.placeholder.com/600x400.png?text=No+Image"
-                      }
-                      alt={posts[0]?.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-custom"></div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 text-white p-4 w-full">
-                    <h3 className="lg:text-2xl text-lg font-medium line-clamp-2">
-                      {posts[0]?.title}
-                    </h3>
-                    <p className="lg:text-sm text-xs mt-1 line-clamp-2">
-                      {posts[0]?.seoDescription}
-                    </p>
-                  </div>
-                </Link>
-              </div>
-            )}
-
-            {/* Smaller Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 flex-grow">
-              {posts.slice(1, 7).map((post) => (
-                <div
-                  key={post.id}
-                  className="overflow-hidden hover:shadow-md border border-gray-200 flex flex-col h-full">
-                  <img
-                    src={
-                      post?.featured_image
-                        ? `${import.meta.env.VITE_API_URL}/${
-                            post?.featured_image
-                          }`
-                        : "https://via.placeholder.com/300x200.png?text=No+Image"
-                    }
-                    alt={post?.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <div className="p-2 flex flex-col flex-grow">
-                    <h3 className="lg:text-base text-sm font-semibold line-clamp-2">
-                      {post?.title}
-                    </h3>
-                    <p className="lg:text-sm text-xs text-gray-600 line-clamp-2">
-                      {post?.seoDescription}
-                    </p>
-                    <Link
-                      to={`/${createSlug(post?.category_names[0])}/${createSlug(
-                        post?.Custom_url
-                      )}`}
-                      className="text-[#00008B] hover:underline inline-block mt-auto">
-                      Read More...
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
+          <div className="flex flex-col lg:flex-row lg:justify-evenly gap-6 items-stretch h-full">
+            {/* Latest Blogs Section */}
+            <div className="flex flex-col lg:w-2/3 gap-4 h-full">
+              <h1 className="lg:text-2xl text-base font-semibold text-black">
+                Latest Blogs
+              </h1>
+              {posts && posts.length > 0 && (
+                <div className="relative overflow-hidden hover:shadow-md flex-grow">
+                  <Link
+                    to={`/${createSlug(
+                      posts[0]?.category_names[0]
+                    )}/${createSlug(posts[0]?.Custom_url)}`}
+                    className="block h-full">
+                    <div className="relative w-full lg:h-[350px] h-[200px]">
+                      <img
+                        src={
+                          posts[0]?.featured_image
+                            ? `${import.meta.env.VITE_API_URL}/${
+                                posts[0]?.featured_image
+                              }`
+                            : "https://via.placeholder.com/600x400.png?text=No+Image"
+                        }
+                        alt={posts[0]?.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-custom"></div>
+                    </div>
+                    <div className="absolute bottom-0 left-0 text-white p-4 w-full">
+                      <h3 className="lg:text-2xl text-lg font-medium line-clamp-2">
+                        {posts[0]?.title}
+                      </h3>
+                      <p className="lg:text-sm text-xs mt-1 line-clamp-2">
+                        {posts[0]?.seoDescription}
+                      </p>
+                    </div>
+                  </Link>
+                </div>
+              )}
 
-          {/* Top Reads Section */}
-          <div className="lg:w-1/2 w-full flex flex-col gap-4 h-full">
-            <h2 className="lg:text-2xl text-base font-semibold mb-4 text-black">
-              Top Reads
-            </h2>
-            <div className="grid grid-cols-1 gap-4 h-full">
-              {topReads.slice(0, 7).map((post) => (
-                <div
-                  key={post.id}
-                  className="post-card flex flex-row gap-4 hover:shadow-md h-full">
-                  <div className="w-2/5">
+              {/* Smaller Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-4 flex-grow">
+                {posts.slice(1, 7).map((post) => (
+                  <div
+                    key={post.id}
+                    className="overflow-hidden hover:shadow-md border border-gray-200 flex flex-col h-full">
                     <img
                       src={
                         post?.featured_image
@@ -188,72 +152,115 @@ function UserHome() {
                       alt={post?.title}
                       className="w-full h-40 object-cover"
                     />
+                    <div className="p-2 flex flex-col flex-grow">
+                      <h3 className="lg:text-base text-sm font-semibold line-clamp-2">
+                        {post?.title}
+                      </h3>
+                      <p className="lg:text-sm text-xs text-gray-600 line-clamp-2">
+                        {post?.seoDescription}
+                      </p>
+                      <Link
+                        to={`/${createSlug(
+                          post?.category_names[0]
+                        )}/${createSlug(post?.Custom_url)}`}
+                        className="text-[#00008B] hover:underline inline-block mt-auto">
+                        Read More...
+                      </Link>
+                    </div>
                   </div>
-                  <div className="flex flex-col  w-3/5 h-full">
-                    <h3 className="lg:text-base text-sm font-semibold text-gray-800 line-clamp-3">
-                      {post?.title}
-                    </h3>
-                    <p className="lg:text-sm text-xs text-gray-600 line-clamp-2">
-                      {post?.seoDescription}
-                    </p>
-                    <Link
-                      to={`/${createSlug(
-                        posts[0]?.category_names[0]
-                      )}/${createSlug(post?.Custom_url)}`}
-                      className="mt-auto">
-                      <button className="lg:text-base text-sm text-white px-5 py-2 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">
-                        Read More
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Editor's Choice Section */}
-          <div className="lg:w-1/2 w-full flex flex-col gap-4 h-full">
-            <h3 className="text-2xl font-semibold mb-4 text-black">
-              Editor’s Choice
-            </h3>
-            <div className="grid grid-cols-2 gap-4 h-full">
-              {editorsChoice.slice(0, 8).map((post) => (
-                <div
-                  key={post.id}
-                  className="overflow-hidden hover:shadow-lg border border-gray-200 flex flex-col h-full">
-                  <img
-                    src={
-                      post?.featured_image
-                        ? `${import.meta.env.VITE_API_URL}/${
-                            post?.featured_image
-                          }`
-                        : "https://via.placeholder.com/300x200.png?text=No+Image"
-                    }
-                    alt={post?.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <div className="p-2 flex flex-col flex-grow">
-                    <h3 className="lg:text-base text-sm font-semibold text-gray-800 line-clamp-2">
-                      {post?.title}
-                    </h3>
-                    <p className="lg:text-sm text-xs text-gray-600 line-clamp-2">
-                      {post?.seoDescription}
-                    </p>
-                    <Link
-                      to={`/${createSlug(
-                        posts[0]?.category_names[0]
-                      )}/${createSlug(post?.Custom_url)}`}
-                      className="mt-auto">
-                      <button className="lg:text-base text-sm text-white px-4 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">
-                        Read More
-                      </button>
-                    </Link>
+            {/* Top Reads Section */}
+            <div className="lg:w-1/2 w-full flex flex-col gap-4 h-full">
+              <h2 className="lg:text-2xl text-base font-semibold mb-4 text-black">
+                Top Reads
+              </h2>
+              <div className="grid grid-cols-1 gap-4 h-full">
+                {topReads.slice(0, 7).map((post) => (
+                  <div
+                    key={post.id}
+                    className="post-card flex flex-row gap-4 hover:shadow-md h-full">
+                    <div className="w-2/5">
+                      <img
+                        src={
+                          post?.featured_image
+                            ? `${import.meta.env.VITE_API_URL}/${
+                                post?.featured_image
+                              }`
+                            : "https://via.placeholder.com/300x200.png?text=No+Image"
+                        }
+                        alt={post?.title}
+                        className="w-full h-40 object-cover"
+                      />
+                    </div>
+                    <div className="flex flex-col  w-3/5 h-full">
+                      <h3 className="lg:text-base text-sm font-semibold text-gray-800 line-clamp-3">
+                        {post?.title}
+                      </h3>
+                      <p className="lg:text-sm text-xs text-gray-600 line-clamp-2">
+                        {post?.seoDescription}
+                      </p>
+                      <Link
+                        to={`/${createSlug(
+                          posts[0]?.category_names[0]
+                        )}/${createSlug(post?.Custom_url)}`}
+                        className="mt-auto">
+                        <button className="lg:text-base text-sm text-white px-5 py-2 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">
+                          Read More
+                        </button>
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Editor's Choice Section */}
+            <div className="lg:w-1/2 w-full flex flex-col gap-4 h-full">
+              <h3 className="text-2xl font-semibold mb-4 text-black">
+                Editor’s Choice
+              </h3>
+              <div className="grid grid-cols-2 gap-4 h-full">
+                {editorsChoice.slice(0, 8).map((post) => (
+                  <div
+                    key={post.id}
+                    className="overflow-hidden hover:shadow-lg border border-gray-200 flex flex-col h-full">
+                    <img
+                      src={
+                        post?.featured_image
+                          ? `${import.meta.env.VITE_API_URL}/${
+                              post?.featured_image
+                            }`
+                          : "https://via.placeholder.com/300x200.png?text=No+Image"
+                      }
+                      alt={post?.title}
+                      className="w-full h-40 object-cover"
+                    />
+                    <div className="p-2 flex flex-col flex-grow">
+                      <h3 className="lg:text-base text-sm font-semibold text-gray-800 line-clamp-2">
+                        {post?.title}
+                      </h3>
+                      <p className="lg:text-sm text-xs text-gray-600 line-clamp-2">
+                        {post?.seoDescription}
+                      </p>
+                      <Link
+                        to={`/${createSlug(
+                          posts[0]?.category_names[0]
+                        )}/${createSlug(post?.Custom_url)}`}
+                        className="mt-auto">
+                        <button className="lg:text-base text-sm text-white px-4 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">
+                          Read More
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
       <div className="mt-8 md:mt-[5%]">
         <div className="text-xl md:text-5xl font-bold text-center px-4">
