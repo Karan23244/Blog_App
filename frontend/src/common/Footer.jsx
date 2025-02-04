@@ -26,14 +26,14 @@ function Footer() {
               className="flex items-center space-x-3 mb-4 cursor-pointer">
               <img src="/footerlogo.webp" alt="Logo" width={120} height={120} loading='lazy'/>
             </div>
-            <h1 className="lg:text-xl text-base font-bold text-center">
+            <h2 className="lg:text-xl text-base font-bold text-center">
               Inspiring Spaces for Life
-            </h1>
+            </h2>
           </div>
 
           <div className="lg:w-9/12 flex flex-col">
             <div>
-              <h1 className="lg:text-lg text-sm text-white text-center">
+              <h2 className="lg:text-lg text-sm text-white text-center">
                 HomImprovement is part of HomeMedia Group, the new generation of
                 digital publishers focused on delivering expert insight and
                 inspiration for all your home improvement needs. For more
@@ -42,7 +42,7 @@ function Footer() {
                   www.ClickOrbits.com{" "}
                 </a>
                  
-              </h1>
+              </h2>
             </div>
             <hr className="my-2 border-gray-500" />
             <div className="text-center">
@@ -79,10 +79,10 @@ function Footer() {
             </div>
             <hr className="my-2 border-gray-500" />
             <div className="lg:text-lg text-xs text-white text-center">
-              <h1>
+              <h2>
                 @ClickOrbitsPteLtd, 10 ANSON ROAD, #33-10, INTERNATIONAL PLAZA,
                 SINGAPORE (079903)
-              </h1>
+              </h2>
             </div>
           </div>
           {/* Footer Links Section */}

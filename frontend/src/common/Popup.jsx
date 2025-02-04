@@ -61,9 +61,9 @@ const SubscribePopup = () => {
               />
             </div>
             <div className="flex flex-col gap-4 sm:gap-8 items-start text-center sm:text-left">
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold">
                 Embark on a journey of transformation!
-              </h1>
+              </h2>
               <p className="text-sm sm:text-base lg:text-lg text-gray-600">
                 Join us for innovative home solutions that inspire, excite, and
                 redefine your living experience!
