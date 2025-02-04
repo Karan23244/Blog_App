@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import "../Admin/New_Post/styles.css";
 import CustomCarousel from "./CustomCrousel";
 import usePageTracker from "../../hooks/usePageTracker";
-import { Helmet } from "react-helmet-async";
 function UserHome() {
   usePageTracker("home");
   const [loading, setLoading] = useState(true);
@@ -292,27 +291,7 @@ function UserHome() {
           </CustomCarousel>
         </div>
       </div>
-
       <CategoryBlogs posts={posts} />
-      <Helmet>
-        <title>HomImprovement - Home</title>
-        <meta
-          name="description"
-          content="Discover expert home improvement tips, DIY projects, and renovation ideas at Homimprovement. Transform your space with our easy-to-follow guides!"
-        />
-        <meta name="keywords" content="Home improvement,DIY home projects,Home renovation tips,Interior design ideas,Home maintenance,Renovation guides,Home decor inspiration,Sustainable home improvements,Home improvement resources,Expert home advice" />
-        <meta property="og:title" content="HomImprovement - Home" />
-        <meta property="og:description" content= "Home improvement,DIY home projects,Home renovation tips,Interior design ideas,Home maintenance,Renovation guides,Home decor inspiration,Sustainable home improvements,Home improvement resources,Expert home advice"/>
-        <meta property="og:type" content="Homepage" />
-        <meta
-          property="og:url"
-          content={`${import.meta.env.VITE_API_URL}`}
-        />
-        <link
-          rel="canonical"
-          href={`${import.meta.env.VITE_API_URL}`}
-        />
-      </Helmet>
     </div>
   );
 }
