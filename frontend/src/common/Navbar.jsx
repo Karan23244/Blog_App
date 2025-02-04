@@ -177,9 +177,9 @@ function Navbar() {
             {/* Horizontal Divider */}
             <div className="w-[2px] h-12 bg-black"></div>
             <div>
-              <h1 className="lg:text-lg text-sm font-medium text-center">
+              <h2 className="lg:text-lg text-sm font-medium text-center">
                 Inspiring Spaces for Life
-              </h1>
+              </h2>
             </div>
           </div>
 
