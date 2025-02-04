@@ -81,6 +81,11 @@ function UserHome() {
 
   return (
     <div className="lg:px-10 lg:py-5 px-5 py-5">
+           <div className="p-4">
+            <h1 className="lg:text-2xl text-center font-semibold text-black">
+              Homimprovement: Your Go-To Source for Home Improvement Tips
+            </h1>
+          </div>
       {loading ? (
         <p className="text-gray-500 text-center h-screen">Loading...</p>
       ) : error ? (
@@ -91,11 +96,7 @@ function UserHome() {
         </p>
       ) : (
         <>
-          <div className="p-4">
-            <h1 className="lg:text-2xl text-center font-semibold text-black">
-              Homimprovement: Your Go-To Source for Home Improvement Tips
-            </h1>
-          </div>
+     
           <div className="flex flex-col lg:flex-row lg:justify-evenly gap-6 items-stretch h-full">
             {/* Latest Blogs Section */}
             <div className="flex flex-col lg:w-2/3 gap-4 h-full">
