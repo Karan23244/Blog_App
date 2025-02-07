@@ -37,7 +37,7 @@ const FullPost = () => {
     {
       id: "choose-the-best-roofing-materials",
       image: "/roofad.webp",
-      link: "https://go.tektrk.work/c/GUYDCNQ=/GIZTMOA=?sub1={click_id}&sub2={source}",
+      link: "https://tracking.clickorbits.in/click?campaign_id=6261&pub_id=579",
     },
   ];
   const adData = blogAds.find((blog) => blog.id === id_or_slug);
