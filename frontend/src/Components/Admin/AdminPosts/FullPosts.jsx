@@ -13,7 +13,34 @@ const FullPost = () => {
   const [activeSection, setActiveSection] = useState("");
   const [updatedContent, setUpdatedContent] = useState(null);
   const fetchedRef = useRef(false);
-  const specificBlogId = "interior-design-ideas-glass-mirrors";
+  const blogAds = [
+    {
+      id: "interior-design-ideas-glass-mirrors",
+      image: "/toptop_ad.webp",
+      link: "https://tracking.clickorbits.in/click?campaign_id=6221&pub_id=469&p1=click_id&source=hi",
+    },
+    {
+      id: "budget-friendly-window-and-door-renovation-ideas",
+      image: "/windowad.webp",
+      link: "https://tracking.clickorbits.in/click?campaign_id=6259&pub_id=579",
+    },
+    {
+      id: "test-the-changes",
+      image: "/solarad.webp",
+      link: "https://tracking.clickorbits.in/click?campaign_id=6258&pub_id=579",
+    },
+    {
+      id: "budget-friendly-diy-bathroom-makeover-ideas",
+      image: "/bathroomad.webp",
+      link: "https://tracking.clickorbits.in/click?campaign_id=6260&pub_id=579",
+    },
+    {
+      id: "choose-the-best-roofing-materials",
+      image: "/roofad.webp",
+      link: "https://go.tektrk.work/c/GUYDCNQ=/GIZTMOA=?sub1={click_id}&sub2={source}",
+    },
+  ];
+  const adData = blogAds.find((blog) => blog.id === id_or_slug);
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
@@ -165,7 +192,7 @@ const FullPost = () => {
 
       <div className="mx-auto px-4 lg:px-8 pt-16">
         {/* Main Layout */}
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row">
           {/* Sidebar for Table of Contents */}
           <aside className="hidden lg:block w-1/4 pr-8 ">
             <div className="sticky top-16 p-4 overflow-auto border-r-2 border-black h-screen">
@@ -211,13 +238,11 @@ const FullPost = () => {
               dangerouslySetInnerHTML={{ __html: updatedContent }}
             />
           </main>
-          {id_or_slug === specificBlogId && (
-            <aside className="hidden lg:block w-1/4 ">
+          {adData && (
+            <aside className="lg:w-1/4">
               <div className="sticky top-16 p-4 border m-4 overflow-auto h-screen">
-                <Link
-                  to="https://tracking.clickorbits.in/click?campaign_id=6221&pub_id=469&p1=click_id&source=hi"
-                  target="_blank">
-                  <img src="/toptop_ad.webp" alt="ad" />
+                <Link to={adData.link} target="_blank">
+                  <img src={adData.image} alt="ad" />
                 </Link>
               </div>
             </aside>
