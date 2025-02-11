@@ -25,7 +25,7 @@ const FullPost = () => {
       link: "https://tracking.clickorbits.in/click?campaign_id=6259&pub_id=579",
     },
     {
-      id: "test-the-changes",
+      id: "homeowners-guide-to-going-solar",
       image: "/solarad.webp",
       link: "https://tracking.clickorbits.in/click?campaign_id=6258&pub_id=579",
     },
@@ -240,7 +240,7 @@ const FullPost = () => {
           </main>
           {adData && (
             <aside className="lg:w-1/4">
-              <div className="sticky top-16 p-4 border m-4 overflow-auto h-screen">
+              <div className="sticky top-16 p-4 border m-4 overflow-auto lg:h-screen">
                 <Link to={adData.link} target="_blank">
                   <img src={adData.image} alt="ad" />
                 </Link>
