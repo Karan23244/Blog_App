@@ -101,8 +101,6 @@
     font-size: 0.85rem;
     line-height: 1.4;
     text-align: justify;
-    white-space: pre-wrap !important;
-    padding-bottom: 30px !important;
   }
   .custom-html ul {
     padding-left: 20px;
