@@ -76,7 +76,8 @@ const generateSitemap = async () => {
   const query = `
     SELECT posts.Custom_url, posts.created_at, categories.category_name 
     FROM posts
-    JOIN categories ON JSON_CONTAINS(posts.category_id, JSON_QUOTE(CAST(categories.category_id AS CHAR)))
+    JOIN categories 
+    ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
     WHERE posts.blog_type = 'published'
   `;
 
@@ -97,7 +98,9 @@ const generateSitemap = async () => {
         if (parsedData.urlset.url) {
           existingUrls = parsedData.urlset.url.map((urlObj) => ({
             loc: urlObj.loc[0],
-            lastmod: urlObj.lastmod ? urlObj.lastmod[0] : new Date().toISOString(),
+            lastmod: urlObj.lastmod
+              ? urlObj.lastmod[0]
+              : new Date().toISOString(),
             changefreq: urlObj.changefreq ? urlObj.changefreq[0] : "weekly",
             priority: urlObj.priority ? urlObj.priority[0] : "0.5",
           }));
@@ -109,7 +112,9 @@ const generateSitemap = async () => {
 
     // Generate new dynamic URLs from database
     const newUrls = results.map((post) => {
-      const categorySlug = post.category_name.toLowerCase().replace(/\s+/g, "-");
+      const categorySlug = post.category_name
+        .toLowerCase()
+        .replace(/\s+/g, "-");
       const urlSlug = post.Custom_url.toLowerCase().replace(/\s+/g, "-");
       return {
         loc: `${baseUrl}/${categorySlug}/${urlSlug}`,
@@ -120,16 +125,23 @@ const generateSitemap = async () => {
     });
 
     // Separate static URLs from dynamic ones
-    const staticUrls = existingUrls.filter(url => !url.loc.startsWith(baseUrl + "/"));
+    const staticUrls = existingUrls.filter(
+      (url) => !url.loc.startsWith(baseUrl + "/")
+    );
 
     // Merge dynamic URLs: update existing ones and remove outdated ones
     const finalDynamicUrls = existingUrls
-      .filter(existing => newUrls.some(newUrl => newUrl.loc === existing.loc)) // Keep existing if still valid
-      .map(existing => newUrls.find(newUrl => newUrl.loc === existing.loc) || existing); // Update properties if needed
+      .filter((existing) =>
+        newUrls.some((newUrl) => newUrl.loc === existing.loc)
+      ) // Keep existing if still valid
+      .map(
+        (existing) =>
+          newUrls.find((newUrl) => newUrl.loc === existing.loc) || existing
+      ); // Update properties if needed
 
     // Add new URLs that don’t exist in the file yet
     newUrls.forEach((newUrl) => {
-      if (!finalDynamicUrls.some(existing => existing.loc === newUrl.loc)) {
+      if (!finalDynamicUrls.some((existing) => existing.loc === newUrl.loc)) {
         finalDynamicUrls.push(newUrl);
       }
     });
@@ -173,7 +185,6 @@ exports.createPost = (req, res) => {
     scheduleDate,
     ad_url,
   } = req.body;
-  console.log(Custom_url, ad_url)
   // If scheduleDate is 'null' (string), set it to actual null
   const processedScheduleDate = scheduleDate === "null" ? null : scheduleDate;
   const featuredImage = req.files?.featuredImage
@@ -196,7 +207,6 @@ exports.createPost = (req, res) => {
         processedScheduleDate ? ", ?" : ""
       })
     `;
-    console.log(query);
     const queryParams = [
       title,
       content,
@@ -389,8 +399,6 @@ exports.updatePost = (req, res) => {
     scheduleDate,
     ad_url,
   } = req.body;
-  console.log(Custom_url, "custom url")
-  console.log(ad_url, "ad url")
   const newImagePath = req.files?.featuredImage
     ? `uploads/${req.files.featuredImage[0].filename}`
     : null;
@@ -439,7 +447,6 @@ exports.updatePost = (req, res) => {
         processedScheduleDate ? ", scheduleDate = ?" : ""
       }
     `;
-    console.log(query)
     const queryParams = [
       title,
       processedContent,
