@@ -18,12 +18,14 @@ function NewPost() {
     author: "",
     seoTitle: "",
     seoDescription: "",
+    ad_url: "",
     Custom_url: "",
     scheduleDate: "",
   });
   const [categories, setCategories] = useState([]);
   const [authors, setAuthors] = useState([]);
   const [featuredImage, setFeaturedImage] = useState(null);
+  const [AdImage, setAdImage] = useState(null);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [startDate, setStartDate] = useState(new Date());
@@ -42,7 +44,6 @@ function NewPost() {
             `${import.meta.env.VITE_API_URL}/api/posts/editData/${id}`
           );
           const post = postResponse.data.data;
-
           const replaceImageUrls = (content) => {
             const baseUrl = `${import.meta.env.VITE_API_URL}`; // Correct base URL
 
@@ -80,12 +81,19 @@ function NewPost() {
             seoDescription: post.seoDescription || "",
             seoTitle: post.seoTitle || "",
             Custom_url: post.Custom_url || "",
+            ad_url: post.ad_url || "",
           });
           setTags(post.tags?.split(",") || []);
           const imageUrl = post.featured_image
             ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
             : "";
+
+          const AdimageUrl = post.AdImage
+            ? `${import.meta.env.VITE_API_URL}/${post.AdImage}`
+            : "";
+
           setFeaturedImage(imageUrl || null);
+          setAdImage(AdimageUrl || null);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -111,11 +119,15 @@ function NewPost() {
     formData.append("author", postDetails.author);
     formData.append("seoTitle", postDetails.seoTitle);
     formData.append("seoDescription", postDetails.seoDescription);
+    formData.append("ad_url", postDetails.ad_url);
     formData.append("Custom_url", postDetails.Custom_url);
     formData.append(
       "scheduleDate",
       postDetails.scheduleDate ? postDetails.scheduleDate : ""
     );
+    if (AdImage && typeof AdImage !== "string") {
+      formData.append("AdImage", AdImage);
+    }
     if (featuredImage && typeof featuredImage !== "string") {
       formData.append("featuredImage", featuredImage);
     }
@@ -196,9 +208,11 @@ function NewPost() {
         seoDescription: "",
         Custom_url: "",
         scheduleDate: "",
+        ad_url: "",
       });
       setTags([]);
       setFeaturedImage(null);
+      setAdImage(null);
     } catch (error) {
       console.error("Error saving post:", error);
       alert("Error saving post");
@@ -217,6 +231,8 @@ function NewPost() {
           authors={authors}
           featuredImage={featuredImage}
           setFeaturedImage={setFeaturedImage}
+          AdImage={AdImage}
+          setAdImage={setAdImage}
           tags={tags}
           setTags={setTags}
           tagInput={tagInput}
@@ -246,6 +262,8 @@ const Sidebar = memo(
     authors,
     featuredImage,
     setFeaturedImage,
+    AdImage,
+    setAdImage,
     tags,
     setTags,
     tagInput,
@@ -258,6 +276,7 @@ const Sidebar = memo(
         featuredImage={featuredImage}
         setFeaturedImage={setFeaturedImage}
       />
+      <AdImageUploader AdImage={AdImage} setAdImage={setAdImage} />
       <PublishStatus
         postDetails={postDetails}
         setPostDetails={setPostDetails}
@@ -356,6 +375,20 @@ const ContentEditor = memo(
         />
       </div>
       <div className="mb-4">
+        <label className="block text-gray-700" htmlFor="title">
+          Ad URL
+        </label>
+        <input
+          type="text"
+          name="ad_url"
+          value={postDetails.ad_url}
+          onChange={handleInputChange}
+          className="w-full p-2 mt-2 border border-gray-300 rounded"
+          required
+          placeholder="Enter ad_url"
+        />
+      </div>
+      <div className="mb-4">
         <label className="block text-gray-700">Content</label>
         <Editor
           value={postDetails.content}
@@ -395,6 +428,47 @@ const ImageUploader = memo(({ featuredImage, setFeaturedImage }) => (
     )}
   </div>
 ));
+
+const AdImageUploader = memo(({ AdImage, setAdImage }) => {
+  const handleFileChange = (e) => {
+    if (e.target.files[0]) {
+      setAdImage(e.target.files[0]);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setAdImage(null);
+  };
+
+  return (
+    <div className="mt-4">
+      <label className="block text-gray-700">Ad Image</label>
+      <input
+        type="file"
+        onChange={handleFileChange}
+        className="w-full mt-2 p-2 border border-gray-300 rounded"
+      />
+      {AdImage && (
+        <div className="relative mt-4">
+          <img
+            src={
+              typeof AdImage === "string"
+                ? AdImage
+                : URL.createObjectURL(AdImage)
+            }
+            alt="Ad"
+            className="w-full h-40 object-cover rounded"
+          />
+          <button
+            onClick={handleRemoveImage}
+            className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full text-xs">
+            ✕
+          </button>
+        </div>
+      )}
+    </div>
+  );
+});
 
 const PublishStatus = memo(({ postDetails, setPostDetails }) => (
   <div className="mt-4">

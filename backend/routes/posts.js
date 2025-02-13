@@ -15,13 +15,26 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
-router.post('/', upload.single('featuredImage'), createPost); 
+router.post('/', 
+  upload.fields([
+    { name: 'featuredImage', maxCount: 1 }, 
+    { name: 'AdImage', maxCount: 1 }
+  ]), 
+  createPost
+);
+
 router.get("/", getAllPosts);
 router.get("/topReadsAndEditorsChoice", getTopReadsAndEditorsChoice);
 router.get("/:id_or_slug", getPostData);
-router.get("/editData/:id",getEditPostData)
-router.delete("/:id",deletePost)
-router.put('/:id', upload.single('featuredImage'), updatePost);
+router.get("/editData/:id", getEditPostData);
+router.delete("/:id", deletePost);
+router.put('/:id', 
+  upload.fields([
+    { name: 'featuredImage', maxCount: 1 }, 
+    { name: 'AdImage', maxCount: 1 }
+  ]), 
+  updatePost
+);
 
 
 

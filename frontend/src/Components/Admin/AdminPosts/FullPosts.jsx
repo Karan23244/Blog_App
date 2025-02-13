@@ -139,8 +139,12 @@ const FullPost = () => {
   const imageUrl = post.featured_image
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "";
-
+    const adimageUrl = post.AdImage
+    ? `${import.meta.env.VITE_API_URL}/${post.AdImage}`
+    : "";
   const postSlug = createSlug(post.Custom_url);
+  //current url
+  const currentUrl = window.location.href;
   return (
     <>
       <Helmet>
@@ -152,11 +156,11 @@ const FullPost = () => {
         <meta property="og:type" content="article" />
         <meta
           property="og:url"
-          content={`${import.meta.env.VITE_API_URL}/${postSlug}`}
+          content={currentUrl}
         />
         <link
           rel="canonical"
-          href={`${import.meta.env.VITE_API_URL}/${postSlug}`}
+          href={currentUrl}
         />
       </Helmet>
       <div
@@ -243,6 +247,15 @@ const FullPost = () => {
               <div className="sticky top-16 p-4 border m-4 overflow-auto lg:h-screen">
                 <Link to={adData.link} target="_blank">
                   <img src={adData.image} alt="ad" />
+                </Link>
+              </div>
+            </aside>
+          )}
+          {post.AdImage && (
+            <aside className="lg:w-1/4">
+              <div className="sticky top-16 p-4 border m-4 overflow-auto lg:h-screen">
+                <Link to={post.ad_url} target="_blank">
+                  <img src={adimageUrl} alt="ad" />
                 </Link>
               </div>
             </aside>

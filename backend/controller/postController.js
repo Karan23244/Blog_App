@@ -79,25 +79,29 @@ exports.createPost = (req, res) => {
     seoDescription,
     Custom_url,
     scheduleDate,
+    ad_url
   } = req.body;
   // If scheduleDate is 'null' (string), set it to actual null
   const processedScheduleDate = scheduleDate === "null" ? null : scheduleDate;
-  const featuredImage = req.file ? `uploads/${req.file.filename}` : null;
+  const featuredImage = req.files?.featuredImage ? `uploads/${req.files.featuredImage[0].filename}` : null;
+  const AdImage = req.files?.AdImage ? `uploads/${req.files.AdImage[0].filename}` : null;
+
   try {
     // Process content to save images and replace base64
     const content = saveImages(rawContent);
 
     let query = `
       INSERT INTO posts 
-      (title, content, featured_image, blog_type, author_id, category_id, tags, seoTitle, seoDescription, Custom_url${
+      (title, content, featured_image, AdImage, blog_type, author_id, category_id, tags, ad_url, seoTitle, seoDescription, Custom_url${
         processedScheduleDate ? ", scheduleDate" : ""
       }) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?${processedScheduleDate ? ", ?" : ""})
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${processedScheduleDate ? ", ?" : ""})
     `;
     const queryParams = [
       title,
       content,
       featuredImage,
+      AdImage,
       blogType,
       author,
       category ? JSON.stringify(category) : null,
@@ -105,6 +109,7 @@ exports.createPost = (req, res) => {
       seoTitle,
       seoDescription,
       Custom_url,
+      ad_url,
       ...(processedScheduleDate ? [processedScheduleDate] : []),
     ];
 
@@ -204,6 +209,8 @@ ON DUPLICATE KEY UPDATE views = views + 1;
           posts.scheduleDate,
           posts.Custom_url,
           posts.created_at,
+          posts.ad_url,
+          posts.AdImage,
           authors.full_name AS author_name,
           COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
         FROM posts
@@ -280,8 +287,11 @@ exports.updatePost = (req, res) => {
     seoDescription,
     Custom_url,
     scheduleDate,
+    ad_url,
   } = req.body;
-  const newImagePath = req.file ? `uploads/${req.file.filename}` : null;
+  const newImagePath = req.files?.featuredImage ? `uploads/${req.files.featuredImage[0].filename}` : null;
+  const newAdImagePath = req.files?.AdImage ? `uploads/${req.files.AdImage[0].filename}` : null;
+
   // If scheduleDate is 'null' (string), set it to actual null
   const processedScheduleDate = scheduleDate === "null" ? null : scheduleDate;
   const saveImages = (htmlContent) => {
@@ -319,7 +329,7 @@ exports.updatePost = (req, res) => {
     // Prepare query to conditionally include scheduleDate
     let query = `
       UPDATE posts 
-      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, Custom_url = ?${
+      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, ad_url = ?, Custom_url = ?${
         processedScheduleDate ? ", scheduleDate = ?" : ""
       }
     `;
@@ -333,6 +343,7 @@ exports.updatePost = (req, res) => {
       seoTitle,
       seoDescription,
       Custom_url,
+      ad_url,
       ...(processedScheduleDate ? [processedScheduleDate] : []),
     ];
 
@@ -340,7 +351,10 @@ exports.updatePost = (req, res) => {
       query += `, featured_image = ?`;
       queryParams.push(newImagePath);
     }
-
+    if (newImagePath) {
+      query += `, AdImage = ?`;
+      queryParams.push(newAdImagePath);
+    }
     query += ` WHERE id = ?`;
     queryParams.push(id);
     // Execute query
