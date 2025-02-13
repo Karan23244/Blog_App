@@ -4,6 +4,7 @@ const path = require("path");
 const cron = require("node-cron");
 const moment = require("moment");
 const { parseStringPromise } = require("xml2js");
+const { log } = require("console");
 // Helper function for sending responses
 const sendResponse = (res, statusCode, message, data = null) => {
   const response = { message };
@@ -172,6 +173,7 @@ exports.createPost = (req, res) => {
     scheduleDate,
     ad_url,
   } = req.body;
+  console.log(Custom_url, ad_url)
   // If scheduleDate is 'null' (string), set it to actual null
   const processedScheduleDate = scheduleDate === "null" ? null : scheduleDate;
   const featuredImage = req.files?.featuredImage
@@ -194,6 +196,7 @@ exports.createPost = (req, res) => {
         processedScheduleDate ? ", ?" : ""
       })
     `;
+    console.log(query);
     const queryParams = [
       title,
       content,
@@ -386,6 +389,8 @@ exports.updatePost = (req, res) => {
     scheduleDate,
     ad_url,
   } = req.body;
+  console.log(Custom_url, "custom url")
+  console.log(ad_url, "ad url")
   const newImagePath = req.files?.featuredImage
     ? `uploads/${req.files.featuredImage[0].filename}`
     : null;
@@ -434,6 +439,7 @@ exports.updatePost = (req, res) => {
         processedScheduleDate ? ", scheduleDate = ?" : ""
       }
     `;
+    console.log(query)
     const queryParams = [
       title,
       processedContent,
@@ -443,8 +449,8 @@ exports.updatePost = (req, res) => {
       tags ? JSON.stringify(tags) : null,
       seoTitle,
       seoDescription,
-      Custom_url,
       ad_url,
+      Custom_url,
       ...(processedScheduleDate ? [processedScheduleDate] : []),
     ];
 
