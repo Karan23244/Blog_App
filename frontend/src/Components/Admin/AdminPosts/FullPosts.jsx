@@ -6,7 +6,7 @@ import "../New_Post/styles.css";
 import usePageTracker from "../../../hooks/usePageTracker";
 const FullPost = () => {
   usePageTracker("blogs");
-  const { id_or_slug } = useParams();
+  const { param2 } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const [toc, setToc] = useState([]);
@@ -40,7 +40,7 @@ const FullPost = () => {
       link: "https://tracking.clickorbits.in/click?campaign_id=6261&pub_id=579",
     },
   ];
-  const adData = blogAds.find((blog) => blog.id === id_or_slug);
+  const adData = blogAds.find((blog) => blog.id === param2);
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
@@ -50,7 +50,7 @@ const FullPost = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/posts/${id_or_slug}`,
+          `${import.meta.env.VITE_API_URL}/api/posts/${param2}`,
           { withCredentials: true }
         );
         setPost(response.data.data);
@@ -61,7 +61,7 @@ const FullPost = () => {
     };
 
     fetchPost();
-  }, [id_or_slug]);
+  }, [param2]);
 
   useEffect(() => {
     if (post) {
@@ -139,7 +139,7 @@ const FullPost = () => {
   const imageUrl = post.featured_image
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "";
-    const adimageUrl = post.AdImage
+  const adimageUrl = post.AdImage
     ? `${import.meta.env.VITE_API_URL}/${post.AdImage}`
     : "";
   const postSlug = createSlug(post.Custom_url);
@@ -154,14 +154,8 @@ const FullPost = () => {
         <meta property="og:description" content={post.seoDescription || ""} />
         <meta property="og:image" content={imageUrl} />
         <meta property="og:type" content="article" />
-        <meta
-          property="og:url"
-          content={currentUrl}
-        />
-        <link
-          rel="canonical"
-          href={currentUrl}
-        />
+        <meta property="og:url" content={currentUrl} />
+        <link rel="canonical" href={currentUrl} />
       </Helmet>
       <div
         className="bg-white bg-cover bg-center h-[400px] rounded-lg relative"

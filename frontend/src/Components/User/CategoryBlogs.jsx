@@ -6,8 +6,10 @@ import { Helmet } from "react-helmet-async";
 
 const CategoryPosts = () => {
   usePageTracker("category");
-  const { posts, loading, error, categoryName, categoryType } =
-    usePostsByCategory();
+  const { posts, loading, error, categoryName, categoryType } = usePostsByCategory();
+
+  const modifiedCategoryName =
+  categoryName?.trim().toLowerCase() === "how to" ? "How To ?" : categoryName;
 
   // Function to fetch SEO data based on category name
   const getSeoDetails = (category) => {
@@ -18,7 +20,6 @@ const CategoryPosts = () => {
           "Homimprovement offers cutting-edge smart home technology to elevate your lifestyle. Discover automation, security, and energy-saving solutions today!",
         keywords:
           "Smart Home Technology,Home Automation,Smart Home Solutions,Energy Efficiency,Home Security Systems,Smart Devices,IoT Home Technology,Home Improvement,Smart Living,Home Tech Innovations",
-        
       },
       "DIY Home Projects": {
         title: "Homimprovement: Easy DIY Home Projects to Enhance Your Home",
@@ -41,20 +42,21 @@ const CategoryPosts = () => {
         keywords:
           "Home Improvement,Home Renovation Tips,Home Maintenance,Outdoor Improvement,Home Decor Ideas",
       },
-      "Best": {
+      Best: {
         title: "Best Home Improvement Ideas for Every Space | Homimprovement",
         description:
           "Explore the best home improvement solutions, DIY tips, and renovation ideas for every space in your house. Homimprovement has you covered!",
         keywords:
           "Best home improvement ideas,Best home upgrades,Best budget home products, Best home improvement tips, Best home improvement projects, Best tools for DIY home improvement, Best home upgrades for resale value, Best home renovation ideas, Best living room decor upgrades, Best seasonal home maintenance tips",
       },
-      "VS": {
+      VS: {
         title: "Expert Tips and Comparisons for Home Improvement Versus",
         description:
           "Uncover the best home improvement strategies with Versus. Get expert comparisons and tips to elevate your living space today!",
-        keywords: "Home Improvement Versus, Product Versus, Traditional vs Modern Homes, DIY vs Professional Home Improvement, Renovation vs Remodeling, Interior Design vs Interior Decoration, Smart Home vs Regular Home",
+        keywords:
+          "Home Improvement Versus, Product Versus, Traditional vs Modern Homes, DIY vs Professional Home Improvement, Renovation vs Remodeling, Interior Design vs Interior Decoration, Smart Home vs Regular Home",
       },
-      "Reviews": {
+      Reviews: {
         title: "Discover Top Home Improvement Reviews at Homimprovement",
         description:
           "Looking for reliable home improvement reviews? Homimprovement provides expert insights to help you choose the right products for your home.",
@@ -72,7 +74,7 @@ const CategoryPosts = () => {
       }
     );
   };
-  const { title, description, keywords } = getSeoDetails(categoryName);
+  const { title, description, keywords } = getSeoDetails(modifiedCategoryName);
   if (loading)
     return <div className="text-gray-500 text-center h-screen">Loading...</div>;
   if (error)
@@ -97,7 +99,7 @@ const CategoryPosts = () => {
           backgroundAttachment: "fixed",
         }}>
         <h1 className="lg:text-5xl text-xl font-semibold text-center text-white">
-          {categoryName}
+          {modifiedCategoryName}
         </h1>
       </div>
       <div className="lg:px-[15%] lg:py-[2%] px-[2%] py-[2%] bg-[#00008B] bg-opacity-30">
@@ -174,7 +176,7 @@ const CategoryPosts = () => {
       {/* Category Title Section */}
       <div className="relative w-full lg:h-[150px] h-[100px] bg-cover bg-center flex items-center justify-center">
         <h1 className="lg:text-5xl text-xl font-semibold text-center text-black">
-          {categoryName}
+          {modifiedCategoryName}
         </h1>
       </div>
 
@@ -182,7 +184,7 @@ const CategoryPosts = () => {
       <div className="lg:mx-[10%] mx-[2%]">
         <div className="mb-5">
           <h2 className="lg:text-3xl text-xl font-semibold text-left text-black underline">
-            Latest about {categoryName}
+            Latest about {modifiedCategoryName}
           </h2>
         </div>
 
@@ -311,16 +313,10 @@ const CategoryPosts = () => {
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta property="og:title" content={title} />
-        <meta property="og:description" content= {description}/>
+        <meta property="og:description" content={description} />
         <meta property="og:type" content="Category Blogs" />
-        <meta
-          property="og:url"
-          content={`${import.meta.env.VITE_API_URL}`}
-        />
-        <link
-          rel="canonical"
-          href={`${import.meta.env.VITE_API_URL}`}
-        />
+        <meta property="og:url" content={`${import.meta.env.VITE_API_URL}`} />
+        <link rel="canonical" href={`${import.meta.env.VITE_API_URL}`} />
       </Helmet>
       {categoryType === "Upgrade Yourself" && <UpgradeYourselfUI />}
       {categoryType === "Home Insights" && <HomeInsightsUI />}

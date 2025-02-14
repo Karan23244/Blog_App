@@ -200,7 +200,7 @@ exports.createPost = (req, res) => {
 
     let query = `
       INSERT INTO posts 
-      (title, content, featured_image, AdImage, blog_type, author_id, category_id, tags, ad_url, seoTitle, seoDescription, Custom_url${
+      (title, content, featured_image, AdImage, blog_type, author_id, category_id, tags, seoTitle, seoDescription, ad_url, Custom_url${
         processedScheduleDate ? ", scheduleDate" : ""
       }) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${
@@ -218,8 +218,8 @@ exports.createPost = (req, res) => {
       tags ? JSON.stringify(tags) : null,
       seoTitle,
       seoDescription,
-      Custom_url,
       ad_url,
+      Custom_url,
       ...(processedScheduleDate ? [processedScheduleDate] : []),
     ];
 
@@ -272,7 +272,7 @@ exports.getAllPosts = (req, res) => {
 // Fetch a single post by ID
 exports.getPostData = (req, res) => {
   // Ensure the rawId is the full string from the URL (e.g., 'beginner-friendly-diy-home-improvement-project')
-  const rawId = req.params.id_or_slug.replace(/-/g, " "); // Remove hyphens from the URL ID
+  const rawId = req.params.param2.replace(/-/g, " "); // Remove hyphens from the URL ID
   const userId = req.cookies.userId;
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
