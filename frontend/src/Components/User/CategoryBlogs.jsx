@@ -11,6 +11,7 @@ const CategoryPosts = () => {
   const modifiedCategoryName =
   categoryName?.trim().toLowerCase() === "how to" ? "How To ?" : categoryName;
 
+  const currentUrl = window.location.href;
   // Function to fetch SEO data based on category name
   const getSeoDetails = (category) => {
     const seoData = {
@@ -314,9 +315,9 @@ const CategoryPosts = () => {
         <meta name="keywords" content={keywords} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:type" content="Category Blogs" />
-        <meta property="og:url" content={`${import.meta.env.VITE_API_URL}`} />
-        <link rel="canonical" href={`${import.meta.env.VITE_API_URL}`} />
+        <meta property="og:type" content="Category Page" />
+        <meta property="og:url" content={`${currentUrl}`} />
+        <link rel="canonical" href={`${currentUrl}`} />
       </Helmet>
       {categoryType === "Upgrade Yourself" && <UpgradeYourselfUI />}
       {categoryType === "Home Insights" && <HomeInsightsUI />}

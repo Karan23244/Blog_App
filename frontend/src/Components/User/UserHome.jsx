@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../Admin/New_Post/styles.css";
 import CustomCarousel from "./CustomCrousel";
 import usePageTracker from "../../hooks/usePageTracker";
+import { Helmet } from "react-helmet-async";
 function UserHome() {
   usePageTracker("home");
   const [loading, setLoading] = useState(true);
@@ -11,6 +12,8 @@ function UserHome() {
   const [topReads, setTopReads] = useState([]);
   const [editorsChoice, setEditorsChoice] = useState([]);
   const [imagePreloaded, setImagePreloaded] = useState(false);
+
+
   //preload Image
   const preloadLCPImage = (url) => {
     const link = document.createElement("link");
@@ -80,6 +83,23 @@ function UserHome() {
   }, [posts, imagePreloaded]);
 
   return (
+    <>
+      <Helmet>
+      <title>Homimprovement: Your Go-To Source for Home Improvement Tips</title>
+      <meta
+        name="description"
+        content="Discover expert home improvement tips, DIY projects, and renovation ideas at Homimprovement. Transform your space with our easy-to-follow guides!"
+      />
+      <meta
+        name="keywords"
+        content="Home improvement,DIY home projects,Home renovation tips,Interior design ideas,Home maintenance,Renovation guides,Home decor inspiration,Sustainable home improvements,Home improvement resources,Expert home advice"
+      />
+      <meta property="og:title" content="Homimprovement: Your Go-To Source for Home Improvement Tips" />
+      <meta property="og:description" content="Discover expert home improvement tips, DIY projects, and renovation ideas at Homimprovement. Transform your space with our easy-to-follow guides!" />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://homimprovement.com" />
+      <link rel="canonical" href="https://homimprovement.com" />
+    </Helmet>
     <div className="lg:px-10 lg:py-5 px-5 py-5">
       {loading ? (
         <p className="text-gray-500 text-center h-screen">Loading...</p>
@@ -270,6 +290,13 @@ function UserHome() {
         </div>
         <div>
           <CustomCarousel>
+          <video
+              autoPlay
+              muted
+              loop
+              className="h-[50vh] md:h-[70vh] w-full object-cover">
+              <source src="/vid4.mp4" />
+            </video>
             <video
               autoPlay
               muted
@@ -296,6 +323,7 @@ function UserHome() {
       </div>
       <CategoryBlogs posts={posts} />
     </div>
+    </>
   );
 }
 
