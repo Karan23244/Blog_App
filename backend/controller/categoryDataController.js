@@ -53,7 +53,7 @@ exports.getPostsByCategory = (req, res) => {
       const categoryId = categoryResult[0].category_id;
       // Now, fetch published posts linked to this category_id
       const postsQuery = `
-    SELECT 
+   SELECT 
       posts.id,
       posts.title,
       posts.content,
@@ -67,12 +67,13 @@ exports.getPostsByCategory = (req, res) => {
       authors.full_name AS author_name,
       COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names,
       COALESCE(JSON_ARRAYAGG(categories.category_type), JSON_ARRAY()) AS category_types
-    FROM posts
-    LEFT JOIN authors ON posts.author_id = authors.author_id
-    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-    WHERE FIND_IN_SET(?, REPLACE(posts.category_id, '"', ''))
-    GROUP BY posts.id
-    ORDER BY posts.created_at DESC;
+FROM posts
+LEFT JOIN authors ON posts.author_id = authors.author_id
+LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+WHERE posts.blog_type = 'published' 
+  AND FIND_IN_SET(?, REPLACE(posts.category_id, '"', ''))
+GROUP BY posts.id
+ORDER BY posts.created_at DESC;
   `;
 
       db.query(postsQuery, [categoryId], (err, postsResult) => {
