@@ -36,28 +36,28 @@ const CategoryPosts = () => {
         keywords:
           "Interior Design Trends,Modern Home Decor,Home Improvement Ideas,Interior Design Inspiration,Latest Design Styles,Home Decor Tips,Contemporary Interior Design,Stylish Home Makeovers,Interior Design Ideas,Home Renovation Trends",
       },
-      "How to ?": {
+      "How To": {
         title: "Home Improvement Made Easy: Step-by-Step Guides",
         description:
           "Discover practical home improvement tips to enhance your living space. Transform your home with our easy-to-follow guides!",
         keywords:
           "Home Improvement,Home Renovation Tips,Home Maintenance,Outdoor Improvement,Home Decor Ideas",
       },
-      Best: {
+      "Best": {
         title: "Best Home Improvement Ideas for Every Space | Homimprovement",
         description:
           "Explore the best home improvement solutions, DIY tips, and renovation ideas for every space in your house. Homimprovement has you covered!",
         keywords:
           "Best home improvement ideas,Best home upgrades,Best budget home products, Best home improvement tips, Best home improvement projects, Best tools for DIY home improvement, Best home upgrades for resale value, Best home renovation ideas, Best living room decor upgrades, Best seasonal home maintenance tips",
       },
-      VS: {
+      "VS": {
         title: "Expert Tips and Comparisons for Home Improvement Versus",
         description:
           "Uncover the best home improvement strategies with Versus. Get expert comparisons and tips to elevate your living space today!",
         keywords:
           "Home Improvement Versus, Product Versus, Traditional vs Modern Homes, DIY vs Professional Home Improvement, Renovation vs Remodeling, Interior Design vs Interior Decoration, Smart Home vs Regular Home",
       },
-      Reviews: {
+      "Reviews": {
         title: "Discover Top Home Improvement Reviews at Homimprovement",
         description:
           "Looking for reliable home improvement reviews? Homimprovement provides expert insights to help you choose the right products for your home.",
