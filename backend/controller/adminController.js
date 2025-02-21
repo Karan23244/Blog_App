@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 const JWT_SECRET = "secret_key";
-
+// admin login api
 exports.adminLogin = (req, res) => {
   const { username, password } = req.body;
   const adminQuery = "SELECT * FROM admin WHERE username = ?";
@@ -18,26 +18,3 @@ exports.adminLogin = (req, res) => {
     return res.json({ user: { id: admin.id, name: admin.name }, role: "admin", token });
   });
 };
-
-// exports.login = (req,res) =>{
-
-// }
-
-// exports.signup =  (req, res) => {
-//     const { name, email, password } = req.body;
-  
-//     const hashedPassword = bcrypt.hashSync(password, 10);
-  
-//     const query =
-//       "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-//     db.query(
-//       query,
-//       [name, email, hashedPassword],
-//       (err, result) => {
-//         if (err) {
-//           return res.status(500).json({ error: "Signup failed" });
-//         }
-//         res.json({ message: "Signup successful" });
-//       }
-//     );
-// }

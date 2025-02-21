@@ -426,7 +426,7 @@ function Navbar() {
                                 key={category.category_id}
                                 className="px-4 py-2">
                                 <Link
-                                  to={`/category/${category.category_type
+                                  to={`/${category.category_type
                                     .replace(/\s+/g, "-")
                                     .toLowerCase()}/${category.category_name
                                     .replace(/\s+/g, "-")

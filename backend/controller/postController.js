@@ -69,9 +69,9 @@ cron.schedule("0,30 * * * *", () => {
   });
 });
 //Dynamic Sitemap
-const baseUrl = "https://www.homimprovement.com";
+const baseUrl = "https://homimprovement.com";
 const sitemapPath = path.join(__dirname, "../../frontend/public/sitemap.xml");
-
+// Creating Dynamic Sitemap
 const generateSitemap = async () => {
   const query = `
     SELECT posts.Custom_url, posts.created_at, categories.category_name 
@@ -500,9 +500,6 @@ exports.deletePost = (req, res) => {
 };
 
 // Fetch Top Reads and Editorial Choice
-/**
- * Get Top Reads and Editor's Choice blogs
- */
 exports.getTopReadsAndEditorsChoice = (req, res) => {
   const topReadsQuery = `
     SELECT 

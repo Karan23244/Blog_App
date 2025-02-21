@@ -84,24 +84,22 @@ function UserHome() {
   return (
     <>
       <Helmet>
-        <title>
-          Homimprovement: Your Go-To Source for Home Improvement Tips
-        </title>
+        <title>Home Improvement Ideas & Design | HomImprovement</title>
         <meta
           name="description"
-          content="Discover expert home improvement tips, DIY projects, and renovation ideas at Homimprovement. Transform your space with our easy-to-follow guides!"
+          content="Upgrade your home with the best home improvement tips & interior design ideas. Get inspired with DIY projects, décor trends, and start your dream home today!"
         />
         <meta
           name="keywords"
-          content="Home improvement,DIY home projects,Home renovation tips,Interior design ideas,Home maintenance,Renovation guides,Home decor inspiration,Sustainable home improvements,Home improvement resources,Expert home advice"
+          content="Home improvement,Home renovation tips,Interior design ideas,Home decor inspiration, House renovation,home improvement ideas"
         />
         <meta
           property="og:title"
-          content="Homimprovement: Your Go-To Source for Home Improvement Tips"
+          content="Home Improvement Ideas & Design | HomImprovement"
         />
         <meta
           property="og:description"
-          content="Discover expert home improvement tips, DIY projects, and renovation ideas at Homimprovement. Transform your space with our easy-to-follow guides!"
+          content="Upgrade your home with the best home improvement tips & interior design ideas. Get inspired with DIY projects, décor trends, and start your dream home today!"
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://homimprovement.com" />
@@ -241,9 +239,9 @@ function UserHome() {
 
               {/* Editor's Choice Section */}
               <div className="lg:w-1/2 w-full flex flex-col gap-4 h-full">
-                <h3 className="text-2xl font-semibold mb-4 text-black">
+                <h2 className="text-2xl font-semibold mb-4 text-black">
                   Editor’s Choice
-                </h3>
+                </h2>
                 <div className="grid grid-cols-2 gap-4 h-full">
                   {editorsChoice.slice(0, 8).map((post) => (
                     <div
@@ -328,6 +326,7 @@ function UserHome() {
           </div>
         </div>
         <CategoryBlogs posts={posts} />
+        <OurMission />
       </div>
     </>
   );
@@ -380,11 +379,11 @@ const CategoryBlogs = ({ posts }) => {
       {groupedPosts.map(({ category, posts }, index) => (
         <div
           key={category.name}
-          className={`flex flex-col md:flex-row ${
+          className={`flex flex-col ${
             index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-          } flex-wrap gap-6`}>
+          } gap-6`}>
           {/* Main Content */}
-          <div className="mt-6 md:w-[65%]">
+          <div className="mt-6 lg:w-3/4">
             <div className="text-3xl md:text-5xl font-bold text-center">
               <h2>{category.name === "How To" ? "How To ?" : category.name}</h2>
             </div>
@@ -481,13 +480,13 @@ const CategoryBlogs = ({ posts }) => {
           </div>
 
           {/* Ad Section */}
-          <div className="md:w-[30%] flex justify-center items-center bg-gray-100 shadow-lg rounded-lg p-4">
+          <div className="lg:w-3/12 flex justify-center items-center bg-gray-100 shadow-lg rounded-lg p-4">
             <div className="text-center">
               <Link to={category.link}>
                 <img
                   src={category.adimg}
                   alt="Ad"
-                  className="w-full h-auto mt-4 rounded-lg"
+                  className="w-full h-auto object-contain mt-4 rounded-lg"
                 />
               </Link>
             </div>
@@ -497,7 +496,99 @@ const CategoryBlogs = ({ posts }) => {
     </div>
   );
 };
+const OurMission = () => {
+  return (
+    <div className="space-y-10 px-4 sm:px-6 lg:px-8 py-5">
+      <div className="text-center mb-6">
+        <h2 className="text-3xl md:text-5xl font-extrabold text-black">
+          Our Mission
+        </h2>
+      </div>
 
+      <div className="text-black text-lg leading-relaxed text-justify space-y-4">
+        <p>
+          Well -Vaking to homimprovement, your final destination for all things
+          related to home improvement! Whether you are planning a complete house
+          renovation or simply looking for new interior design ideas, our site
+          is here to inspire and guide it every step on the way. In
+          homimprovement, we believe that your home is a reflection of your
+          personality and style. This is why we offer a wide range of{" "}
+          <Link
+            to={`https://homimprovement.com/upgrade-yourself/diy-home-projects`}
+            className="text-blue-500">
+            home improvement ideas
+          </Link>{" "}
+          to help it turn your space into something truly special. From economic
+          bridge projects to luxurious updates, our tips and resources meet all
+          tastes and budgets
+        </p>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-10 p-6 lg:p-12">
+        {/* Left Section */}
+        <div className="flex flex-col lg:w-1/2 space-y-6">
+          <div className="text-lg text-black space-y-4 leading-relaxed">
+            <p>
+              Explore our collection curated by{" "}
+              <Link
+                to={`https://homimprovement.com/upgrade-yourself/interior-design-trends`}
+                className="text-blue-500">
+                interior design ideas
+              </Link>{" "}
+              to discover innovative ways to renew your living spaces. Whether
+              you are updating an individual room or reimaging your entire home,
+              our specialized advice and trend concepts will help you create a
+              beautiful and beautiful space. Planning a house renovation? We
+              have you covered! Our comprehensive guides and{" "}
+              <Link
+                to={`https://homimprovement.com/home-insights/how-to`}
+                className="text-blue-500">
+                step-by-step tutorials
+              </Link>{" "}
+              facilitate combat to the most challenging projects. From Kitchen
+              Reforms to Bathroom Reforms, we provide practical solutions to
+              bring your vision to life.
+            </p>
+          </div>
+          <div className="overflow-hidden rounded-xl shadow-lg">
+            <img
+              src="mission1.jpeg"
+              alt="Mission"
+              className="w-full h-auto object-cover transform hover:scale-105 transition-all duration-300"
+            />
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="flex flex-col lg:w-1/2 space-y-6">
+          <div className="overflow-hidden rounded-xl shadow-lg">
+            <img
+              src="mission2.jpeg"
+              alt="Mission"
+              className="w-full h-auto object-cover transform hover:scale-105 transition-all duration-300"
+            />
+          </div>
+          <div className="text-lg text-black space-y-4 leading-relaxed">
+            <p>
+              Homimprovement is more than just a site - it is a community of
+              passionate owners and design enthusiasts. Join us to share your
+              projects, seek inspiration and connect to individuals who think
+              the same way as they share their love for home improvement. Start
+              your journey today and unlock the potential of your home. Visit
+              homimprovement.com to get numerous home improvement ideas,{" "}
+              <Link
+                to={`https://homimprovement.com/home-insights/reviews`}
+                className="text-blue-500">
+                expert tips
+              </Link>{" "}
+              and the inspiration you need to create the home of your dreams!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 // Helper function to create slug
 const createSlug = (title) => {
   // Check if the title is not null and is a string before processing

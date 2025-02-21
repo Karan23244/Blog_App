@@ -1,6 +1,6 @@
 const db = require('../config/db');
 const transporter = require('../config/email');
-
+//Subscribe User Api
 exports.subscribeUser = (req, res) => {
   const { email } = req.body;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -6,7 +6,6 @@ const predefinedCategoriesType = ["upgrade-yourself", "home-insights"];
 
 const RouteHandler = () => {
   const { param1 } = useParams();
-
   // If categoryType is in predefined categories, render CategoryBlogs
   if (predefinedCategoriesType.includes(param1)) {
     return <CategoryBlogs />;

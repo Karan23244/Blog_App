@@ -44,7 +44,6 @@ function NewPost() {
             `${import.meta.env.VITE_API_URL}/api/posts/editData/${id}`
           );
           const post = postResponse.data.data;
-          console.log(post);
           const replaceImageUrls = (content) => {
             const baseUrl = `${import.meta.env.VITE_API_URL}`; // Correct base URL
 
@@ -132,9 +131,9 @@ function NewPost() {
     if (featuredImage && typeof featuredImage !== "string") {
       formData.append("featuredImage", featuredImage);
     }
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(`${key}: ${value}`);
+    // }
     try {
       if (id) {
         try {

@@ -10,7 +10,7 @@ const executeQuery = (query, params = []) => {
     });
   });
 };
-
+// get all author details
 exports.getAllAuthors = async (req, res) => {
   try {
     const authors = await executeQuery("SELECT * FROM authors");
@@ -23,7 +23,7 @@ exports.getAllAuthors = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
+// add new author details
 exports.addAuthor = async (req, res) => {
   const { full_name, email, bio } = req.body;
 
@@ -48,7 +48,7 @@ exports.addAuthor = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
+// update existing author details
 exports.updateAuthor = async (req, res) => {
   const { id } = req.params;
   const { full_name, email, bio } = req.body;
@@ -82,7 +82,7 @@ exports.updateAuthor = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
+// Delete a author Details
 exports.deleteAuthor = async (req, res) => {
   const { id } = req.params;
 

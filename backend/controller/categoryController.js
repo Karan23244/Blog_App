@@ -13,7 +13,7 @@ const executeQuery = (query, params = []) => {
     });
   });
 };
-
+// Get All category Details
 exports.getAllCategories = async (req, res) => {
   try {
     const categories = await executeQuery("SELECT * FROM categories");
@@ -26,7 +26,7 @@ exports.getAllCategories = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
+// Add a new Category
 exports.addCategory = async (req, res) => {
   const { category_name, description, category_type } = req.body;
 
@@ -51,7 +51,7 @@ exports.addCategory = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
+// Update existing Category
 exports.updateCategory = async (req, res) => {
   const { id } = req.params;
   const { category_name, description, category_type } = req.body;
@@ -85,7 +85,7 @@ exports.updateCategory = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
+//Delete a Existing Category
 exports.deleteCategory = async (req, res) => {
   const { id } = req.params;
 

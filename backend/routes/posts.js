@@ -1,5 +1,5 @@
 const express = require("express");
-const {createPost, getAllPosts,getPostData, getEditPostData,deletePost,updatePost,getTopReadsAndEditorsChoice,getPostsByCategory } = require("../controller/postController");
+const {createPost, getAllPosts,getPostData, getEditPostData,deletePost,updatePost,getTopReadsAndEditorsChoice } = require("../controller/postController");
 const router = express.Router();
 const multer = require('multer');
 const path = require('path'); 
