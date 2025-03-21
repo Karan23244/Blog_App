@@ -338,25 +338,25 @@ const CategoryBlogs = ({ posts }) => {
       name: "Reviews",
       description: "Shop Smart: Read Our Expert Reviews Before You Buy!",
       adimg: "review.webp",
-      link: "categoryData?categoryId=8&categoryName=Review&categoryType=Home%20Insights",
+      link: "home-insights/reviews",
     },
     {
       name: "VS",
       description: "Compare the Best Products with Ease.",
       adimg: "vs.webp",
-      link: "categoryData?categoryId=10&categoryName=VS&categoryType=Home%20Insights",
+      link: "home-insights/how-to",
     },
     {
       name: "Best",
       description: "Find the Best Picks Curated Just for You!",
       adimg: "best.webp",
-      link: "categoryData?categoryId=11&categoryName=Best&categoryType=Home%20Insights",
+      link: "home-insights/vs",
     },
     {
       name: "How To",
       description: "Step-by-Step Guides for Everyday Solutions.",
       adimg: "howto.webp",
-      link: "categoryData?categoryId=9&categoryName=How%20To%20%3F&categoryType=Home%20Insights",
+      link: "home-insights/best",
     },
   ];
 

@@ -3,11 +3,20 @@ import usePostsByCategory from "../../hooks/usePostsByCategory";
 import { Link } from "react-router-dom";
 import usePageTracker from "../../hooks/usePageTracker";
 import { Helmet } from "react-helmet-async";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const CategoryPosts = () => {
   usePageTracker("category");
-  const { posts, loading, error, categoryName, categoryType } =
-    usePostsByCategory();
+  const {
+    posts,
+    loading,
+    error,
+    categoryName,
+    categoryType,
+    totalPages,
+    currentPage,
+    fetchPosts,
+  } = usePostsByCategory();
 
   const modifiedCategoryName =
     categoryName?.trim().toLowerCase() === "how to" ? "How To ?" : categoryName;
@@ -253,6 +262,30 @@ const CategoryPosts = () => {
             </div>
           ))}
         </div>
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-6 space-x-3">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => fetchPosts(currentPage - 1)}
+              className="flex items-center gap-2 px-4 py-2 text-white bg-[#00008B] rounded-full shadow-md transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+              <FaChevronLeft className="text-lg" />
+              Prev
+            </button>
+
+            <span className="px-4 py-2 text-lg font-semibold text-gray-800 bg-gray-100 rounded-lg shadow-md">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => fetchPosts(currentPage + 1)}
+              className="flex items-center gap-2 px-4 py-2 text-white bg-[#00008B] rounded-full shadow-md transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+              Next
+              <FaChevronRight className="text-lg" />
+            </button>
+          </div>
+        )}
         <div className="leading-relaxed py-5">
           <div dangerouslySetInnerHTML={{ __html: html }} />
         </div>
@@ -264,10 +297,10 @@ const CategoryPosts = () => {
     <>
       {/* Category Title Section */}
       <div className="relative w-full lg:h-[250px] h-[350px] flex flex-col lg:gap-5 gap-3 py-5 lg:px-[10%] px-[2%]">
-        <h1 className="lg:text-5xl text-xl font-semibold text-black">
+        <h1 className="lg:text-5xl text-center text-xl font-semibold text-black">
           {modifiedCategoryName}
         </h1>
-        <p className="text-lg text-black space-y-4 leading-relaxed">
+        <p className="text-lg text-black text-justify space-y-4 leading-relaxed">
           {shortDescription}
         </p>
       </div>
@@ -289,7 +322,7 @@ const CategoryPosts = () => {
                   to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(
                     posts[0]?.Custom_url
                   )}`}
-                  className="block">
+                  className="block relative h-full">
                   <img
                     src={
                       posts[0]?.featured_image
@@ -302,28 +335,29 @@ const CategoryPosts = () => {
                     className="w-full lg:h-[450px] h-[250px] object-cover"
                     loading="lazy"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                  <div className="absolute bottom-4 left-4 right-4 text-white">
+                    <h3 className="lg:text-2xl text-lg font-semibold">
+                      {posts[0]?.title}
+                    </h3>
+                    <p className="lg:text-lg text-base mt-2">
+                      {posts[0]?.seoDescription}
+                    </p>
+                  </div>
                 </Link>
-                <div className="text-black pt-3">
-                  <h3 className="lg:text-2xl text-lg line-clamp-2 font-semibold">
-                    {posts[0]?.title}
-                  </h3>
-                  <p className="lg:text-lg text-base mt-2 lg:line-clamp-4 line-clamp-2">
-                    {posts[0]?.seoDescription}
-                  </p>
-                </div>
               </div>
 
-              {/* Smaller Cards */}
-              <div className="flex flex-col lg:gap-4 gap-2 order-2 lg:order-none">
-                {posts.slice(1, 3).map((post) => (
+              {/* Smaller Cards - Equal Height */}
+              <div className="flex flex-col lg:gap-4 gap-2 order-2 lg:order-none h-full">
+                {posts.slice(1, 3).map((post, index) => (
                   <div
                     key={post.id}
-                    className="flex flex-col overflow-hidden bg-white">
+                    className="relative flex-1 flex flex-col bg-white">
                     <Link
                       to={`/${createSlug(post?.category_names[0])}/${createSlug(
                         post?.Custom_url
                       )}`}
-                      className="block">
+                      className="block relative h-full">
                       <img
                         src={
                           post?.featured_image
@@ -336,19 +370,21 @@ const CategoryPosts = () => {
                         className="w-full h-[150px] object-cover"
                         loading="lazy"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                      <div className="absolute bottom-4 left-4 right-4 text-white">
+                        <h3 className="lg:text-lg text-base font-semibold">
+                          {post?.title}
+                        </h3>
+                        <p className="lg:text-base text-sm mt-1 line-clamp-2">
+                          {post?.seoDescription}
+                        </p>
+                      </div>
                     </Link>
-                    <div className="text-black lg:p-4">
-                      <h3 className="lg:text-lg text-base font-semibold">
-                        {post?.title}
-                      </h3>
-                      <p className="lg:text-base text-sm mt-1 line-clamp-2">
-                        {post?.seoDescription}
-                      </p>
-                    </div>
                   </div>
                 ))}
               </div>
             </div>
+
             <hr className=" border-gray-300 my-5" />
             {/* Remaining Posts Section */}
             <div className="grid lg:grid-cols-2 grid-cols-1 lg:gap-6 gap-2 lg:mt-8 pb-8">
@@ -391,6 +427,30 @@ const CategoryPosts = () => {
               ))}
             </div>
           </>
+        )}
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-6 space-x-3">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => fetchPosts(currentPage - 1)}
+              className="flex items-center gap-2 px-4 py-2 text-white bg-[#00008B] rounded-full shadow-md transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+              <FaChevronLeft className="text-lg" />
+              Prev
+            </button>
+
+            <span className="px-4 py-2 text-lg font-semibold text-gray-800 bg-gray-100 rounded-lg shadow-md">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => fetchPosts(currentPage + 1)}
+              className="flex items-center gap-2 px-4 py-2 text-white bg-[#00008B] rounded-full shadow-md transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+              Next
+              <FaChevronRight className="text-lg" />
+            </button>
+          </div>
         )}
         <div className="leading-relaxed py-5">
           <div dangerouslySetInnerHTML={{ __html: html }} />

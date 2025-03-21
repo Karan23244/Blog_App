@@ -1,5 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom"; // Import Link from react-router-dom
+import { FaFacebook, FaInstagram } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 function Footer() {
   const location = useLocation();
@@ -24,7 +26,13 @@ function Footer() {
             <div
               onClick={handleLogoClick}
               className="flex items-center space-x-3 mb-4 cursor-pointer">
-              <img src="/footerlogo.webp" alt="Logo" width={120} height={120} loading='lazy'/>
+              <img
+                src="/footerlogo.webp"
+                alt="Logo"
+                width={120}
+                height={120}
+                loading="lazy"
+              />
             </div>
             <h2 className="lg:text-xl text-base font-bold text-center">
               Inspiring Spaces for Life
@@ -32,17 +40,41 @@ function Footer() {
           </div>
 
           <div className="lg:w-9/12 flex flex-col">
-            <div>
-              <h2 className="lg:text-lg text-sm text-white text-center">
-                HomImprovement is part of HomeMedia Group, the new generation of
-                digital publishers focused on delivering expert insight and
-                inspiration for all your home improvement needs. For more
-                information you can visit our corporate site:
-                <a href="https://clickorbits.com/" target="_blank">
-                  www.ClickOrbits.com{" "}
-                </a>
-                 
-              </h2>
+            <div className="flex flex-col lg:flex-row items-center justify-between rounded-lg shadow-lg">
+              {/* Text Section */}
+              <div className="lg:w-4/5 text-center lg:text-left">
+                <h2 className="lg:text-lg text-sm text-white text-center">
+                  HomImprovement is part of HomeMedia Group, the new generation
+                  of digital publishers focused on delivering expert insight and
+                  inspiration for all your home improvement needs. For more
+                  information you can visit our corporate site:
+                  <a href="https://clickorbits.com/" target="_blank">
+                    www.ClickOrbits.com{" "}
+                  </a>
+                   
+                </h2>
+              </div>
+
+              {/* Social Media Icons Section */}
+              <div className="flex gap-8 mt-4 lg:mt-0">
+                <ul className="flex space-x-4">
+                  <li>
+                    <Link to={`https://www.facebook.com/homimprovement9`}>
+                      <FaFacebook className="text-white text-2xl hover:text-blue-500 transition-all duration-300 cursor-pointer" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={`https://x.com/Improvemen53343`}>
+                      <FaXTwitter className="text-white text-2xl hover:text-blue-500 transition-all duration-300 cursor-pointer" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={`https://www.instagram.com/homimprovement97`}>
+                      <FaInstagram className="text-white text-2xl hover:text-blue-500 transition-all duration-300 cursor-pointer" />
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
             <hr className="my-2 border-gray-500" />
             <div className="text-center">
@@ -50,28 +82,28 @@ function Footer() {
                 <li>
                   <Link
                     to="/privacy_policy"
-                    className="hover:underline lg:text-lg text-sm text-white hover:text-blue-900 mx-4 py-2 lg:font-semibold">
+                    className="hover:underline lg:text-lg text-sm text-white mx-4 py-2 lg:font-semibold">
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/terms_and_condition"
-                    className="hover:underline lg:text-lg text-sm text-white hover:text-[#00008B] mx-4 py-2 lg:font-semibold">
+                    className="hover:underline lg:text-lg text-sm text-white mx-4 py-2 lg:font-semibold">
                     Terms & Conditions
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/disclaimer"
-                    className="hover:underline lg:text-lg text-sm text-white hover:text-[#00008B] mx-4 py-2 lg:font-semibold">
+                    className="hover:underline lg:text-lg text-sm text-white mx-4 py-2 lg:font-semibold">
                     Disclaimer
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/about_us"
-                    className="hover:underline lg:text-lg text-sm text-white hover:text-[#00008B] mx-4 py-2 lg:font-semibold">
+                    className="hover:underline lg:text-lg text-sm text-white mx-4 py-2 lg:font-semibold">
                     About Us
                   </Link>
                 </li>
@@ -85,6 +117,7 @@ function Footer() {
               </h2>
             </div>
           </div>
+
           {/* Footer Links Section */}
         </div>
       </div>
