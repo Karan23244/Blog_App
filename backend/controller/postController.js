@@ -502,26 +502,62 @@ exports.deletePost = (req, res) => {
 // Fetch Top Reads and Editorial Choice
 exports.getTopReadsAndEditorsChoice = (req, res) => {
   const topReadsQuery = `
-    SELECT 
-    p.id, p.title, p.content, p.featured_image, 
-    p.blog_type, p.seoDescription, p.Custom_url, 
-    SUM(pv.views) AS total_views
-    FROM posts p
-    JOIN post_views pv ON p.id = pv.post_id
-    WHERE pv.view_date >= CURDATE() - INTERVAL 7 DAY
-    GROUP BY p.id
-    ORDER BY total_views DESC;`;
+  SELECT 
+    p.id, 
+    p.title, 
+    p.content, 
+    p.featured_image, 
+    p.blog_type, 
+    p.seoDescription, 
+    p.Custom_url, 
+    SUM(pv.views) AS total_views,
+    COALESCE(
+      (
+        SELECT JSON_ARRAYAGG(category_name)
+        FROM (
+          SELECT DISTINCT c.category_name
+          FROM categories c
+          WHERE FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
+        ) AS unique_categories
+      ),
+      JSON_ARRAY()
+    ) AS category_names
+  FROM posts p
+  JOIN post_views pv ON p.id = pv.post_id
+  WHERE pv.view_date >= CURDATE() - INTERVAL 7 DAY
+  GROUP BY p.id
+  ORDER BY total_views DESC;
+`;
+
 
   const editorsChoiceQuery = `
-    SELECT 
-    p.id, p.title, p.content, p.featured_image, 
-    p.blog_type, p.seoDescription, p.Custom_url, 
-    SUM(pv.views) AS total_views
-    FROM posts p
-    JOIN post_views pv ON p.id = pv.post_id
-    WHERE pv.view_date >= CURDATE() - INTERVAL 15 DAY
-    GROUP BY p.id
-    ORDER BY total_views DESC;`;
+  SELECT 
+    p.id, 
+    p.title, 
+    p.content, 
+    p.featured_image, 
+    p.blog_type, 
+    p.seoDescription, 
+    p.Custom_url, 
+    SUM(pv.views) AS total_views,
+    COALESCE(
+      (
+        SELECT JSON_ARRAYAGG(category_name)
+        FROM (
+          SELECT DISTINCT c.category_name
+          FROM categories c
+          WHERE FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
+        ) AS unique_categories
+      ),
+      JSON_ARRAY()
+    ) AS category_names
+  FROM posts p
+  JOIN post_views pv ON p.id = pv.post_id
+  LEFT JOIN categories c ON FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
+  WHERE pv.view_date >= CURDATE() - INTERVAL 15 DAY
+  GROUP BY p.id
+  ORDER BY total_views DESC;
+`;
 
   // First query: Top Reads
   db.query(topReadsQuery, (topReadsErr, topReadsResults) => {

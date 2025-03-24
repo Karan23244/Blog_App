@@ -36,7 +36,6 @@ const usePostsByCategory = () => {
           params: { page, limit }, // Apply dynamic limit
         }
       );
-      console.log(response)
       const { data, totalPages, currentPage } = response.data;
       setPosts(data.data);
       setTotalPages(data.totalPages);

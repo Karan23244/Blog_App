@@ -180,6 +180,11 @@ const CategoryPosts = () => {
   const mostViewedPost = sortedPosts[0]; // Most viewed post
   const remainingPosts = sortedPosts.slice(1); // Remaining posts
   // UI for Upgrade Yourself category
+  const categoryTypes = mostViewedPost?.category_names?.split(",") || [];
+  console.log(categoryTypes[0]);
+  console.log(mostViewedPost?.category_names);
+  console.log(mostViewedPost);
+  console.log(remainingPosts);
   const UpgradeYourselfUI = () => (
     <>
       <div
@@ -205,7 +210,7 @@ const CategoryPosts = () => {
             </h2>
             <Link
               to={`/${createSlug(
-                mostViewedPost?.category_names[0]
+                mostViewedPost?.category_names?.split(",")[0]
               )}/${createSlug(mostViewedPost?.Custom_url)}`}
               className="block">
               <img
@@ -252,9 +257,9 @@ const CategoryPosts = () => {
                   {post?.seoDescription}
                 </p>
                 <Link
-                  to={`/${createSlug(post?.category_names[0])}/${createSlug(
-                    post?.Custom_url
-                  )}`}
+                  to={`/${createSlug(
+                    post?.category_names?.split(",")[0]
+                  )}/${createSlug(post?.Custom_url)}`}
                   className="text-[#00008B] hover:underline inline-block">
                   Read More...
                 </Link>
@@ -319,9 +324,9 @@ const CategoryPosts = () => {
               {/* Featured Post (Big Card) */}
               <div className="relative lg:col-span-2 order-1 lg:order-none">
                 <Link
-                  to={`/${createSlug(posts[0]?.category_names[0])}/${createSlug(
-                    posts[0]?.Custom_url
-                  )}`}
+                  to={`/${createSlug(
+                    posts[0]?.category_names?.split(",")[0]
+                  )}/${createSlug(posts[0]?.Custom_url)}`}
                   className="block relative h-full">
                   <img
                     src={
@@ -354,9 +359,9 @@ const CategoryPosts = () => {
                     key={post.id}
                     className="relative flex-1 flex flex-col bg-white">
                     <Link
-                      to={`/${createSlug(post?.category_names[0])}/${createSlug(
-                        post?.Custom_url
-                      )}`}
+                      to={`/${createSlug(
+                        post?.category_names?.split(",")[0]
+                      )}/${createSlug(post?.Custom_url)}`}
                       className="block relative h-full">
                       <img
                         src={
@@ -416,7 +421,7 @@ const CategoryPosts = () => {
                       </p>
                       <Link
                         to={`/${createSlug(
-                          post?.category_names[0]
+                          post?.category_names?.split(",")[0]
                         )}/${createSlug(post?.Custom_url)}`}
                         className="text-blue-600 hover:underline mt-2 inline-block">
                         Read More...
@@ -480,8 +485,13 @@ const CategoryPosts = () => {
 
 // Helper function to create slug
 const createSlug = (title) => {
+  // Check if the title is not null and is a string before processing
+  if (typeof title !== "string") {
+    return ""; // Return an empty string or handle the case as needed
+  }
+  console.log(title);
   return title
-    ?.toLowerCase()
+    .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, "") // Remove special characters
     .replace(/\s+/g, "-"); // Replace spaces with hyphens

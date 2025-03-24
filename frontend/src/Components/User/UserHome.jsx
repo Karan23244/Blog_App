@@ -80,7 +80,6 @@ function UserHome() {
       setImagePreloaded(true); // Mark the image as preloaded
     }
   }, [posts, imagePreloaded]);
-
   return (
     <>
       <Helmet>
@@ -224,7 +223,7 @@ function UserHome() {
                         </p>
                         <Link
                           to={`/${createSlug(
-                            posts[0]?.category_names[0]
+                            post?.category_names[0]
                           )}/${createSlug(post?.Custom_url)}`}
                           className="mt-auto">
                           <button className="lg:text-base text-sm text-white px-5 py-2 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">
@@ -267,7 +266,7 @@ function UserHome() {
                         </p>
                         <Link
                           to={`/${createSlug(
-                            posts[0]?.category_names[0]
+                            post?.category_names[0]
                           )}/${createSlug(post?.Custom_url)}`}
                           className="mt-auto">
                           <button className="lg:text-base text-sm text-white px-4 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">

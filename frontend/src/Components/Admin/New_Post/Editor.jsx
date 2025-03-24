@@ -69,20 +69,16 @@ const Toolbar = ({ editor }) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const base64 = e.target.result;
-          editor.chain().focus().setImage({ src: base64 }).run();
+  
+          // Ask for alt text when the image is uploaded
+          const altText = prompt("Enter alt text for the image:", "Image description");
+  
+          // Insert image with alt text
+          editor.chain().focus().setImage({ src: base64, alt: altText || "" }).run();
         };
         reader.readAsDataURL(file);
       }
     };
-    const selectedImage = editor.state.selection.$from.node();
-
-    if (selectedImage.type.name === "editableImage") {
-      editor
-        .chain()
-        .focus()
-        .updateAttributes("editableImage", { src, alt })
-        .run();
-    }
     input.click();
   };
 
