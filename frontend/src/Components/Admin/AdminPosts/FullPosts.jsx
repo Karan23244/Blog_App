@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import "../New_Post/styles.css";
 import usePageTracker from "../../../hooks/usePageTracker";
+import CommentSection from "./Comments";
 const FullPost = () => {
   usePageTracker("blogs");
   const { param2 } = useParams();
@@ -12,6 +13,11 @@ const FullPost = () => {
   const [toc, setToc] = useState([]);
   const [activeSection, setActiveSection] = useState("");
   const [updatedContent, setUpdatedContent] = useState(null);
+  const [relatedBlogs, setRelatedBlogs] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [name, setName] = useState("");
+  const [comment, setComment] = useState("");
+  const [loading, setLoading] = useState(false);
   const fetchedRef = useRef(false);
   const blogAds = [
     {
@@ -41,12 +47,50 @@ const FullPost = () => {
     },
   ];
   const adData = blogAds.find((blog) => blog.id === param2);
+  const fetchComments = async () => {
+    try {
+      // ✅ Check if post exists and has at least one item before accessing post[0].id
+      if (!post || post.length === 0) {
+        console.warn("No post found. Skipping fetchComments.");
+        return;
+      }
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/comments/${post.id}`
+      );
+      const data = await res.json();
+      setComments(data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (fetchedRef.current) return;
+  //   fetchedRef.current = true;
+  //   setPost(null);
+  //   setError(null);
+
+  //   const fetchPost = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${import.meta.env.VITE_API_URL}/api/posts/${param2}`,
+  //         { withCredentials: true }
+  //       );
+  //       setPost(response.data.data);
+  //     } catch (err) {
+  //       console.error("Error fetching post:", err);
+  //       setError("Unable to load the post. Please try again later.");
+  //     }
+  //   };
+
+  //   fetchPost();
+  // }, [param2]);
+
   useEffect(() => {
-    if (fetchedRef.current) return;
-    fetchedRef.current = true;
     setPost(null);
     setError(null);
-
+  
     const fetchPost = async () => {
       try {
         const response = await axios.get(
@@ -59,13 +103,15 @@ const FullPost = () => {
         setError("Unable to load the post. Please try again later.");
       }
     };
-
+  
     fetchPost();
   }, [param2]);
+  
 
   useEffect(() => {
     if (post) {
       // Generate TOC and add IDs to headings
+      console.log(post);
       const parser = new DOMParser();
       const contentDocument = parser.parseFromString(
         decodeHtml(post.content || ""),
@@ -81,13 +127,27 @@ const FullPost = () => {
           level: heading.tagName.toLowerCase(),
         };
       });
+      const fetchRelatedBlogs = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/posts/related/${
+              post.category_names
+            }`
+          );
+          setRelatedBlogs(response.data.data);
+        } catch (err) {
+          console.error("Error fetching related blogs:", err);
+        }
+      };
+
+      fetchRelatedBlogs();
       setToc(tocData);
       // Set the updated content only once
       const updatedContent = contentDocument.body.innerHTML;
       setUpdatedContent(updatedContent);
+      fetchComments();
     }
   }, [post]);
-
   const decodeHtml = (html) => {
     const txt = document.createElement("textarea");
     txt.innerHTML = html;
@@ -128,23 +188,37 @@ const FullPost = () => {
   if (!post) {
     return <p className="text-gray-500 text-center h-screen">Loading...</p>;
   }
-  const createSlug = (title) => {
-    if (typeof title !== "string") return "";
-    return title
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-");
-  };
   const imageUrl = post.featured_image
     ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
     : "";
   const adimageUrl = post.AdImage
     ? `${import.meta.env.VITE_API_URL}/${post.AdImage}`
     : "";
-  const postSlug = createSlug(post.Custom_url);
   //current url
   const currentUrl = window.location.href;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name || !comment) return alert("All fields are required!");
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: post.id, name, comment }),
+      });
+
+      if (res.ok) {
+        setName("");
+        setComment("");
+        fetchComments();
+      }
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    }
+    setLoading(false);
+  };
   return (
     <>
       <Helmet>
@@ -235,7 +309,17 @@ const FullPost = () => {
               className="custom-html text-gray-700 leading-relaxed mb-8"
               dangerouslySetInnerHTML={{ __html: updatedContent }}
             />
+            <CommentSection
+              comments={comments}
+              handleSubmit={handleSubmit}
+              loading={loading}
+              name={name}
+              setName={setName}
+              comment={comment}
+              setComment={setComment}
+            />
           </main>
+
           {adData && (
             <aside className="lg:w-1/4">
               <div className="sticky top-16 p-4 border m-4 overflow-auto lg:h-screen">
@@ -256,8 +340,61 @@ const FullPost = () => {
           )}
         </div>
       </div>
+      <div className="bg-[#F0F2F5]">
+        {/* Related Blog Section */}
+        {relatedBlogs.length > 0 && (
+          <div className="lg:mx-[10%] lg:mt-12 py-5">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+              Related Blogs
+            </h2>
+            <div className="grid md:grid-cols-4 gap-6 py-5">
+              {relatedBlogs.map((blog) => (
+                <Link
+                  to={`/${createSlug(
+                    blog?.category_names[0]
+                  )}/${createSlug(blog?.Custom_url)}`}
+                  className="block">
+                  <img
+                    src={`${import.meta.env.VITE_API_URL}/${
+                      blog.featured_image
+                    }`}
+                    alt={blog.title}
+                    className="w-full h-48 object-cover rounded-xl"
+                  />
+                  <div className="">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      {blog.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-2">
+                      {blog.seoDescription}
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                      {new Date(blog.created_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </>
   );
 };
-
+// Helper function to create slug
+const createSlug = (title) => {
+  // Check if the title is not null and is a string before processing
+  if (typeof title !== "string") {
+    return ""; // Return an empty string or handle the case as needed
+  }
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-"); // Replace spaces with hyphens
+};
 export default FullPost;

@@ -17,7 +17,7 @@ const CategoryPosts = () => {
     currentPage,
     fetchPosts,
   } = usePostsByCategory();
-
+  console.log(categoryName)
   const modifiedCategoryName =
     categoryName?.trim().toLowerCase() === "how to" ? "How To ?" : categoryName;
 
@@ -154,6 +154,27 @@ const CategoryPosts = () => {
 <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt;"><span style="font-size:11pt;font-family:Arial,sans-serif;color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;">The smart home devices is unexpectedly evolving, with new products and innovations emerging regularly. Our Reviews category is dedicated to retaining you knowledgeable about the present day traits and improvements in&nbsp;</span><a href="https://homimprovement.com/upgrade-yourself/smart-home-technology" style="text-decoration:none;"><span style="font-size:11pt;font-family:Arial,sans-serif;color:#1155cc;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:underline;-webkit-text-decoration-skip:none;text-decoration-skip-ink:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;">smart home technology</span></a><span style="font-size:11pt;font-family:Arial,sans-serif;color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;">. We cover all of it, making sure you&rsquo;re always privy to the first-rate alternatives to be had. By staying up to date on smart home technology, you can make great choices about which products to invest in for your house. Our ongoing product analysis ensures that you receive the most relevant and up-to-date information.</span></p>
 <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt;"><span style="font-size:11pt;font-family:Arial,sans-serif;color:#000000;background-color:transparent;font-weight:400;font-style:normal;font-variant:normal;text-decoration:none;vertical-align:baseline;white-space:pre;white-space:pre-wrap;">Our Smart Home Product Reviews category at Homimprovement is your ultimate guide for navigating the arena of smart home devices. With in-intensity product evaluations, expert comparisons, actual-world trying out, and the brand new developments, we aim to empower you to make informed decisions for your smart home purchases. Whether you&rsquo;re seeking to beautify your property&rsquo;s security, improve strength efficiency, or smartly revel in the convenience of linked devices, our evaluations will manual you every step of the manner. Explore our smart home product nowadays and find out the excellent answers to raise your dwelling enjoy! Don&apos;t forget to check out the best product review websites for additional insights and recommendations.</span></p>`,
       },
+      Deals: {
+        title: "Smart Home Deals: Discounts You Can’t Miss!",
+        description:
+          "Get exclusive smart home deals today! Shop top smart home bundle deals to automate your home for less. Save big on automation essentials—Act now!",
+        keywords: "smart home bundle deals, smart home deals today, home automation deals, great deal products, smart deal, smart deals, smart deals now",
+        shortDescription:
+          "In our increasingly busy world, adding smart home technology to your abode has never been easier. Here at Homimprovement, we are pleased to showcase a wide range of smart home bundle deals to suit any budget and need. Whether you're looking to get into home automation for the first time or are an experienced tech person, our smart home bundle deals allow you to start building out a better home.",
+        html: `<h2><strong>Discover Smart Home Bundle Deals</strong></h2>
+<h2><span style="font-weight: 400;">Smart home bundle deals Our smart home bundle deals are a great way to level up your home and save big in the process. Often, these bundles include more than one device that can&ensp;work in harmony with each other to give you a fully connected smart home experience. These packages, ranging from smart lights to </span><a href="https://homimprovement.com/best/indoor-security-camera"><span style="font-weight: 400;">security cameras</span></a><span style="font-weight: 400;">, are curated&ensp;to ensure compatibility and ease of use. The bundling of products is often seen as a cost-effective solution, saving money when items are bought&ensp;together instead of separately. And with each bundle designed to work together, you'll reap&ensp;the rewards of </span><a href="https://homimprovement.com/smart-home-technology/smart-home-matter-thread"><span style="font-weight: 400;">interconnected devices</span></a><span style="font-weight: 400;"> that work through one app.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span></h2>
+<h2><strong>Smart Home Deals Today</strong></h2>
+<h2><span style="font-weight: 400;">Want to save even more on smart home deals today? You&rsquo;re in luck! From the latest sales on highly-rated </span><a href="https://homimprovement.com/smart-home-technology/must-have-smart-home-devices"><span style="font-weight: 400;">smart home devices</span></a><span style="font-weight: 400;"> to&ensp;the best offers on top-of-the-line appliances, our website is updated daily. Whether it&rsquo;s an energy-efficient </span><a href="https://homimprovement.com/smart-home-technology/smart-thermostat-save-energy"><span style="font-weight: 400;">smart thermostat</span></a><span style="font-weight: 400;"> or a </span><a href="https://homimprovement.com/best/smart-locks"><span style="font-weight: 400;">smart lock</span></a><span style="font-weight: 400;"> to&ensp;secure your property, we can help. Date-stamped deals, to ensure&ensp;you receive the lowest prices possible. From </span><a href="https://homimprovement.com/best/smart-kitchen-appliances"><span style="font-weight: 400;">kitchen products</span></a><span style="font-weight: 400;"> to security, there are all sorts of products you can&ensp;enjoy that fit your lifestyle. There are also customer reviews to guide&ensp;your decisions regarding your purchases.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span></h2>
+<h2><strong>Home Automation Deals</strong></h2>
+<h2><span style="font-weight: 400;">Get with the home automation times; our home automation deals make it more affordable than ever! Just envision&ensp;having the ability to manage your </span><a href="https://homimprovement.com/upgrade-yourself/smart-home-technology"><span style="font-weight: 400;">lights, thermostat, and security system from your phone or use voice commands</span></a><span style="font-weight: 400;">. Smart lighting is part of our smart home bundle deals as they are bulbs you can dim or change the mood of any color&ensp;and from anywhere smart thermostats can learn your schedule and adjust&ensp;temperatures as needed to help save energy and money. Our security systems also guard your home with smart cameras and&ensp;alarms you can check from anywhere.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span></h2>
+<p>&nbsp;</p>
+<h2><strong>Great Deal Products</strong></h2>
+<h2><span style="font-weight: 400;">If you want to know more about Homimprovement and our great deal products for your home, please read more. We have the smart speakers pro,&ensp;letting you control your smart home with voice commands as you stream music. </span><a href="https://homimprovement.com/smart-home-technology/what-is-a-smart-plug"><span style="font-weight: 400;">Smart plugs</span></a><span style="font-weight: 400;"> can make your devices smart and enable control from a distance. We also showcase an array of smart appliances, including refrigerators and ovens, that bring a new level of ease to meals and food stockkeeping for those&ensp;who may be ready for a </span><a href="https://homimprovement.com/smart-home-technology/smart-kitchens-integrating-technology-for-a-connected-home"><span style="font-weight: 400;">kitchen upgrade</span></a><span style="font-weight: 400;">. These great deal products are ideal for&ensp;anyone who wants to modernize their home with smart technology.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span></h2>
+<h2><strong>Smart Deals Now</strong></h2>
+<h2><span style="font-weight: 400;">Make sure that you don&rsquo;t wait to upgrade your home! Now with smart deals, it&rsquo;s the perfect time to look&ensp;for a smart investment. Our extensive organization and&ensp;search features help you find what you need quickly. Your information is safe during the checkout process, and if you have any questions or concerns about your purchases, our customer support team is here to&ensp;help you.</span><span style="font-weight: 400;"><br /></span><span style="font-weight: 400;"><br /></span></h2>
+<h2><strong>Wrap-Up</strong></h2>
+<h2><span style="font-weight: 400;">Overall, Homimprovement is the place to&ensp;be for the best smart home deals of the season. Smart home bundle deals and daily promotions with quality means&ensp;you can tailor your living space into the smart home you want it to be. Take advantage of our great deals on products and home automation. Make your home smart with the smart deals and smart deals now! And for anyone interested in making smart&ensp;choices, we offer </span><a href="https://homimprovement.com/home-insights/vs"><span style="font-weight: 400;">Versus guides</span></a><span style="font-weight: 400;"> and smart home product reviews to help you understand which devices are best for you.</span></h2>`,
+      },
     };
 
     return (
@@ -180,11 +201,6 @@ const CategoryPosts = () => {
   const mostViewedPost = sortedPosts[0]; // Most viewed post
   const remainingPosts = sortedPosts.slice(1); // Remaining posts
   // UI for Upgrade Yourself category
-  const categoryTypes = mostViewedPost?.category_names?.split(",") || [];
-  console.log(categoryTypes[0]);
-  console.log(mostViewedPost?.category_names);
-  console.log(mostViewedPost);
-  console.log(remainingPosts);
   const UpgradeYourselfUI = () => (
     <>
       <div
@@ -203,31 +219,28 @@ const CategoryPosts = () => {
         </p>
       </div>
       <div className="lg:px-[15%] lg:py-[2%] px-[2%] py-[2%] bg-[#00008B] bg-opacity-30">
-        {mostViewedPost && (
+        {posts && (
           <div className="mb-6">
             <h2 className="lg:text-2xl text-lg font-semibold mb-2">
-              {mostViewedPost.title}
+              {posts[0].title}
             </h2>
             <Link
               to={`/${createSlug(
-                mostViewedPost?.category_names?.split(",")[0]
-              )}/${createSlug(mostViewedPost?.Custom_url)}`}
+                posts[0]?.category_names?.split(",")[0]
+              )}/${createSlug(posts[0]?.Custom_url)}`}
               className="block">
               <img
                 src={
-                  mostViewedPost.featured_image
-                    ? `${import.meta.env.VITE_API_URL}/${
-                        mostViewedPost.featured_image
-                      }`
+                  posts[0].featured_image
+                    ? `${import.meta.env.VITE_API_URL}/${posts[0].featured_image}`
                     : "https://via.placeholder.com/300x200.png?text=No+Image"
                 }
-                alt={mostViewedPost.title}
+                alt={posts[0].title}
                 className="w-full h-[300px] object-cover mb-4"
                 loading="lazy"
               />
               <p className="lg:text-lg text-base text-gray-700">
-                {mostViewedPost.seoDescription ||
-                  mostViewedPost.content.substring(0, 150)}
+                {posts[0].seoDescription}
                 ...
               </p>
             </Link>
@@ -235,7 +248,7 @@ const CategoryPosts = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
-          {remainingPosts.map((post) => (
+          {posts.slice(1).map((post) => (
             <div
               key={post.id}
               className="bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out">
@@ -489,7 +502,6 @@ const createSlug = (title) => {
   if (typeof title !== "string") {
     return ""; // Return an empty string or handle the case as needed
   }
-  console.log(title);
   return title
     .toLowerCase()
     .trim()

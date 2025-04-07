@@ -358,3 +358,24 @@ input[type="file"] {
 p:empty {
   margin: 20px !important;
 }
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.button-label {
+  display: inline;
+  outline: none;
+}
+

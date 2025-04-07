@@ -69,12 +69,19 @@ const Toolbar = ({ editor }) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const base64 = e.target.result;
-  
+
           // Ask for alt text when the image is uploaded
-          const altText = prompt("Enter alt text for the image:", "Image description");
-  
+          const altText = prompt(
+            "Enter alt text for the image:",
+            "Image description"
+          );
+
           // Insert image with alt text
-          editor.chain().focus().setImage({ src: base64, alt: altText || "" }).run();
+          editor
+            .chain()
+            .focus()
+            .setImage({ src: base64, alt: altText || "" })
+            .run();
         };
         reader.readAsDataURL(file);
       }
@@ -305,6 +312,21 @@ const Toolbar = ({ editor }) => {
         onClick={() => editor.chain().focus().deleteTable().run()}
         title="Delete Table">
         <BsTrash />
+      </button>
+      <button
+        onClick={() => {
+          editor
+            .chain()
+            .focus()
+            .insertContent(
+              `<button class="btn-primary px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+            Click Me
+          </button>`
+            )
+            .run();
+        }}
+        title="Insert Button">
+        ➕ Button
       </button>
     </div>
   );

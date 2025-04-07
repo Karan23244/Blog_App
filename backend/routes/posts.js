@@ -1,5 +1,5 @@
 const express = require("express");
-const {createPost, getAllPosts,getPostData, getEditPostData,deletePost,updatePost,getTopReadsAndEditorsChoice } = require("../controller/postController");
+const {createPost, getAllPosts,getPostData, getEditPostData,deletePost,updatePost,getTopReadsAndEditorsChoice,relatedPosts } = require("../controller/postController");
 const router = express.Router();
 const multer = require('multer');
 const path = require('path'); 
@@ -27,6 +27,7 @@ router.get("/", getAllPosts);
 router.get("/topReadsAndEditorsChoice", getTopReadsAndEditorsChoice);
 router.get("/:param2", getPostData);
 router.get("/editData/:id", getEditPostData);
+router.get("/related/:category", relatedPosts);
 router.delete("/:id", deletePost);
 router.put('/:id', 
   upload.fields([

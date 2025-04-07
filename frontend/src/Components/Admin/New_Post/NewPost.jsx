@@ -522,7 +522,6 @@ const ScheduleDate = ({ postDetails, setPostDetails, startDate }) => {
       scheduleDate: formattedString,
     }));
   };
-
   const now = new Date();
   const maxDate = new Date();
   const minTime =

@@ -8,7 +8,8 @@ const postRoutes = require("./routes/posts");
 const categoryDataRoutes = require("./routes/categoryData");
 const subscribeRoutes = require("./routes/subscriber");
 const trackingRoutes = require("./routes/trackingRoutes.js");
-
+const commentRoutes = require("./routes/comments");
+const db = require("./config/db.js");
 const app = express();
 
 app.use(express.json());
@@ -19,7 +20,7 @@ const corsOptions = {
     const allowedOrigins = [
       "http://localhost:5173",
       "https://homimprovement.com",
-      "https://www.homimprovement.com"
+      "https://www.homimprovement.com",
     ];
 
     // Allow requests from allowed origins
@@ -42,6 +43,7 @@ app.use("/api/authors", authorRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/category", categoryDataRoutes);
 app.use("/api/subscribe", subscribeRoutes);
-app.use("/api/track-page", trackingRoutes); // Attach tracking routes
+app.use("/api/track-page", trackingRoutes);
+app.use("/api/comments", commentRoutes);
 
 module.exports = app;
