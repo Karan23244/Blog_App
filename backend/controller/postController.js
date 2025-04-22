@@ -72,103 +72,103 @@ cron.schedule("0,30 * * * *", () => {
 const baseUrl = "https://homimprovement.com";
 const sitemapPath = path.join(__dirname, "../../frontend/public/sitemap.xml");
 // Creating Dynamic Sitemap
-const generateSitemap = async () => {
-  const query = `
-    SELECT posts.Custom_url, posts.created_at, categories.category_name 
-    FROM posts
-    JOIN categories 
-    ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-    WHERE posts.blog_type = 'published'
-  `;
+// const generateSitemap = async () => {
+//   const query = `
+//     SELECT posts.Custom_url, posts.created_at, categories.category_name 
+//     FROM posts
+//     JOIN categories 
+//     ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+//     WHERE posts.blog_type = 'published'
+//   `;
 
-  db.query(query, async (err, results) => {
-    if (err) {
-      console.error("Error fetching posts for sitemap:", err);
-      return;
-    }
+//   db.query(query, async (err, results) => {
+//     if (err) {
+//       console.error("Error fetching posts for sitemap:", err);
+//       return;
+//     }
 
-    let existingUrls = [];
+//     let existingUrls = [];
 
-    // Read the existing sitemap.xml if it exists
-    if (fs.existsSync(sitemapPath)) {
-      try {
-        const existingData = fs.readFileSync(sitemapPath, "utf-8");
-        const parsedData = await parseStringPromise(existingData);
+//     // Read the existing sitemap.xml if it exists
+//     if (fs.existsSync(sitemapPath)) {
+//       try {
+//         const existingData = fs.readFileSync(sitemapPath, "utf-8");
+//         const parsedData = await parseStringPromise(existingData);
 
-        if (parsedData.urlset.url) {
-          existingUrls = parsedData.urlset.url.map((urlObj) => ({
-            loc: urlObj.loc[0],
-            lastmod: urlObj.lastmod
-              ? urlObj.lastmod[0]
-              : new Date().toISOString(),
-            changefreq: urlObj.changefreq ? urlObj.changefreq[0] : "weekly",
-            priority: urlObj.priority ? urlObj.priority[0] : "0.5",
-          }));
-        }
-      } catch (error) {
-        console.error("Error reading existing sitemap:", error);
-      }
-    }
+//         if (parsedData.urlset.url) {
+//           existingUrls = parsedData.urlset.url.map((urlObj) => ({
+//             loc: urlObj.loc[0],
+//             lastmod: urlObj.lastmod
+//               ? urlObj.lastmod[0]
+//               : new Date().toISOString(),
+//             changefreq: urlObj.changefreq ? urlObj.changefreq[0] : "weekly",
+//             priority: urlObj.priority ? urlObj.priority[0] : "0.5",
+//           }));
+//         }
+//       } catch (error) {
+//         console.error("Error reading existing sitemap:", error);
+//       }
+//     }
 
-    // Generate new dynamic URLs from database
-    const newUrls = results.map((post) => {
-      const categorySlug = post.category_name
-        .toLowerCase()
-        .replace(/\s+/g, "-");
-      const urlSlug = post.Custom_url.toLowerCase().replace(/\s+/g, "-");
-      return {
-        loc: `${baseUrl}/${categorySlug}/${urlSlug}`,
-        lastmod: new Date(post.created_at).toISOString(),
-        changefreq: "weekly",
-        priority: "0.5",
-      };
-    });
+//     // Generate new dynamic URLs from database
+//     const newUrls = results.map((post) => {
+//       const categorySlug = post.category_name
+//         .toLowerCase()
+//         .replace(/\s+/g, "-");
+//       const urlSlug = post.Custom_url.toLowerCase().replace(/\s+/g, "-");
+//       return {
+//         loc: `${baseUrl}/${categorySlug}/${urlSlug}`,
+//         lastmod: new Date(post.created_at).toISOString(),
+//         changefreq: "weekly",
+//         priority: "0.5",
+//       };
+//     });
 
-    // Separate static URLs from dynamic ones
-    const staticUrls = existingUrls.filter(
-      (url) => !url.loc.startsWith(baseUrl + "/")
-    );
+//     // Separate static URLs from dynamic ones
+//     const staticUrls = existingUrls.filter(
+//       (url) => !url.loc.startsWith(baseUrl + "/")
+//     );
 
-    // Merge dynamic URLs: update existing ones and remove outdated ones
-    const finalDynamicUrls = existingUrls
-      .filter((existing) =>
-        newUrls.some((newUrl) => newUrl.loc === existing.loc)
-      ) // Keep existing if still valid
-      .map(
-        (existing) =>
-          newUrls.find((newUrl) => newUrl.loc === existing.loc) || existing
-      ); // Update properties if needed
+//     // Merge dynamic URLs: update existing ones and remove outdated ones
+//     const finalDynamicUrls = existingUrls
+//       .filter((existing) =>
+//         newUrls.some((newUrl) => newUrl.loc === existing.loc)
+//       ) // Keep existing if still valid
+//       .map(
+//         (existing) =>
+//           newUrls.find((newUrl) => newUrl.loc === existing.loc) || existing
+//       ); // Update properties if needed
 
-    // Add new URLs that don’t exist in the file yet
-    newUrls.forEach((newUrl) => {
-      if (!finalDynamicUrls.some((existing) => existing.loc === newUrl.loc)) {
-        finalDynamicUrls.push(newUrl);
-      }
-    });
+//     // Add new URLs that don’t exist in the file yet
+//     newUrls.forEach((newUrl) => {
+//       if (!finalDynamicUrls.some((existing) => existing.loc === newUrl.loc)) {
+//         finalDynamicUrls.push(newUrl);
+//       }
+//     });
 
-    // Final list: Combine static and dynamic URLs
-    const finalUrls = [...staticUrls, ...finalDynamicUrls];
+//     // Final list: Combine static and dynamic URLs
+//     const finalUrls = [...staticUrls, ...finalDynamicUrls];
 
-    // Generate updated XML content
-    let sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    sitemapContent += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+//     // Generate updated XML content
+//     let sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+//     sitemapContent += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    finalUrls.forEach((url) => {
-      sitemapContent += `  <url>\n`;
-      sitemapContent += `    <loc>${url.loc}</loc>\n`;
-      sitemapContent += `    <lastmod>${url.lastmod}</lastmod>\n`;
-      sitemapContent += `    <changefreq>${url.changefreq}</changefreq>\n`;
-      sitemapContent += `    <priority>${url.priority}</priority>\n`;
-      sitemapContent += `  </url>\n`;
-    });
+//     finalUrls.forEach((url) => {
+//       sitemapContent += `  <url>\n`;
+//       sitemapContent += `    <loc>${url.loc}</loc>\n`;
+//       sitemapContent += `    <lastmod>${url.lastmod}</lastmod>\n`;
+//       sitemapContent += `    <changefreq>${url.changefreq}</changefreq>\n`;
+//       sitemapContent += `    <priority>${url.priority}</priority>\n`;
+//       sitemapContent += `  </url>\n`;
+//     });
 
-    sitemapContent += `</urlset>`;
+//     sitemapContent += `</urlset>`;
 
-    // Write updated sitemap.xml file
-    fs.writeFileSync(sitemapPath, sitemapContent);
-    console.log("Sitemap updated successfully!");
-  });
-};
+//     // Write updated sitemap.xml file
+//     fs.writeFileSync(sitemapPath, sitemapContent);
+//     console.log("Sitemap updated successfully!");
+//   });
+// };
 
 // Create a new post
 exports.createPost = (req, res) => {
@@ -552,7 +552,7 @@ exports.getTopReadsAndEditorsChoice = (req, res) => {
   FROM posts p
   JOIN post_views pv ON p.id = pv.post_id
   LEFT JOIN categories c ON FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
-  WHERE pv.view_date >= CURDATE() - INTERVAL 15 DAY
+  WHERE pv.view_date >= CURDATE() - INTERVAL 60 DAY
   GROUP BY p.id
   ORDER BY total_views DESC;
 `;
