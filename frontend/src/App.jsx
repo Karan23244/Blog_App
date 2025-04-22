@@ -38,7 +38,6 @@ function App() {
     <HelmetProvider>
       <BrowserRouter>
         <Navbar />
-        <Popup />
         <ScrollToTop/>
         <Suspense fallback={<div>Loading public content...</div>}>
           <Routes>
