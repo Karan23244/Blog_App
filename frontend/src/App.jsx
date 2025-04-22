@@ -57,8 +57,8 @@ function App() {
               element={<Terms_and_Condition />}
             />
             <Route path="/About_us" element={<About_us />} /> */}
-            <Route path="/:category/:id_or_slug" element={<FullPostAdmin />} />
-          {/* <Route path="/:categoryType/:categoryName" element={<CategoryBlogs />} />
+            <Route path="/:param1/:param2" element={<FullPostAdmin />} />
+          {/* <Route path="/:param1/:param2" element={<CategoryBlogs />} />
             <Route
               path="/:param1/:param2"
               element={<RouteHandler />}
