@@ -229,7 +229,7 @@ exports.createPost = (req, res) => {
           .status(500)
           .json({ error: "Error saving post", details: err });
       }
-      generateSitemap(); // Update sitemap after new post
+      // generateSitemap(); // Update sitemap after new post
       res.status(201).json({
         message: "Post created successfully",
         postId: result.insertId,
@@ -476,7 +476,7 @@ exports.updatePost = (req, res) => {
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Post not found" });
       }
-      generateSitemap(); // Update sitemap after editing post
+      // generateSitemap(); // Update sitemap after editing post
       sendResponse(res, 200, "Post updated successfully");
     });
   } catch (error) {
