@@ -23,7 +23,6 @@ exports.addComment = (req, res) => {
 // 📌 Get Comments for a Specific Post
 exports.allComments = (req, res) => {
   const { post_id } = req.params;
-
   const sql =
     "SELECT name, comment, created_at FROM comments WHERE post_id = ? ORDER BY created_at DESC";
 

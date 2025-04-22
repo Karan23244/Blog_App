@@ -106,12 +106,11 @@ const FullPost = () => {
   
     fetchPost();
   }, [param2]);
-  
+  console.log(post)
 
   useEffect(() => {
     if (post) {
       // Generate TOC and add IDs to headings
-      console.log(post);
       const parser = new DOMParser();
       const contentDocument = parser.parseFromString(
         decodeHtml(post.content || ""),

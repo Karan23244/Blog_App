@@ -13,7 +13,7 @@ app.get("/sitemap.xml", (req, res) => {
     path.join("../frontend/public", "sitemap.xml")
   );
 });
-const staticPath1 = path.join("../frontend/public", "sitemap.xml");
+const staticPath1 = path.join("../../", "sitemap.xml");
 console.log("Static files served from:", staticPath1);
 
 const port = process.env.PORT || 5500;

@@ -18,9 +18,11 @@ app.use(express.json());
 const corsOptions = {
   origin: (origin, callback) => {
     const allowedOrigins = [
+      "http://localhost:3000",
       "http://localhost:5173",
       "https://homimprovement.com",
       "https://www.homimprovement.com",
+      "https://admin.homimprovement.com/",
     ];
 
     // Allow requests from allowed origins

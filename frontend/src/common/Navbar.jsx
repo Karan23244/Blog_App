@@ -163,7 +163,7 @@ function Navbar() {
       <header>
         <nav className="relative border-gray-200 border border-b-1 shadow-xl">
           <div className="flex justify-between items-center">
-            <div className="flex flex-row items-center  lg:gap-4 gap-2 lg:w-[40%] pl-3 py-1">
+            <div className="flex flex-row items-center lg:gap-4 gap-2 lg:w-[40%] pl-3 py-1">
               <div onClick={handleLogoClick}>
                 <img
                   src="/headerlogo.webp"
@@ -269,94 +269,11 @@ function Navbar() {
                       Logout
                     </button>
                   </>
-                ) : (
-                  <>
-                    <div className="flex flex-row justify-center items-center gap-28">
-                      <div
-                        className={`${
-                          isMenuOpen ? "block" : "hidden"
-                        } w-full lg:flex lg:items-center lg:justify-between lg:w-auto `}>
-                        <ul className="flex flex-col lg:flex-row lg:space-x-8 gap-14">
-                          {Object.keys(groupedCategories).map((type) => (
-                            <li className="relative group" key={type}>
-                              <button className="block text-black text-xl hover:text-[#00008B] font-semibold">
-                                {type}
-                              </button>
-                              <ul className="absolute hidden group-hover:block w-[250px] z-10 bg-white shadow-lg border border-black">
-                                {groupedCategories[type].map((category) => (
-                                  <li
-                                    key={category.category_id}
-                                    className="p-1 hover:bg-gray-200 hover:border-black hover:border-l-4 cursor-pointer transition-transform duration-200">
-                                    <Link
-                                      to={`/${category.category_type
-                                        .replace(/\s+/g, "-")
-                                        .toLowerCase()}/${category.category_name
-                                        .toLowerCase()
-                                        .replace(/\s+/g, "-")}`}
-                                      className="block px-4 py-2 hover:border-gray-600 text-black">
-                                      {category.category_name === "How To"
-                                        ? "How To ?"
-                                        : category.category_name}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          value={searchQuery}
-                          onChange={handleSearchChange}
-                          placeholder="Search blogs..."
-                          className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-1 focus:ring-[#00008B]"
-                        />
-                        {showDropdown && (
-                          <ul
-                            ref={dropdownRef}
-                            className="suggestion-item absolute bg-white border border-black rounded-xl shadow-lg w-[calc(100%+10rem)] -left-[10rem] mt-2 py-5 transition-all z-10">
-                            <div className="px-4">
-                              <span className="text-md text-semibold">
-                                Searching For
-                              </span>
-                            </div>
-                            {suggestions.map((suggestion) => (
-                              <li
-                                key={suggestion?.id}
-                                className="px-6 py-2 flex items-center font-medium justify-between hover:bg-gray-200 hover:border-black hover:border-l-4 cursor-pointer transition-transform duration-200"
-                                onClick={() =>
-                                  handleSuggestionClick(suggestion)
-                                }>
-                                <div>
-                                  <span className="flex-grow">
-                                    {suggestion?.title}
-                                  </span>
-                                </div>
-                                <div>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-6 w-6 text-gray-700"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={3}
-                                      d="M7 17l9-9m0 0v6m0-6H10"
-                                    />
-                                  </svg>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                )}
+            ):(
+              <div>
+
+              </div>
+            )}
               </div>
             </div>
 
@@ -396,49 +313,7 @@ function Navbar() {
                 ) : (
                   <>
                     <div className="flex flex-col gap-4">
-                      {Object.keys(groupedCategories).map((type) => (
-                        <div key={type} className="relative group">
-                          {/* Category Header */}
-                          <button
-                            className="flex justify-between items-center w-full px-4 py-2 text-black text-xl font-semibold hover:text-[#00008B] border-b"
-                            onClick={() =>
-                              setActiveCategory(
-                                activeCategory === type ? null : type
-                              )
-                            }>
-                            {type}
-                            {/* Chevron icon */}
-                            {activeCategory === type ? (
-                              <FaChevronUp className="text-gray-600 text-sm" />
-                            ) : (
-                              <FaChevronDown className="text-gray-600 text-sm" />
-                            )}
-                          </button>
-                          {/* Dropdown Content */}
-                          <ul
-                            className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                              activeCategory === type
-                                ? "max-h-[500px]"
-                                : "max-h-0"
-                            }`}>
-                            {groupedCategories[type].map((category) => (
-                              <li
-                                key={category.category_id}
-                                className="px-4 py-2">
-                                <Link
-                                  to={`/${category.category_type
-                                    .replace(/\s+/g, "-")
-                                    .toLowerCase()}/${category.category_name
-                                    .replace(/\s+/g, "-")
-                                    .toLowerCase()}`}
-                                  className="block px-4 py-2 hover:border-gray-600 text-black">
-                                  {category.category_name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                  
                     </div>
                   </>
                 )}

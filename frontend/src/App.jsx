@@ -46,24 +46,24 @@ function App() {
             <Route
               path="/"
               element={
-                isAuthenticated ? <Navigate to="/admin/home" /> : <UserHome />
+                isAuthenticated ? <Navigate to="/admin/home" /> : <AdminLogin />
               }
             />
-            <Route path="/adminlogin" element={<AdminLogin />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
+            {/* <Route path="/adminlogin" element={<AdminLogin />} /> */}
+            {/* <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/privacy_policy" element={<Privacy_Policy />} />
             <Route
               path="/terms_and_condition"
               element={<Terms_and_Condition />}
             />
-            <Route path="/About_us" element={<About_us />} />
-            {/* <Route path="/:category/:id_or_slug" element={<FullPostAdmin />} />
-          <Route path="/:categoryType/:categoryName" element={<CategoryBlogs />} /> */}
+            <Route path="/About_us" element={<About_us />} /> */}
+            <Route path="/:category/:id_or_slug" element={<FullPostAdmin />} />
+          {/* <Route path="/:categoryType/:categoryName" element={<CategoryBlogs />} />
             <Route
               path="/:param1/:param2"
               element={<RouteHandler />}
-            />
+            /> */}
 
             {/* Admin Routes - Protected */}
             <Route
@@ -87,7 +87,7 @@ function App() {
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Suspense>
-        <Subscribe />
+        {/* <Subscribe /> */}
         <Footer />
       </BrowserRouter>
     </HelmetProvider>

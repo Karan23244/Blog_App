@@ -271,12 +271,9 @@ exports.getAllPosts = (req, res) => {
 
 // Fetch a single post by ID
 exports.getPostData = (req, res) => {
-  // Ensure the rawId is the full string from the URL (e.g., 'beginner-friendly-diy-home-improvement-project')
   const rawId = req.params.param2.replace(/-/g, " "); // Remove hyphens from the URL ID
-  const userId = req.cookies.userId;
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
+  const userId = req.cookies.userId || null; // Set userId to null if not provided
+
   // Fetch the post ID from the 'posts' table using the rawId (Custom_url)
   const fetchPostIdQuery = `
     SELECT id FROM posts WHERE Custom_url = ?
@@ -292,20 +289,19 @@ exports.getPostData = (req, res) => {
     }
 
     const postId = fetchResults[0].id;
-
-    // Update view count (you can do it here before fetching the post data)
     const today = new Date().toISOString().slice(0, 10); // Get current date (YYYY-MM-DD)
+
     const updateViewCountQuery = `
-INSERT INTO post_views (post_id, view_date, views, user_id)
-VALUES (?, ?, 1, ?)
-ON DUPLICATE KEY UPDATE views = views + 1;
-`;
+      INSERT INTO post_views (post_id, view_date, views, user_id)
+      VALUES (?, ?, 1, ?)
+      ON DUPLICATE KEY UPDATE views = views + 1;
+    `;
+
     db.query(updateViewCountQuery, [postId, today, userId], (updateErr) => {
       if (updateErr) {
         return handleError(res, updateErr, "Error incrementing view count");
       }
 
-      // Fetch the post data
       const query = `
         SELECT 
           posts.id,
@@ -335,18 +331,20 @@ ON DUPLICATE KEY UPDATE views = views + 1;
           return handleError(res, fetchPostErr, "Error fetching post data");
         }
 
-        if (results === 0) {
+        if (results.length === 0) {
           return res.status(404).json({ message: "Post not found" });
         }
+
         const baseURL = `${req.protocol}://${req.get("host")}`;
         const postData = results[0];
-        // Replace relative image paths in content with absolute URLs
+
         postData.content = postData.content.replace(
           /<img src="\/uploads\/([^"]+)"/g,
           (match, fileName) => {
             return `<img src="${baseURL}/uploads/${fileName}"`;
           }
         );
+
         res.status(200).json({
           message: "Post retrieved successfully",
           data: postData,
@@ -355,6 +353,7 @@ ON DUPLICATE KEY UPDATE views = views + 1;
     });
   });
 };
+
 
 // Fetch a post for editing
 exports.getEditPostData = (req, res) => {
@@ -465,7 +464,7 @@ exports.updatePost = (req, res) => {
       query += `, featured_image = ?`;
       queryParams.push(newImagePath);
     }
-    if (newImagePath) {
+    if (newAdImagePath) {
       query += `, AdImage = ?`;
       queryParams.push(newAdImagePath);
     }
