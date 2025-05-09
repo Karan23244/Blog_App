@@ -34,11 +34,6 @@ const PostCard = ({ post }) => {
       <p className="text-gray-600">By {post.author_name}</p>
       <p className="text-sm mt-2 text-gray-600">{post.seoDescription}</p>
       <div className="mt-4 flex items-center justify-between">
-        <Link
-          to={`/${createSlug(post?.category_names[0])}/${createSlug(post?.Custom_url)}`}
-          className="text-blue-500 hover:underline">
-          Read More
-        </Link>
         {isAuthenticated && (
           <div className="flex items-center gap-4">
             <button
