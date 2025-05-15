@@ -74,9 +74,9 @@ const sitemapPath = path.join(__dirname, "../../frontend/public/sitemap.xml");
 // Creating Dynamic Sitemap
 // const generateSitemap = async () => {
 //   const query = `
-//     SELECT posts.Custom_url, posts.created_at, categories.category_name 
+//     SELECT posts.Custom_url, posts.created_at, categories.category_name
 //     FROM posts
-//     JOIN categories 
+//     JOIN categories
 //     ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
 //     WHERE posts.blog_type = 'published'
 //   `;
@@ -270,90 +270,191 @@ exports.getAllPosts = (req, res) => {
 };
 
 // Fetch a single post by ID
-exports.getPostData = (req, res) => {
-  const rawId = req.params.param2.replace(/-/g, " "); // Remove hyphens from the URL ID
-  const userId = req.cookies.userId || null; // Set userId to null if not provided
+// exports.getPostData = (req, res) => {
+//   const rawId = req.params.param2.replace(/-/g, " "); // Remove hyphens from the URL ID
+//   const userId = req.cookies.userId || null; // Set userId to null if not provided
 
-  // Fetch the post ID from the 'posts' table using the rawId (Custom_url)
-  const fetchPostIdQuery = `
-    SELECT id FROM posts WHERE Custom_url = ?
+//   // Fetch the post ID from the 'posts' table using the rawId (Custom_url)
+//   const fetchPostIdQuery = `
+//     SELECT id FROM posts WHERE Custom_url = ?
+//   `;
+
+//   db.query(fetchPostIdQuery, [rawId], (fetchErr, fetchResults) => {
+//     if (fetchErr) {
+//       return handleError(res, fetchErr, "Error fetching post ID");
+//     }
+
+//     if (fetchResults.length === 0) {
+//       return res.status(404).json({ message: "Post not found" });
+//     }
+
+//     const postId = fetchResults[0].id;
+//     const today = new Date().toISOString().slice(0, 10); // Get current date (YYYY-MM-DD)
+
+//     const updateViewCountQuery = `
+//       INSERT INTO post_views (post_id, view_date, views, user_id)
+//       VALUES (?, ?, 1, ?)
+//       ON DUPLICATE KEY UPDATE views = views + 1;
+//     `;
+
+//     db.query(updateViewCountQuery, [postId, today, userId], (updateErr) => {
+//       if (updateErr) {
+//         return handleError(res, updateErr, "Error incrementing view count");
+//       }
+
+//       const query = `
+//         SELECT
+//           posts.id,
+//           posts.title,
+//           posts.content,
+//           posts.featured_image,
+//           posts.blog_type,
+//           posts.tags,
+//           posts.seoTitle,
+//           posts.seoDescription,
+//           posts.scheduleDate,
+//           posts.Custom_url,
+//           posts.created_at,
+//           posts.ad_url,
+//           posts.AdImage,
+//           authors.full_name AS author_name,
+//           COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
+//         FROM posts
+//         LEFT JOIN authors ON posts.author_id = authors.author_id
+//         LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+//         WHERE posts.Custom_url = ?
+//         GROUP BY posts.id
+//       `;
+
+//       db.query(query, [rawId], (fetchPostErr, results) => {
+//         if (fetchPostErr) {
+//           return handleError(res, fetchPostErr, "Error fetching post data");
+//         }
+
+//         if (results.length === 0) {
+//           return res.status(404).json({ message: "Post not found" });
+//         }
+
+//         const baseURL = `${req.protocol}://${req.get("host")}`;
+//         const postData = results[0];
+
+//         postData.content = postData.content.replace(
+//           /<img src="\/uploads\/([^"]+)"/g,
+//           (match, fileName) => {
+//             return `<img src="${baseURL}/uploads/${fileName}"`;
+//           }
+//         );
+
+//         res.status(200).json({
+//           message: "Post retrieved successfully",
+//           data: postData,
+//         });
+//       });
+//     });
+//   });
+// };
+exports.getPostData = (req, res) => {
+  const categoryParam = req.params.param1.replace(/-/g, " ").toLowerCase();
+  const rawId = req.params.param2.replace(/-/g, " ");
+  const userId = req.cookies.userId || null;
+
+  console.log("categoryParam", categoryParam);
+
+  const query = `
+    SELECT 
+      posts.id,
+      posts.title,
+      posts.content,
+      posts.featured_image,
+      posts.blog_type,
+      posts.tags,
+      posts.seoTitle,
+      posts.seoDescription,
+      posts.scheduleDate,
+      posts.Custom_url,
+      posts.created_at,
+      posts.ad_url,
+      posts.AdImage,
+      authors.full_name AS author_name,
+      COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
+    FROM posts
+    LEFT JOIN authors ON posts.author_id = authors.author_id
+    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+    WHERE posts.Custom_url = ?
+    GROUP BY posts.id
   `;
 
-  db.query(fetchPostIdQuery, [rawId], (fetchErr, fetchResults) => {
-    if (fetchErr) {
-      return handleError(res, fetchErr, "Error fetching post ID");
+  db.query(query, [rawId], (fetchPostErr, results) => {
+    if (fetchPostErr) {
+      return handleError(res, fetchPostErr, "Error fetching post data");
     }
 
-    if (fetchResults.length === 0) {
+    if (results.length === 0) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    const postId = fetchResults[0].id;
-    const today = new Date().toISOString().slice(0, 10); // Get current date (YYYY-MM-DD)
+    const postData = results[0];
 
+    // 🔒 Safe category parsing
+    let categoryList = [];
+
+    if (Array.isArray(postData.category_names)) {
+      categoryList = postData.category_names;
+    } else {
+      const rawCatNames = postData.category_names;
+
+      try {
+        const parsed = JSON.parse(rawCatNames);
+        categoryList = Array.isArray(parsed)
+          ? parsed
+          : String(parsed)
+              .split(",")
+              .map((x) => x.trim());
+      } catch (e) {
+        categoryList = String(rawCatNames)
+          .split(",")
+          .map((x) => x.trim());
+      }
+    }
+
+    categoryList = categoryList.map((name) => name.toLowerCase());
+    console.log("categoryList", categoryList);
+
+    if (!categoryList.includes(categoryParam)) {
+      return res
+        .status(404)
+        .json({ message: "Category does not match the post" });
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
     const updateViewCountQuery = `
       INSERT INTO post_views (post_id, view_date, views, user_id)
       VALUES (?, ?, 1, ?)
       ON DUPLICATE KEY UPDATE views = views + 1;
     `;
 
-    db.query(updateViewCountQuery, [postId, today, userId], (updateErr) => {
-      if (updateErr) {
-        return handleError(res, updateErr, "Error incrementing view count");
-      }
-
-      const query = `
-        SELECT 
-          posts.id,
-          posts.title,
-          posts.content,
-          posts.featured_image,
-          posts.blog_type,
-          posts.tags,
-          posts.seoTitle,
-          posts.seoDescription,
-          posts.scheduleDate,
-          posts.Custom_url,
-          posts.created_at,
-          posts.ad_url,
-          posts.AdImage,
-          authors.full_name AS author_name,
-          COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
-        FROM posts
-        LEFT JOIN authors ON posts.author_id = authors.author_id
-        LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-        WHERE posts.Custom_url = ?
-        GROUP BY posts.id
-      `;
-
-      db.query(query, [rawId], (fetchPostErr, results) => {
-        if (fetchPostErr) {
-          return handleError(res, fetchPostErr, "Error fetching post data");
-        }
-
-        if (results.length === 0) {
-          return res.status(404).json({ message: "Post not found" });
+    db.query(
+      updateViewCountQuery,
+      [postData.id, today, userId],
+      (updateErr) => {
+        if (updateErr) {
+          return handleError(res, updateErr, "Error incrementing view count");
         }
 
         const baseURL = `${req.protocol}://${req.get("host")}`;
-        const postData = results[0];
-
         postData.content = postData.content.replace(
           /<img src="\/uploads\/([^"]+)"/g,
-          (match, fileName) => {
-            return `<img src="${baseURL}/uploads/${fileName}"`;
-          }
+          (match, fileName) => `<img src="${baseURL}/uploads/${fileName}"`
         );
 
         res.status(200).json({
           message: "Post retrieved successfully",
           data: postData,
         });
-      });
-    });
+      }
+    );
   });
 };
-
 
 // Fetch a post for editing
 exports.getEditPostData = (req, res) => {
@@ -626,4 +727,3 @@ exports.relatedPosts = (req, res) => {
     res.status(200).json({ data: results });
   });
 };
-
