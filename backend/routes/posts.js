@@ -35,9 +35,9 @@ router.post(
 
 router.get("/", getAllPosts);
 router.get("/topReadsAndEditorsChoice", getTopReadsAndEditorsChoice);
+router.get("/editData/:id", getEditPostData);
 router.get("/related/:category", relatedPosts);
 router.get("/:param1/:param2", getPostData);
-router.get("/editData/:id", getEditPostData);
 
 router.delete("/:id", deletePost);
 router.put(
