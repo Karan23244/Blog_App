@@ -689,8 +689,49 @@ exports.getTopReadsAndEditorsChoice = (req, res) => {
 
 //related blogs
 
+// exports.relatedPosts = (req, res) => {
+//   const categoryName = req.params.category;
+//   console.log(categoryName)
+//   const query = `
+//     SELECT 
+//       posts.id,
+//       posts.title,
+//       posts.content,
+//       posts.featured_image,
+//       posts.tags,
+//       posts.blog_type,
+//       posts.seoTitle,
+//       posts.seoDescription,
+//       posts.created_at,
+//       posts.Custom_url,
+//       authors.full_name AS author_name,
+//       COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
+//     FROM posts
+//     LEFT JOIN authors ON posts.author_id = authors.author_id
+//     LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+//     WHERE categories.category_name = ?
+//     GROUP BY posts.id
+//     ORDER BY posts.created_at DESC
+//     LIMIT 4;
+//   `;
+
+//   db.query(query, [categoryName], (err, results) => {
+//     if (err) {
+//       console.error("❌ Error fetching related posts:", err);
+//       return res.status(500).json({ error: "Internal Server Error" });
+//     }
+
+//     if (results.length === 0) {
+//       console.warn("⚠️ No related posts found for category:", categoryName);
+//       return res.status(404).json({ error: "No related posts found" });
+//     }
+//     res.status(200).json({ data: results });
+//   });
+// };
+
 exports.relatedPosts = (req, res) => {
-  const categoryName = req.params.category;
+  const categoryName = decodeURIComponent(req.params.category); // In case URL encoding needed
+  console.log(categoryName)
   const query = `
     SELECT 
       posts.id,
@@ -707,8 +748,8 @@ exports.relatedPosts = (req, res) => {
       COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
     FROM posts
     LEFT JOIN authors ON posts.author_id = authors.author_id
-    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-    WHERE categories.category_name = ?
+    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(REPLACE(posts.category_id, '"', ''), '[', '')) -- adjust depending on actual format
+    WHERE LOWER(categories.category_name) = LOWER(?)
     GROUP BY posts.id
     ORDER BY posts.created_at DESC
     LIMIT 4;
@@ -724,6 +765,7 @@ exports.relatedPosts = (req, res) => {
       console.warn("⚠️ No related posts found for category:", categoryName);
       return res.status(404).json({ error: "No related posts found" });
     }
+
     res.status(200).json({ data: results });
   });
 };

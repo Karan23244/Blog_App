@@ -1,8 +1,17 @@
 const express = require("express");
-const {createPost, getAllPosts,getPostData, getEditPostData,deletePost,updatePost,getTopReadsAndEditorsChoice,relatedPosts } = require("../controller/postController");
+const {
+  createPost,
+  getAllPosts,
+  getPostData,
+  getEditPostData,
+  deletePost,
+  updatePost,
+  getTopReadsAndEditorsChoice,
+  relatedPosts,
+} = require("../controller/postController");
 const router = express.Router();
-const multer = require('multer');
-const path = require('path'); 
+const multer = require("multer");
+const path = require("path");
 // Multer middleware for image upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -15,28 +24,29 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
-router.post('/', 
+router.post(
+  "/",
   upload.fields([
-    { name: 'featuredImage', maxCount: 1 }, 
-    { name: 'AdImage', maxCount: 1 }
-  ]), 
+    { name: "featuredImage", maxCount: 1 },
+    { name: "AdImage", maxCount: 1 },
+  ]),
   createPost
 );
 
 router.get("/", getAllPosts);
 router.get("/topReadsAndEditorsChoice", getTopReadsAndEditorsChoice);
+router.get("/related/:category", relatedPosts);
 router.get("/:param1/:param2", getPostData);
 router.get("/editData/:id", getEditPostData);
-router.get("/related/:category", relatedPosts);
+
 router.delete("/:id", deletePost);
-router.put('/:id', 
+router.put(
+  "/:id",
   upload.fields([
-    { name: 'featuredImage', maxCount: 1 }, 
-    { name: 'AdImage', maxCount: 1 }
-  ]), 
+    { name: "featuredImage", maxCount: 1 },
+    { name: "AdImage", maxCount: 1 },
+  ]),
   updatePost
 );
-
-
 
 module.exports = router;
