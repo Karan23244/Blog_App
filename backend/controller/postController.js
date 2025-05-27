@@ -368,41 +368,34 @@ exports.getPostData = (req, res) => {
   console.log("categoryParam", categoryParam);
 
   const query = `
-SELECT 
+ SELECT 
   posts.id,
   posts.title,
   posts.content,
   posts.featured_image,
   posts.blog_type,
+  posts.tags,
   posts.seoTitle,
   posts.seoDescription,
-  posts.created_at,
+  posts.scheduleDate,
   posts.Custom_url,
-  COALESCE(SUM(post_views.views), 0) AS view_count,
+  posts.created_at,
+  posts.ad_url,
+  posts.AdImage,
   authors.full_name AS author_name,
   COALESCE(
     JSON_ARRAYAGG(
       JSON_OBJECT(
-        'category_name', category_data.category_name,
-        'category_type', category_data.category_type
+        'category_name', categories.category_name,
+        'category_type', categories.category_type
       )
     ), JSON_ARRAY()
   ) AS categories
 FROM posts
 LEFT JOIN authors ON posts.author_id = authors.author_id
-LEFT JOIN post_views ON post_views.post_id = posts.id
-LEFT JOIN (
-  SELECT DISTINCT
-    c.category_id,
-    c.category_name,
-    c.category_type
-  FROM categories c
-) AS category_data ON FIND_IN_SET(category_data.category_id, REPLACE(posts.category_id, '"', ''))
-WHERE posts.blog_type = 'published' 
-  AND FIND_IN_SET(?, REPLACE(posts.category_id, '"', ''))
+LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+WHERE posts.Custom_url = ?
 GROUP BY posts.id
-ORDER BY posts.created_at DESC
-LIMIT ? OFFSET ?;
   `;
 
   db.query(query, [rawId], (fetchPostErr, results) => {
