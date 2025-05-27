@@ -95,13 +95,13 @@ const sendResponse = (res, statusCode, message, data = null) => {
 //   );
 // };
 exports.getPostsByCategory = (req, res) => {
-  const { param1, param2 } = req.params;
+  const { param0, param1 } = req.params;
   const { page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
-
+  console.log(param0,param0)
   // Convert slugs back to normal text
-  const formattedCategoryType = param1.replace(/-/g, " ");
-  const formattedCategoryName = param2.replace(/-/g, " ");
+  const formattedCategoryType = param0.replace(/-/g, " ");
+  const formattedCategoryName = param1.replace(/-/g, " ");
 
   // Get category_id from categories table
   const categoryQuery = `
