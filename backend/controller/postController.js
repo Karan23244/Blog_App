@@ -244,24 +244,31 @@ exports.createPost = (req, res) => {
 // Fetch all posts
 exports.getAllPosts = (req, res) => {
   const query = `
-    SELECT 
-      posts.id,
-      posts.title,
-      posts.content,
-      posts.featured_image,
-      posts.tags,
-      posts.blog_type,
-      posts.seoTitle,
-      posts.seoDescription,
-      posts.created_at,
-      posts.Custom_url,
-      authors.full_name AS author_name,
-      COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
-    FROM posts
-    LEFT JOIN authors ON posts.author_id = authors.author_id
-    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-    GROUP BY posts.id
-    ORDER BY posts.created_at DESC;
+SELECT 
+  posts.id,
+  posts.title,
+  posts.content,
+  posts.featured_image,
+  posts.tags,
+  posts.blog_type,
+  posts.seoTitle,
+  posts.seoDescription,
+  posts.created_at,
+  posts.Custom_url,
+  authors.full_name AS author_name,
+  COALESCE(
+    JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'category_name', categories.category_name,
+        'category_type', categories.category_type
+      )
+    ), JSON_ARRAY()
+  ) AS categories
+FROM posts
+LEFT JOIN authors ON posts.author_id = authors.author_id
+LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+GROUP BY posts.id
+ORDER BY posts.created_at DESC;
   `;
   db.query(query, (err, results) => {
     if (err) return handleError(res, err, "Error fetching posts");
@@ -361,27 +368,34 @@ exports.getPostData = (req, res) => {
   console.log("categoryParam", categoryParam);
 
   const query = `
-    SELECT 
-      posts.id,
-      posts.title,
-      posts.content,
-      posts.featured_image,
-      posts.blog_type,
-      posts.tags,
-      posts.seoTitle,
-      posts.seoDescription,
-      posts.scheduleDate,
-      posts.Custom_url,
-      posts.created_at,
-      posts.ad_url,
-      posts.AdImage,
-      authors.full_name AS author_name,
-      COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
-    FROM posts
-    LEFT JOIN authors ON posts.author_id = authors.author_id
-    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-    WHERE posts.Custom_url = ?
-    GROUP BY posts.id
+ SELECT 
+  posts.id,
+  posts.title,
+  posts.content,
+  posts.featured_image,
+  posts.blog_type,
+  posts.tags,
+  posts.seoTitle,
+  posts.seoDescription,
+  posts.scheduleDate,
+  posts.Custom_url,
+  posts.created_at,
+  posts.ad_url,
+  posts.AdImage,
+  authors.full_name AS author_name,
+  COALESCE(
+    JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'category_name', categories.category_name,
+        'category_type', categories.category_type
+      )
+    ), JSON_ARRAY()
+  ) AS categories
+FROM posts
+LEFT JOIN authors ON posts.author_id = authors.author_id
+LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+WHERE posts.Custom_url = ?
+GROUP BY posts.id
   `;
 
   db.query(query, [rawId], (fetchPostErr, results) => {
@@ -602,60 +616,71 @@ exports.deletePost = (req, res) => {
 // Fetch Top Reads and Editorial Choice
 exports.getTopReadsAndEditorsChoice = (req, res) => {
   const topReadsQuery = `
-  SELECT 
-    p.id, 
-    p.title, 
-    p.content, 
-    p.featured_image, 
-    p.blog_type, 
-    p.seoDescription, 
-    p.Custom_url, 
-    SUM(pv.views) AS total_views,
-    COALESCE(
-      (
-        SELECT JSON_ARRAYAGG(category_name)
-        FROM (
-          SELECT DISTINCT c.category_name
-          FROM categories c
-          WHERE FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
-        ) AS unique_categories
-      ),
-      JSON_ARRAY()
-    ) AS category_names
-  FROM posts p
-  JOIN post_views pv ON p.id = pv.post_id
-  WHERE pv.view_date >= CURDATE() - INTERVAL 7 DAY
-  GROUP BY p.id
-  ORDER BY total_views DESC;
+ SELECT 
+  p.id, 
+  p.title, 
+  p.content, 
+  p.featured_image, 
+  p.blog_type, 
+  p.seoDescription, 
+  p.Custom_url, 
+  SUM(pv.views) AS total_views,
+  COALESCE(
+    (
+      SELECT JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'category_name', c.category_name,
+          'category_type', c.category_type
+        )
+      )
+      FROM (
+        SELECT DISTINCT c.category_name, c.category_type
+        FROM categories c
+        WHERE FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
+      ) AS unique_categories
+    ),
+    JSON_ARRAY()
+  ) AS categories
+FROM posts p
+JOIN post_views pv ON p.id = pv.post_id
+WHERE pv.view_date >= CURDATE() - INTERVAL 7 DAY
+GROUP BY p.id
+ORDER BY total_views DESC;
 `;
 
   const editorsChoiceQuery = `
-  SELECT 
-    p.id, 
-    p.title, 
-    p.content, 
-    p.featured_image, 
-    p.blog_type, 
-    p.seoDescription, 
-    p.Custom_url, 
-    SUM(pv.views) AS total_views,
-    COALESCE(
-      (
-        SELECT JSON_ARRAYAGG(category_name)
-        FROM (
-          SELECT DISTINCT c.category_name
-          FROM categories c
-          WHERE FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
-        ) AS unique_categories
-      ),
-      JSON_ARRAY()
-    ) AS category_names
-  FROM posts p
-  JOIN post_views pv ON p.id = pv.post_id
-  LEFT JOIN categories c ON FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
-  WHERE pv.view_date >= CURDATE() - INTERVAL 60 DAY
-  GROUP BY p.id
-  ORDER BY total_views DESC;
+ SELECT 
+  p.id, 
+  p.title, 
+  p.content, 
+  p.featured_image, 
+  p.blog_type, 
+  p.seoDescription, 
+  p.Custom_url, 
+  SUM(pv.views) AS total_views,
+  COALESCE(
+    (
+      SELECT JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'category_name', c.category_name,
+          'category_type', c.category_type
+        )
+      )
+      FROM (
+        SELECT DISTINCT c.category_name, c.category_type
+        FROM categories c
+        WHERE FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
+      ) AS unique_categories
+    ),
+    JSON_ARRAY()
+  ) AS categories
+FROM posts p
+JOIN post_views pv ON p.id = pv.post_id
+LEFT JOIN categories c ON FIND_IN_SET(c.category_id, REPLACE(p.category_id, '"', ''))
+WHERE pv.view_date >= CURDATE() - INTERVAL 60 DAY
+GROUP BY p.id
+ORDER BY total_views DESC;
+
 `;
 
   // First query: Top Reads
@@ -693,7 +718,7 @@ exports.getTopReadsAndEditorsChoice = (req, res) => {
 //   const categoryName = req.params.category;
 //   console.log(categoryName)
 //   const query = `
-//     SELECT 
+//     SELECT
 //       posts.id,
 //       posts.title,
 //       posts.content,
@@ -731,28 +756,36 @@ exports.getTopReadsAndEditorsChoice = (req, res) => {
 
 exports.relatedPosts = (req, res) => {
   const categoryName = decodeURIComponent(req.params.category); // In case URL encoding needed
-  console.log(categoryName)
+  console.log(categoryName);
   const query = `
-    SELECT 
-      posts.id,
-      posts.title,
-      posts.content,
-      posts.featured_image,
-      posts.tags,
-      posts.blog_type,
-      posts.seoTitle,
-      posts.seoDescription,
-      posts.created_at,
-      posts.Custom_url,
-      authors.full_name AS author_name,
-      COALESCE(JSON_ARRAYAGG(categories.category_name), JSON_ARRAY()) AS category_names
-    FROM posts
-    LEFT JOIN authors ON posts.author_id = authors.author_id
-    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(REPLACE(posts.category_id, '"', ''), '[', '')) -- adjust depending on actual format
-    WHERE LOWER(categories.category_name) = LOWER(?)
-    GROUP BY posts.id
-    ORDER BY posts.created_at DESC
-    LIMIT 4;
+   SELECT 
+  posts.id,
+  posts.title,
+  posts.content,
+  posts.featured_image,
+  posts.tags,
+  posts.blog_type,
+  posts.seoTitle,
+  posts.seoDescription,
+  posts.created_at,
+  posts.Custom_url,
+  authors.full_name AS author_name,
+  COALESCE(
+    JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'category_name', categories.category_name,
+        'category_type', categories.category_type
+      )
+    ), 
+    JSON_ARRAY()
+  ) AS categories
+FROM posts
+LEFT JOIN authors ON posts.author_id = authors.author_id
+LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(REPLACE(posts.category_id, '"', ''), '[', ''))
+WHERE LOWER(categories.category_name) = LOWER(?)
+GROUP BY posts.id
+ORDER BY posts.created_at DESC
+LIMIT 4;
   `;
 
   db.query(query, [categoryName], (err, results) => {
