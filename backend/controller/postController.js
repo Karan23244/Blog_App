@@ -395,6 +395,7 @@ FROM posts
 LEFT JOIN authors ON posts.author_id = authors.author_id
 LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
 WHERE posts.Custom_url = ?
+  AND posts.blog_type = 'published'
 GROUP BY posts.id
   `;
 
@@ -760,7 +761,7 @@ exports.relatedPosts = (req, res) => {
   const categoryName = decodeURIComponent(req.params.category); // In case URL encoding needed
   console.log(categoryName);
   const query = `
-   SELECT 
+SELECT 
   posts.id,
   posts.title,
   posts.content,
@@ -785,6 +786,7 @@ FROM posts
 LEFT JOIN authors ON posts.author_id = authors.author_id
 LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(REPLACE(posts.category_id, '"', ''), '[', ''))
 WHERE LOWER(categories.category_name) = LOWER(?)
+  AND posts.blog_type = 'published'
 GROUP BY posts.id
 ORDER BY posts.created_at DESC
 LIMIT 4;
