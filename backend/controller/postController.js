@@ -241,7 +241,7 @@ exports.createPost = (req, res) => {
   }
 };
 
-// Fetch all posts
+// Fetch all published posts
 exports.getAllPosts = (req, res) => {
   const query = `
 SELECT 
@@ -267,15 +267,52 @@ SELECT
 FROM posts
 LEFT JOIN authors ON posts.author_id = authors.author_id
 LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+WHERE posts.blog_type = 'published'
 GROUP BY posts.id
 ORDER BY posts.created_at DESC;
+
   `;
   db.query(query, (err, results) => {
     if (err) return handleError(res, err, "Error fetching posts");
     sendResponse(res, 200, "Posts retrieved successfully", results);
   });
 };
+// Fetch all draft posts
+exports.getAllDraftPosts = (req, res) => {
+  const query = `
+SELECT 
+  posts.id,
+  posts.title,
+  posts.content,
+  posts.featured_image,
+  posts.tags,
+  posts.blog_type,
+  posts.seoTitle,
+  posts.seoDescription,
+  posts.created_at,
+  posts.Custom_url,
+  authors.full_name AS author_name,
+  COALESCE(
+    JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'category_name', categories.category_name,
+        'category_type', categories.category_type
+      )
+    ), JSON_ARRAY()
+  ) AS categories
+FROM posts
+LEFT JOIN authors ON posts.author_id = authors.author_id
+LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+WHERE posts.blog_type = 'draft'
+GROUP BY posts.id
+ORDER BY posts.created_at DESC;
 
+  `;
+  db.query(query, (err, results) => {
+    if (err) return handleError(res, err, "Error fetching posts");
+    sendResponse(res, 200, "Posts retrieved successfully", results);
+  });
+};
 // Fetch a single post by ID
 // exports.getPostData = (req, res) => {
 //   const rawId = req.params.param2.replace(/-/g, " "); // Remove hyphens from the URL ID

@@ -8,25 +8,28 @@ const PostList = () => {
   const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
   const [showDrafts, setShowDrafts] = useState(false); // State to toggle between draft and published posts
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/posts`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch posts");
-        }
-        const responseData = await response.json();
-        const data = responseData.data; // Extract the 'data' array containing posts
-        setPosts(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
+ useEffect(() => {
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const endpoint = showDrafts ? "/api/posts/draft" : "/api/posts";
+      const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch posts");
       }
-    };
+      const responseData = await response.json();
+      const data = responseData.data;
+      setPosts(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchPosts();
-  }, []);
+  fetchPosts();
+}, [showDrafts]); // Re-run when `showDrafts` changes
+
 
   // Filter posts based on search query (case-insensitive search for title and content)
   const filteredPosts = posts.filter((post) => {

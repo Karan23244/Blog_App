@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createPost,
   getAllPosts,
+  getAllDraftPosts,
   getPostData,
   getEditPostData,
   deletePost,
@@ -34,6 +35,7 @@ router.post(
 );
 
 router.get("/", getAllPosts);
+router.get("/draft", getAllDraftPosts);
 router.get("/topReadsAndEditorsChoice", getTopReadsAndEditorsChoice);
 router.get("/editData/:id", getEditPostData);
 router.get("/related/:category", relatedPosts);
