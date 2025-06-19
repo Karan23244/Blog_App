@@ -184,6 +184,7 @@ exports.createPost = (req, res) => {
     Custom_url,
     scheduleDate,
     ad_url,
+    schema,
   } = req.body;
   // If scheduleDate is 'null' (string), set it to actual null
   const processedScheduleDate = scheduleDate === "null" ? null : scheduleDate;
@@ -200,10 +201,10 @@ exports.createPost = (req, res) => {
 
     let query = `
       INSERT INTO posts 
-      (title, content, featured_image, AdImage, blog_type, author_id, category_id, tags, seoTitle, seoDescription, ad_url, Custom_url${
+      (title, content, featured_image, AdImage, blog_type, author_id, category_id, tags, seoTitle, seoDescription, ad_url,schema, Custom_url${
         processedScheduleDate ? ", scheduleDate" : ""
       }) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?${
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?${
         processedScheduleDate ? ", ?" : ""
       })
     `;
@@ -219,6 +220,7 @@ exports.createPost = (req, res) => {
       seoTitle,
       seoDescription,
       ad_url,
+      schema,
       Custom_url,
       ...(processedScheduleDate ? [processedScheduleDate] : []),
     ];
@@ -255,6 +257,7 @@ SELECT
   posts.seoDescription,
   posts.created_at,
   posts.Custom_url,
+  posts.schema,
   authors.full_name AS author_name,
   COALESCE(
     JSON_ARRAYAGG(
@@ -291,6 +294,7 @@ SELECT
   posts.seoDescription,
   posts.created_at,
   posts.Custom_url,
+  post.schema,
   authors.full_name AS author_name,
   COALESCE(
     JSON_ARRAYAGG(
@@ -419,6 +423,7 @@ exports.getPostData = (req, res) => {
   posts.created_at,
   posts.ad_url,
   posts.AdImage,
+  posts.schema,
   authors.full_name AS author_name,
   COALESCE(
     JSON_ARRAYAGG(
@@ -441,7 +446,7 @@ GROUP BY posts.id
       return handleError(res, fetchPostErr, "Error fetching post data");
     }
 
-    if (results.length === 0) {
+    if (resultsee.length === 0) {
       return res.status(404).json({ message: "Post not found" });
     }
 
@@ -551,6 +556,7 @@ exports.updatePost = (req, res) => {
     seoDescription,
     Custom_url,
     scheduleDate,
+    schema,
     ad_url,
   } = req.body;
   const newImagePath = req.files?.featuredImage
@@ -597,7 +603,7 @@ exports.updatePost = (req, res) => {
     // Prepare query to conditionally include scheduleDate
     let query = `
       UPDATE posts 
-      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?, ad_url = ?, Custom_url = ?${
+      SET title = ?, content = ?, blog_type = ?, author_id = ?, category_id = ?, tags = ?, seoTitle = ?, seoDescription = ?,\`schema\` = ?, ad_url = ?, Custom_url = ?${
         processedScheduleDate ? ", scheduleDate = ?" : ""
       }
     `;
@@ -610,6 +616,7 @@ exports.updatePost = (req, res) => {
       tags ? JSON.stringify(tags) : null,
       seoTitle,
       seoDescription,
+      schema,
       ad_url,
       Custom_url,
       ...(processedScheduleDate ? [processedScheduleDate] : []),

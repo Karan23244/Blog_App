@@ -21,6 +21,7 @@ function NewPost() {
     ad_url: "",
     Custom_url: "",
     scheduleDate: "",
+    schema: "",
   });
   const [categories, setCategories] = useState([]);
   const [authors, setAuthors] = useState([]);
@@ -82,7 +83,9 @@ function NewPost() {
             seoTitle: post.seoTitle || "",
             Custom_url: post.Custom_url || "",
             ad_url: post.ad_url || "",
+            schema: post.schema ? JSON.stringify(post.schema, null, 2) : "",
           });
+
           setTags(post.tags?.split(",") || []);
           const imageUrl = post.featured_image
             ? `${import.meta.env.VITE_API_URL}/${post.featured_image}`
@@ -121,6 +124,7 @@ function NewPost() {
     formData.append("seoDescription", postDetails.seoDescription);
     formData.append("ad_url", postDetails.ad_url);
     formData.append("Custom_url", postDetails.Custom_url);
+    formData.append("schema", postDetails.schema);
     formData.append(
       "scheduleDate",
       postDetails.scheduleDate ? postDetails.scheduleDate : ""
@@ -209,6 +213,7 @@ function NewPost() {
         Custom_url: "",
         scheduleDate: "",
         ad_url: "",
+        schema: "",
       });
       setTags([]);
       setFeaturedImage(null);
@@ -386,6 +391,20 @@ const ContentEditor = memo(
           className="w-full p-2 mt-2 border border-gray-300 rounded"
           required
           placeholder="Enter ad_url"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700" htmlFor="title">
+          Add Schema
+        </label>
+        <input
+          type="text"
+          name="schema"
+          value={postDetails.schema}
+          onChange={handleInputChange}
+          className="w-full p-2 mt-2 border border-gray-300 rounded"
+          required
+          placeholder="Enter Schema"
         />
       </div>
       <div className="mb-4">
