@@ -201,7 +201,7 @@ exports.createPost = (req, res) => {
 
     let query = `
       INSERT INTO posts 
-      (title, content, featured_image, AdImage, blog_type, author_id, category_id, tags, seoTitle, seoDescription, ad_url,schema, Custom_url${
+      (title, content, featured_image, AdImage, blog_type, author_id, category_id, tags, seoTitle, seoDescription, ad_url,\`schema\`, Custom_url${
         processedScheduleDate ? ", scheduleDate" : ""
       }) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?${
@@ -294,7 +294,7 @@ SELECT
   posts.seoDescription,
   posts.created_at,
   posts.Custom_url,
-  post.schema,
+  posts.schema,
   authors.full_name AS author_name,
   COALESCE(
     JSON_ARRAYAGG(
@@ -446,7 +446,7 @@ GROUP BY posts.id
       return handleError(res, fetchPostErr, "Error fetching post data");
     }
 
-    if (resultsee.length === 0) {
+    if (results.length === 0) {
       return res.status(404).json({ message: "Post not found" });
     }
 
