@@ -245,6 +245,10 @@ exports.createPost = (req, res) => {
 
 // Fetch all published posts
 exports.getAllPosts = (req, res) => {
+  res.setHeader(
+    "Cache-Control",
+    "public, max-age=300, stale-while-revalidate=59"
+  );
   const query = `
 SELECT 
   posts.id,
@@ -402,48 +406,60 @@ ORDER BY posts.created_at DESC;
 //   });
 // };
 exports.getPostData = (req, res) => {
-  const categoryParam = req.params.param1.replace(/-/g, " ").toLowerCase();
-  const rawId = req.params.param2.replace(/-/g, " ");
+  const categoryParam = req.params.param1.replace(/-/g, " ").toLowerCase(); // e.g. 'smart-home-tech' => 'smart home tech'
+  const rawId = req.params.param2.toLowerCase(); // e.g. 'schema-test'
   const userId = req.cookies.userId || null;
 
-  console.log("categoryParam", categoryParam);
+  // ❌ Ignore Chrome DevTools/invalid slugs
+  if (
+    rawId.includes("chrome") ||
+    rawId.includes("devtools") ||
+    !/^[a-z0-9-]+$/.test(rawId)
+  ) {
+    console.warn(
+      "⚠️ Ignored devtools or invalid API request:",
+      req.originalUrl
+    );
+    return res.status(404).json({ message: "Invalid blog slug" });
+  }
 
   const query = `
- SELECT 
-  posts.id,
-  posts.title,
-  posts.content,
-  posts.featured_image,
-  posts.blog_type,
-  posts.tags,
-  posts.seoTitle,
-  posts.seoDescription,
-  posts.scheduleDate,
-  posts.Custom_url,
-  posts.created_at,
-  posts.ad_url,
-  posts.AdImage,
-  posts.schema,
-  authors.full_name AS author_name,
-  COALESCE(
-    JSON_ARRAYAGG(
-      JSON_OBJECT(
-        'category_name', categories.category_name,
-        'category_type', categories.category_type
-      )
-    ), JSON_ARRAY()
-  ) AS categories
-FROM posts
-LEFT JOIN authors ON posts.author_id = authors.author_id
-LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-WHERE posts.Custom_url = ?
-  AND posts.blog_type = 'published'
-GROUP BY posts.id
+    SELECT 
+      posts.id,
+      posts.title,
+      posts.content,
+      posts.featured_image,
+      posts.blog_type,
+      posts.tags,
+      posts.seoTitle,
+      posts.seoDescription,
+      posts.scheduleDate,
+      posts.Custom_url,
+      posts.created_at,
+      posts.ad_url,
+      posts.AdImage,
+      posts.schema,
+      authors.full_name AS author_name,
+      COALESCE(
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'category_name', categories.category_name,
+            'category_type', categories.category_type
+          )
+        ), JSON_ARRAY()
+      ) AS categories
+    FROM posts
+    LEFT JOIN authors ON posts.author_id = authors.author_id
+    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+    WHERE LOWER(REPLACE(posts.Custom_url, ' ', '-')) = ?
+    GROUP BY posts.id
   `;
 
   db.query(query, [rawId], (fetchPostErr, results) => {
     if (fetchPostErr) {
-      return handleError(res, fetchPostErr, "Error fetching post data");
+      return res
+        .status(500)
+        .json({ message: "Error fetching post data", error: fetchPostErr });
     }
 
     if (results.length === 0) {
@@ -451,33 +467,30 @@ GROUP BY posts.id
     }
 
     const postData = results[0];
-    console.log("Raw categories from DB:", postData.categories);
-    // 🔒 Safe category parsing
-    let categoryList = [];
 
+    // ✅ Block drafts even if somehow fetched
+    if (postData.blog_type.toLowerCase() !== "published") {
+      console.warn("🚫 Blocked draft post:", postData.title);
+      return res.status(403).json({ message: "This post is not published" });
+    }
+
+    // ✅ Validate category
+    let categoryList = [];
     try {
       if (Array.isArray(postData.categories)) {
-        // Already a parsed JS array
         categoryList = postData.categories.map((cat) =>
           (cat.category_name || "").toLowerCase()
         );
       } else {
-        console.error(
-          "Unexpected format for postData.categories:",
-          postData.categories
-        );
         return res
           .status(500)
           .json({ message: "Invalid category data format" });
       }
     } catch (err) {
-      console.error("Error parsing categories JSON:", err);
       return res
         .status(500)
-        .json({ message: "Internal error processing category data" });
+        .json({ message: "Error processing category list", error: err });
     }
-
-    console.log("categoryList", categoryList);
 
     if (!categoryList.includes(categoryParam)) {
       return res
@@ -485,6 +498,7 @@ GROUP BY posts.id
         .json({ message: "Category does not match the post" });
     }
 
+    // ✅ Update view count
     const today = new Date().toISOString().slice(0, 10);
     const updateViewCountQuery = `
       INSERT INTO post_views (post_id, view_date, views, user_id)
@@ -497,16 +511,19 @@ GROUP BY posts.id
       [postData.id, today, userId],
       (updateErr) => {
         if (updateErr) {
-          return handleError(res, updateErr, "Error incrementing view count");
+          return res
+            .status(500)
+            .json({ message: "Error updating view count", error: updateErr });
         }
 
+        // ✅ Fix relative image URLs
         const baseURL = `${req.protocol}://${req.get("host")}`;
         postData.content = postData.content.replace(
           /<img src="\/uploads\/([^"]+)"/g,
           (match, fileName) => `<img src="${baseURL}/uploads/${fileName}"`
         );
 
-        res.status(200).json({
+        return res.status(200).json({
           message: "Post retrieved successfully",
           data: postData,
         });
@@ -803,7 +820,6 @@ ORDER BY total_views DESC;
 
 exports.relatedPosts = (req, res) => {
   const categoryName = decodeURIComponent(req.params.category); // In case URL encoding needed
-  console.log(categoryName);
   const query = `
 SELECT 
   posts.id,

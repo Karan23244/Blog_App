@@ -15,6 +15,7 @@ const executeQuery = (query, params = []) => {
 };
 // Get All category Details
 exports.getAllCategories = async (req, res) => {
+  res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=59");
   try {
     const categories = await executeQuery("SELECT * FROM categories");
     res.status(200).json({

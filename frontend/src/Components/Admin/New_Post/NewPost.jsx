@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import readability from "text-readability";
 
 function NewPost() {
   const { id } = useParams();
@@ -30,6 +31,9 @@ function NewPost() {
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [startDate, setStartDate] = useState(new Date());
+  const [readabilityScore, setReadabilityScore] = useState(null);
+  const [brokenLinks, setBrokenLinks] = useState([]);
+  console.log(postDetails.content);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -104,6 +108,50 @@ function NewPost() {
     };
     fetchData();
   }, [id]);
+
+  // Function to find and validate all links
+  useEffect(() => {
+    const checkBrokenLinks = async () => {
+      const div = document.createElement("div");
+      div.innerHTML = postDetails.content;
+      const anchors = Array.from(div.querySelectorAll("a"));
+      const urls = anchors.map((a) => a.href);
+
+      const broken = [];
+      await Promise.all(
+        urls.map(async (url) => {
+          try {
+            const res = await fetch(url, { method: "HEAD", mode: "no-cors" });
+            // Note: In no-cors mode, status won't be accessible, so skip status check.
+            if (!res.ok && res.status !== 0) broken.push(url);
+          } catch (err) {
+            broken.push(url);
+          }
+        })
+      );
+
+      setBrokenLinks(broken);
+    };
+
+    if (postDetails.content) {
+      checkBrokenLinks();
+    }
+  }, [postDetails.content]);
+  useEffect(() => {
+    const plainText = postDetails.content.replace(/<[^>]+>/g, "").trim();
+
+    if (plainText.split(" ").length < 5) {
+      setReadabilityScore(null); // Not enough content
+      return;
+    }
+
+    try {
+      const score = readability.fleschReadingEase(plainText);
+      setReadabilityScore(score.toFixed(2));
+    } catch (e) {
+      setReadabilityScore("Error");
+    }
+  }, [postDetails.content]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -252,6 +300,8 @@ function NewPost() {
             setPostDetails((prev) => ({ ...prev, content }))
           }
           handlePostSubmit={handlePostSubmit}
+          readabilityScore={readabilityScore}
+          brokenLinks={brokenLinks}
           id={id}
         />
       </div>
@@ -321,6 +371,8 @@ const ContentEditor = memo(
     handleEditorChange,
     handlePostSubmit,
     id,
+    readabilityScore,
+    brokenLinks,
   }) => (
     <div className="lg:w-3/4 p-6 bg-gray-100 rounded-lg shadow-md">
       <div className="mb-4">
@@ -414,6 +466,40 @@ const ContentEditor = memo(
           onChange={handleEditorChange}
           placeholder="Start typing here..."
         />
+        {readabilityScore && (
+          <div
+            className={`mt-2 text-sm font-medium ${
+              readabilityScore >= 90
+                ? "text-green-600"
+                : readabilityScore >= 70
+                ? "text-lime-600"
+                : readabilityScore >= 60
+                ? "text-yellow-600"
+                : readabilityScore >= 30
+                ? "text-orange-600"
+                : "text-red-600"
+            }`}>
+            Readability Score : {readabilityScore}
+          </div>
+        )}
+        {brokenLinks.length > 0 && (
+          <div className="mt-3 text-sm text-red-600">
+            🚫 Broken Links Found:
+            <ul className="list-disc list-inside mt-1">
+              {brokenLinks.map((link, index) => (
+                <li key={index}>
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <div className="flex justify-end gap-4">
         <button
