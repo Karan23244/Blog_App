@@ -407,21 +407,21 @@ ORDER BY posts.created_at DESC;
 // };
 exports.getPostData = (req, res) => {
   const categoryParam = req.params.param1.replace(/-/g, " ").toLowerCase(); // e.g. 'smart-home-tech' => 'smart home tech'
-  const rawId = req.params.param2.toLowerCase(); // e.g. 'schema-test'
+ const rawId = req.params.param2.toLowerCase().replace(/-/g, " ");
   const userId = req.cookies.userId || null;
 
   // ❌ Ignore Chrome DevTools/invalid slugs
-  // if (
-  //   rawId.includes("chrome") ||
-  //   rawId.includes("devtools") ||
-  //   !/^[a-z0-9-]+$/.test(rawId)
-  // ) {
-  //   console.warn(
-  //     "⚠️ Ignored devtools or invalid API request:",
-  //     req.originalUrl
-  //   );
-  //   return res.status(404).json({ message: "Invalid blog slug" });
-  // }
+  if (
+    rawId.includes("chrome") ||
+    rawId.includes("devtools") ||
+    !/^[a-z0-9-]+$/.test(rawId)
+  ) {
+    console.warn(
+      "⚠️ Ignored devtools or invalid API request:",
+      req.originalUrl
+    );
+    return res.status(404).json({ message: "Invalid blog slug" });
+  }
 
   const query = `
       SELECT 
@@ -463,73 +463,27 @@ exports.getPostData = (req, res) => {
         .json({ message: "Error fetching post data", error: fetchPostErr });
     }
 
+    console.log("Query results:", results);
+
     if (results.length === 0) {
+      console.log("❌ No post found with Custom_url:", rawId);
       return res.status(404).json({ message: "Post not found" });
     }
 
     const postData = results[0];
 
-    // ✅ Block drafts even if somehow fetched
     if (postData.blog_type.toLowerCase() !== "published") {
       console.warn("🚫 Blocked draft post:", postData.title);
       return res.status(403).json({ message: "This post is not published" });
     }
 
-    // ✅ Validate category
-    let categoryList = [];
-    try {
-      if (Array.isArray(postData.categories)) {
-        categoryList = postData.categories.map((cat) =>
-          (cat.category_name || "").toLowerCase()
-        );
-      } else {
-        return res
-          .status(500)
-          .json({ message: "Invalid category data format" });
-      }
-    } catch (err) {
-      return res
-        .status(500)
-        .json({ message: "Error processing category list", error: err });
-    }
+    console.log("Requested category:", categoryParam);
 
-    if (!categoryList.includes(categoryParam)) {
-      return res
-        .status(404)
-        .json({ message: "Category does not match the post" });
-    }
 
-    // ✅ Update view count
-    // const today = new Date().toISOString().slice(0, 10);
-    // const updateViewCountQuery = `
-    //   INSERT INTO post_views (post_id, view_date, views, user_id)
-    //   VALUES (?, ?, 1, ?)
-    //   ON DUPLICATE KEY UPDATE views = views + 1;
-    // `;
-
-    // db.query(
-    //   updateViewCountQuery,
-    //   [postData.id, today, userId],
-    //   (updateErr) => {
-    //     if (updateErr) {
-    //       return res
-    //         .status(500)
-    //         .json({ message: "Error updating view count", error: updateErr });
-    //     }
-
-    //     // ✅ Fix relative image URLs
-    //     const baseURL = `${req.protocol}://${req.get("host")}`;
-    //     postData.content = postData.content.replace(
-    //       /<img src="\/uploads\/([^"]+)"/g,
-    //       (match, fileName) => `<img src="${baseURL}/uploads/${fileName}"`
-    //     );
-
-    //     return res.status(200).json({
-    //       message: "Post retrieved successfully",
-    //       data: postData,
-    //     });
-    //   }
-    // );
+    return res.status(200).json({
+      message: "Post retrieved successfully",
+      data: postData,
+    });
   });
 };
 
