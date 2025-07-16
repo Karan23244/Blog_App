@@ -24,8 +24,6 @@ const corsOptions = {
       "https://homimprovement.com",
       "https://www.homimprovement.com",
       "https://admin.homimprovement.com/",
-      "https://steptosale.com/",
-      "http://127.0.0.1:5501",
     ];
 
     // Allow requests from allowed origins

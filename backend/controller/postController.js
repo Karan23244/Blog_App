@@ -411,48 +411,49 @@ exports.getPostData = (req, res) => {
   const userId = req.cookies.userId || null;
 
   // ❌ Ignore Chrome DevTools/invalid slugs
-  if (
-    rawId.includes("chrome") ||
-    rawId.includes("devtools") ||
-    !/^[a-z0-9-]+$/.test(rawId)
-  ) {
-    console.warn(
-      "⚠️ Ignored devtools or invalid API request:",
-      req.originalUrl
-    );
-    return res.status(404).json({ message: "Invalid blog slug" });
-  }
+  // if (
+  //   rawId.includes("chrome") ||
+  //   rawId.includes("devtools") ||
+  //   !/^[a-z0-9-]+$/.test(rawId)
+  // ) {
+  //   console.warn(
+  //     "⚠️ Ignored devtools or invalid API request:",
+  //     req.originalUrl
+  //   );
+  //   return res.status(404).json({ message: "Invalid blog slug" });
+  // }
 
   const query = `
-    SELECT 
-      posts.id,
-      posts.title,
-      posts.content,
-      posts.featured_image,
-      posts.blog_type,
-      posts.tags,
-      posts.seoTitle,
-      posts.seoDescription,
-      posts.scheduleDate,
-      posts.Custom_url,
-      posts.created_at,
-      posts.ad_url,
-      posts.AdImage,
-      posts.schema,
-      authors.full_name AS author_name,
-      COALESCE(
-        JSON_ARRAYAGG(
-          JSON_OBJECT(
-            'category_name', categories.category_name,
-            'category_type', categories.category_type
-          )
-        ), JSON_ARRAY()
-      ) AS categories
-    FROM posts
-    LEFT JOIN authors ON posts.author_id = authors.author_id
-    LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
-    WHERE LOWER(REPLACE(posts.Custom_url, ' ', '-')) = ?
-    GROUP BY posts.id
+      SELECT 
+    posts.id,
+    posts.title,
+    posts.content,
+    posts.featured_image,
+    posts.blog_type,
+    posts.tags,
+    posts.seoTitle,
+    posts.seoDescription,
+    posts.scheduleDate,
+    posts.Custom_url,
+    posts.created_at,
+    posts.ad_url,
+    posts.AdImage,
+    posts.schema,
+    authors.full_name AS author_name,
+    COALESCE(
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'category_name', categories.category_name,
+          'category_type', categories.category_type
+        )
+      ), JSON_ARRAY()
+    ) AS categories
+  FROM posts
+  LEFT JOIN authors ON posts.author_id = authors.author_id
+  LEFT JOIN categories ON FIND_IN_SET(categories.category_id, REPLACE(posts.category_id, '"', ''))
+  WHERE posts.Custom_url = ?
+    AND posts.blog_type = 'published'
+  GROUP BY posts.id
   `;
 
   db.query(query, [rawId], (fetchPostErr, results) => {
@@ -499,36 +500,36 @@ exports.getPostData = (req, res) => {
     }
 
     // ✅ Update view count
-    const today = new Date().toISOString().slice(0, 10);
-    const updateViewCountQuery = `
-      INSERT INTO post_views (post_id, view_date, views, user_id)
-      VALUES (?, ?, 1, ?)
-      ON DUPLICATE KEY UPDATE views = views + 1;
-    `;
+    // const today = new Date().toISOString().slice(0, 10);
+    // const updateViewCountQuery = `
+    //   INSERT INTO post_views (post_id, view_date, views, user_id)
+    //   VALUES (?, ?, 1, ?)
+    //   ON DUPLICATE KEY UPDATE views = views + 1;
+    // `;
 
-    db.query(
-      updateViewCountQuery,
-      [postData.id, today, userId],
-      (updateErr) => {
-        if (updateErr) {
-          return res
-            .status(500)
-            .json({ message: "Error updating view count", error: updateErr });
-        }
+    // db.query(
+    //   updateViewCountQuery,
+    //   [postData.id, today, userId],
+    //   (updateErr) => {
+    //     if (updateErr) {
+    //       return res
+    //         .status(500)
+    //         .json({ message: "Error updating view count", error: updateErr });
+    //     }
 
-        // ✅ Fix relative image URLs
-        const baseURL = `${req.protocol}://${req.get("host")}`;
-        postData.content = postData.content.replace(
-          /<img src="\/uploads\/([^"]+)"/g,
-          (match, fileName) => `<img src="${baseURL}/uploads/${fileName}"`
-        );
+    //     // ✅ Fix relative image URLs
+    //     const baseURL = `${req.protocol}://${req.get("host")}`;
+    //     postData.content = postData.content.replace(
+    //       /<img src="\/uploads\/([^"]+)"/g,
+    //       (match, fileName) => `<img src="${baseURL}/uploads/${fileName}"`
+    //     );
 
-        return res.status(200).json({
-          message: "Post retrieved successfully",
-          data: postData,
-        });
-      }
-    );
+    //     return res.status(200).json({
+    //       message: "Post retrieved successfully",
+    //       data: postData,
+    //     });
+    //   }
+    // );
   });
 };
 
