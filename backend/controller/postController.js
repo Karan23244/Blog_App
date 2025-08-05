@@ -39,7 +39,7 @@ const saveImages = (htmlContent) => {
     fs.writeFileSync(filePath, buffer);
 
     // Return the updated image URL
-    const imageUrl = `uploads/${fileName}`;
+    const imageUrl = `/uploads/${fileName}`;
     return `<img src="${imageUrl}"`;
   });
 };
@@ -407,14 +407,14 @@ ORDER BY posts.created_at DESC;
 // };
 exports.getPostData = (req, res) => {
   const categoryParam = req.params.param1.replace(/-/g, " ").toLowerCase(); // e.g. 'smart-home-tech' => 'smart home tech'
- const rawId = req.params.param2.toLowerCase().replace(/-/g, " ");
+  const rawId = req.params.param2.toLowerCase().replace(/-/g, " ");
   const userId = req.cookies.userId || null;
 
   // ❌ Ignore Chrome DevTools/invalid slugs
   if (
     rawId.includes("chrome") ||
     rawId.includes("devtools") ||
-    !/^[a-z0-9-]+$/.test(rawId)
+    !/^[a-z0-9 ]+$/.test(rawId) // allow spaces
   ) {
     console.warn(
       "⚠️ Ignored devtools or invalid API request:",
@@ -478,7 +478,6 @@ exports.getPostData = (req, res) => {
     }
 
     console.log("Requested category:", categoryParam);
-
 
     return res.status(200).json({
       message: "Post retrieved successfully",
