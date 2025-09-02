@@ -660,8 +660,8 @@ SELECT
     JSON_ARRAY()
   ) AS categories
 FROM posts p
-JOIN post_views pv ON p.id = pv.post_id
-WHERE pv.view_date >= CURDATE() - INTERVAL 7 DAY
+LEFT JOIN post_views pv ON p.id = pv.post_id
+WHERE pv.view_date IS NULL OR pv.view_date >= CURDATE() - INTERVAL 7 DAY
 GROUP BY p.id
 ORDER BY total_views DESC;
 `;
