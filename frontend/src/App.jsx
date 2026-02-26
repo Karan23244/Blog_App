@@ -42,27 +42,28 @@ function App() {
         <Suspense fallback={<div>Loading public content...</div>}>
           <Routes>
             {/* Public Routes */}
-            <Route
+            {/* <Route
               path="/"
               element={
                 isAuthenticated ? <Navigate to="/admin/home" /> : <AdminLogin />
               }
-            />
-            {/* <Route path="/adminlogin" element={<AdminLogin />} /> */}
-            {/* <Route path="/unauthorized" element={<Unauthorized />} />
+            /> */}
+            <Route path="/" element={<UserHome />} />
+            <Route path="/adminlogin" element={<AdminLogin />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/privacy_policy" element={<Privacy_Policy />} />
             <Route
               path="/terms_and_condition"
               element={<Terms_and_Condition />}
             />
-            <Route path="/About_us" element={<About_us />} /> */}
-            {/* <Route path="/:param1/:param2" element={<FullPostAdmin />} /> */}
-          {/* <Route path="/:param1/:param2" element={<CategoryBlogs />} />
+            <Route path="/About_us" element={<About_us />} />
+            <Route path="/:param1/:param2" element={<FullPostAdmin />} />
+          <Route path="/:param1/:param2" element={<CategoryBlogs />} />
             <Route
               path="/:param1/:param2"
               element={<RouteHandler />}
-            /> */}
+            />
 
             {/* Admin Routes - Protected */}
             <Route
