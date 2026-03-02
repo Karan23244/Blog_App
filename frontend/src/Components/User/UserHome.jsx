@@ -27,11 +27,13 @@ function UserHome() {
       const fetchPosts = async () => {
         try {
           const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/posts`
+            `${import.meta.env.VITE_API_URL}/api/posts`,
           );
+          console.log("API Response:", response); // Log the raw response
           const responseData = await response.json();
+          console.log("Parsed API Response:", responseData); // Log the parsed response
           const filteredPosts = responseData.data.filter(
-            (post) => post.blog_type === "published"
+            (post) => post.blog_type === "published",
           );
           setPosts(filteredPosts);
         } catch (error) {
@@ -49,14 +51,17 @@ function UserHome() {
       const fetchData = async () => {
         try {
           const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/posts/topReadsAndEditorsChoice`
+            `${import.meta.env.VITE_API_URL}/api/posts/topReadsAndEditorsChoice`,
           );
+          console.log("API Response:", response); // Log the raw response
+
           const result = await response.json();
-          const filteredtopReadsPosts = result.data.topReads.filter(
-            (post) => post.blog_type === "published"
+          console.log("Parsed API Result:", result); // Log the parsed result
+          const filteredtopReadsPosts = result.data.topReads?.filter(
+            (post) => post.blog_type === "published",
           );
-          const filterededitorsChoicePosts = result.data.editorsChoice.filter(
-            (post) => post.blog_type === "published"
+          const filterededitorsChoicePosts = result.data.editorsChoice?.filter(
+            (post) => post.blog_type === "published",
           );
           setTopReads(filteredtopReadsPosts);
           setEditorsChoice(filterededitorsChoicePosts);
@@ -125,7 +130,7 @@ function UserHome() {
                   <div className="relative overflow-hidden hover:shadow-md flex-grow">
                     <Link
                       to={`/${createSlug(
-                        posts[0]?.category_names[0]
+                        posts[0]?.category_names?.[0],
                       )}/${createSlug(posts[0]?.Custom_url)}`}
                       className="block h-full">
                       <div className="relative w-full lg:h-[350px] h-[200px]">
@@ -180,7 +185,7 @@ function UserHome() {
                         </p>
                         <Link
                           to={`/${createSlug(
-                            post?.category_names[0]
+                            post?.category_names?.[0],
                           )}/${createSlug(post?.Custom_url)}`}
                           className="text-[#00008B] hover:underline inline-block mt-auto">
                           Read More...
@@ -223,7 +228,7 @@ function UserHome() {
                         </p>
                         <Link
                           to={`/${createSlug(
-                            post?.category_names[0]
+                            post?.category_names?.[0],
                           )}/${createSlug(post?.Custom_url)}`}
                           className="mt-auto">
                           <button className="lg:text-base text-sm text-white px-5 py-2 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">
@@ -266,7 +271,7 @@ function UserHome() {
                         </p>
                         <Link
                           to={`/${createSlug(
-                            post?.category_names[0]
+                            post?.category_names?.[0],
                           )}/${createSlug(post?.Custom_url)}`}
                           className="mt-auto">
                           <button className="lg:text-base text-sm text-white px-4 py-1 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">
@@ -359,18 +364,20 @@ const CategoryBlogs = ({ posts }) => {
     },
   ];
 
-  const filteredPosts = posts.filter(
-    (post) =>
-      post.blog_type === "published" &&
-      post.category_names.some((category) =>
-        categoryFilter.some((filter) => filter.name === category)
-      )
-  );
+  const filteredPosts = posts.filter((post) => {
+    if (post.blog_type !== "published" || !Array.isArray(post.category_names)) {
+      return false;
+    }
+
+    return post.category_names.some((category) =>
+      categoryFilter.some((filter) => filter.name === category),
+    );
+  });
 
   const groupedPosts = categoryFilter.map((category) => ({
     category,
     posts: filteredPosts.filter((post) =>
-      post.category_names.includes(category.name)
+      post.category_names.includes(category.name),
     ),
   }));
   return (
@@ -394,7 +401,7 @@ const CategoryBlogs = ({ posts }) => {
                 {posts.slice(0, 3).map((post) => (
                   <Link
                     to={`/${createSlug(
-                      posts[0]?.category_names[0]
+                      posts[0]?.category_names?.[0],
                     )}/${createSlug(post?.Custom_url)}`}>
                     <div
                       key={post.id}
@@ -430,7 +437,7 @@ const CategoryBlogs = ({ posts }) => {
                 {posts.slice(0, 3).map((post) => (
                   <Link
                     to={`/${createSlug(
-                      posts[0]?.category_names[0]
+                      posts[0]?.category_names?.[0],
                     )}/${createSlug(post?.Custom_url)}`}>
                     <div
                       key={post.id}
