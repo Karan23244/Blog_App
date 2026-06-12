@@ -5,7 +5,7 @@ import CustomCarousel from "./CustomCrousel";
 import usePageTracker from "../../hooks/usePageTracker";
 import { Helmet } from "react-helmet-async";
 function UserHome() {
-  usePageTracker("home");
+  // usePageTracker("home");
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
@@ -85,6 +85,7 @@ function UserHome() {
       setImagePreloaded(true); // Mark the image as preloaded
     }
   }, [posts, imagePreloaded]);
+
   return (
     <>
       <Helmet>
@@ -130,7 +131,7 @@ function UserHome() {
                   <div className="relative overflow-hidden hover:shadow-md flex-grow">
                     <Link
                       to={`/${createSlug(
-                        posts[0]?.category_names?.[0],
+                        posts[0]?.categories?.[0]?.category_type,
                       )}/${createSlug(posts[0]?.Custom_url)}`}
                       className="block h-full">
                       <div className="relative w-full lg:h-[350px] h-[200px]">
@@ -185,7 +186,7 @@ function UserHome() {
                         </p>
                         <Link
                           to={`/${createSlug(
-                            post?.category_names?.[0],
+                            post?.categories?.[0]?.category_type,
                           )}/${createSlug(post?.Custom_url)}`}
                           className="text-[#00008B] hover:underline inline-block mt-auto">
                           Read More...
@@ -228,7 +229,7 @@ function UserHome() {
                         </p>
                         <Link
                           to={`/${createSlug(
-                            post?.category_names?.[0],
+                            post?.categories?.[0]?.category_names?.[0],
                           )}/${createSlug(post?.Custom_url)}`}
                           className="mt-auto">
                           <button className="lg:text-base text-sm text-white px-5 py-2 bg-gradient-to-r from-[#00008B] to-[#00008B] rounded-md shadow-md hover:shadow-lg">

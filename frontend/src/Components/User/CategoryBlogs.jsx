@@ -6,7 +6,7 @@ import { Helmet } from "react-helmet-async";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const CategoryPosts = () => {
-  usePageTracker("category");
+  // usePageTracker("category");
   const {
     posts,
     loading,

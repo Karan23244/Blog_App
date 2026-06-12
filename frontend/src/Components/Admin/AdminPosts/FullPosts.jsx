@@ -6,7 +6,7 @@ import "../New_Post/styles.css";
 import usePageTracker from "../../../hooks/usePageTracker";
 import CommentSection from "./Comments";
 const FullPost = () => {
-  usePageTracker("blogs");
+  // usePageTracker("blogs");
   const { param2 } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
