@@ -221,7 +221,7 @@ const CategoryPosts = () => {
         {posts && (
           <div className="mb-6">
             <h2 className="lg:text-2xl text-lg font-semibold mb-2">
-              {posts[0].title}
+              {posts[0]?.title}
             </h2>
             <Link
               to={`/${createSlug(
@@ -230,16 +230,16 @@ const CategoryPosts = () => {
               className="block">
               <img
                 src={
-                  posts[0].featured_image
-                    ? `${import.meta.env.VITE_API_URL}/${posts[0].featured_image}`
+                  posts[0]?.featured_image
+                    ? `${import.meta.env.VITE_API_URL}/${posts[0]?.featured_image}`
                     : "https://via.placeholder.com/300x200.png?text=No+Image"
                 }
-                alt={posts[0].title}
+                alt={posts[0]?.title}
                 className="w-full h-[300px] object-cover mb-4"
                 loading="lazy"
               />
               <p className="lg:text-lg text-base text-gray-700">
-                {posts[0].seoDescription}
+                {posts[0]?.seoDescription}
                 ...
               </p>
             </Link>

@@ -7,7 +7,8 @@ import usePageTracker from "../../../hooks/usePageTracker";
 import CommentSection from "./Comments";
 const FullPost = () => {
   // usePageTracker("blogs");
-  const { param2 } = useParams();
+  const { param1, param2 } = useParams();
+  console.log("URL Parameters:", { param1, param2 }); // Debug log
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const [toc, setToc] = useState([]);
@@ -94,9 +95,10 @@ const FullPost = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/posts/${param2}`,
+          `${import.meta.env.VITE_API_URL}/api/posts/${param1}/${param2}`,
           { withCredentials: true }
         );
+        console.log("Fetched post data:", response.data.data); // Debug log
         setPost(response.data.data);
       } catch (err) {
         console.error("Error fetching post:", err);
@@ -105,7 +107,7 @@ const FullPost = () => {
     };
   
     fetchPost();
-  }, [param2]);
+  }, [param1, param2]);
   console.log(post)
 
   useEffect(() => {
